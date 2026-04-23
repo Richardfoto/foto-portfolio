@@ -57,7 +57,7 @@ export default function Footer() {
           </h4>
           <div className="flex flex-col gap-3 text-sm text-zinc-300">
             <a
-              href="mailto:richard@example.com"
+              href="mailto:richardfoto@icloud.com"
               className="hover:text-white transition-colors"
             >
               richardfoto@icloud.com
