@@ -1,11 +1,33 @@
 import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import type { SanityImageSource } from "@sanity/image-url";
 import { groq } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
+import type { Metadata } from "next";
+import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
-const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
-  return builder.image(source);
+type LocaleParams = Promise<{ locale: string }>;
+
+type GalleryCard = {
+  _id: string;
+  title: string;
+  category: string;
+  description?: string;
+  coverImage?: SanityImageSource;
+  slugCurrent: string;
+};
+
+export async function generateMetadata(props: {
+  params: LocaleParams;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale, namespace: "gallery" });
+
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+  };
 }
 
 const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc) {
@@ -14,32 +36,39 @@ const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc) {
   category,
   description,
   coverImage,
-  slug
+  "slugCurrent": slug.current
 }`;
 
-export default async function GalleryPage() {
-  const galleries = await client.fetch(galleriesQuery);
+export default async function GalleryPage(props: { params: LocaleParams }) {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale, namespace: "gallery" });
+  const galleries = await client.fetch<GalleryCard[]>(galleriesQuery);
 
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-zinc-900 text-white text-center py-32 px-4">
-        <h1 className="text-5xl font-serif mb-4">Galéria</h1>
-        <p className="text-zinc-400 max-w-md mx-auto">Válassz egy kategóriát</p>
+        <h1 className="text-5xl font-serif mb-4">{t("title")}</h1>
+        <p className="text-zinc-400 max-w-md mx-auto">{t("subtitle")}</p>
       </section>
       <section className="max-w-6xl mx-auto py-24 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {galleries.map((gallery: any) => (
-            <Link key={gallery._id} href={`/gallery/${gallery.slug.current}`}>
+          {galleries.map((gallery) => (
+            <Link
+              key={gallery._id}
+              href={`/${locale}/gallery/${gallery.slugCurrent}`}
+            >
               <div className="group overflow-hidden cursor-pointer">
                 {gallery.coverImage && (
-                  <div className="overflow-hidden">
-                    <img
+                  <div className="overflow-hidden bg-zinc-100">
+                    <Image
                       src={urlFor(gallery.coverImage)
                         .width(600)
                         .height(400)
                         .url()}
                       alt={gallery.title}
-                      className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-700"
+                      width={600}
+                      height={400}
+                      className="w-full h-72 object-contain group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
                 )}
@@ -47,14 +76,7 @@ export default async function GalleryPage() {
                   <p className="text-xs text-zinc-400 tracking-widest uppercase">
                     {gallery.category}
                   </p>
-                  <h3 className="text-xl font-serif mt-1 group-hover:text-zinc-500 transition-colors">
-                    {gallery.title}
-                  </h3>
-                  {gallery.description && (
-                    <p className="text-sm text-zinc-500 mt-2 line-clamp-2">
-                      {gallery.description}
-                    </p>
-                  )}
+                  <h3 className="text-xl font-serif mt-1">{gallery.title}</h3>
                 </div>
               </div>
             </Link>

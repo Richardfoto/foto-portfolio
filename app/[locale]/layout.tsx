@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { NextIntlClientProvider } from "next-intl";
@@ -17,6 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://richardfoto.vercel.app"),
   title: {
     default: "Richard Foto – Professzionális fotózás Budapest",
     template: "%s | Richard Foto",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
@@ -40,17 +40,15 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
 
   return (
-    <html lang={locale} className={`${playfair.variable} ${inter.variable}`}>
-      <body className="min-h-screen flex flex-col">
-        <NextIntlClientProvider messages={messages}>
-          <Navbar />
-          <div className="pt-16 flex-1">{children}</div>
-          <Footer />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <div className={`${playfair.variable} ${inter.variable} min-h-screen flex flex-col`}>
+        <Navbar />
+        <div className="pt-16 flex-1">{children}</div>
+        <Footer />
+      </div>
+    </NextIntlClientProvider>
   );
 }

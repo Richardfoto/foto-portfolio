@@ -3,11 +3,12 @@
     "gallery": "Gallery",
     "services": "Services",
     "about": "About",
+    "booking": "Booking",
     "contact": "Contact"
   },
   "home": {
     "hero_title": "Richard Foto",
-    "hero_subtitle": "I photograph people – real moments, not poses.",
+    "hero_subtitle": "Every image tells a story. Be the one at its heart.",
     "gallery_button": "Gallery"
   },
   "gallery": {
@@ -22,14 +23,41 @@
   },
   "about": {
     "title": "About me",
-    "experience": "years of experience"
+    "description": "Get to know me – professional photographer from Budapest",
+    "experience": "years of experience",
+    "contactHeading": "Contact details",
+    "socialInstagram": "Instagram",
+    "socialFacebook": "Facebook"
+  },
+  "booking": {
+    "title": "Booking",
+    "description": "Book your session with the package that fits you best.",
+    "subtitle": "Fill out the form below and I will get back to you soon.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "service": "Package",
+    "date": "Preferred date",
+    "message": "Notes",
+    "selectPackage": "Choose a package...",
+    "other": "Other",
+    "send": "Send booking request",
+    "sending": "Sending...",
+    "successTitle": "Thank you!",
+    "successMessage": "I will get back to you soon about your booking.",
+    "validationError": "Please fill out the required fields correctly.",
+    "error": "Something went wrong, please try again."
   },
   "contact": {
     "title": "Contact",
     "subtitle": "Get in touch with me",
+    "description": "Reach out and I will get back to you soon.",
+    "detailsHeading": "Contact details",
+    "formHeading": "Send me a message",
     "name": "Your name",
     "email": "Your email",
     "message": "Your message",
+    "validationError": "Please fill out the fields correctly.",
     "send": "Send",
     "sending": "Sending...",
     "success_title": "Thank you!",
@@ -39,6 +67,12 @@
   "footer": {
     "pages": "Pages",
     "contact": "Contact",
+    "tagline": "Every image tells a story. Be the one at its heart.",
+    "gallery": "Gallery",
+    "services": "Services",
+    "about": "About",
+    "booking": "Booking",
+    "contactLink": "Contact",
     "rights": "All rights reserved."
   }
 }

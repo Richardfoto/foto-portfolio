@@ -3,11 +3,12 @@
     "gallery": "Galéria",
     "services": "Szolgáltatások",
     "about": "Rólam",
+    "booking": "Foglalás",
     "contact": "Kapcsolat"
   },
   "home": {
     "hero_title": "Richard Foto",
-    "hero_subtitle": "Embereket fotózok – valódi pillanatokat, nem pózokat.",
+    "hero_subtitle": "Minden kép egy történetet mesél el. Legyél te a főszereplő.",
     "gallery_button": "Galéria"
   },
   "gallery": {
@@ -22,14 +23,41 @@
   },
   "about": {
     "title": "Rólam",
-    "experience": "év tapasztalat"
+    "description": "Ismerj meg – professzionális fotós Budapestről",
+    "experience": "év tapasztalat",
+    "contactHeading": "Elérhetőségek",
+    "socialInstagram": "Instagram",
+    "socialFacebook": "Facebook"
+  },
+  "booking": {
+    "title": "Foglalás",
+    "description": "Foglalj időpontot – a szolgáltatások alapján választott csomaggal.",
+    "subtitle": "Töltsd ki az alábbi űrlapot és hamarosan felveszem veled a kapcsolatot.",
+    "name": "Név",
+    "email": "Email",
+    "phone": "Telefon",
+    "service": "Csomag",
+    "date": "Kívánt időpont",
+    "message": "Megjegyzés",
+    "selectPackage": "Válassz csomagot...",
+    "other": "Egyéb",
+    "send": "Foglalás küldése",
+    "sending": "Küldés...",
+    "successTitle": "Köszönöm!",
+    "successMessage": "Hamarosan felveszem veled a kapcsolatot a foglalással kapcsolatban.",
+    "validationError": "Kérlek, töltsd ki helyesen a kötelező mezőket.",
+    "error": "Hiba történt, próbáld újra."
   },
   "contact": {
     "title": "Kapcsolat",
     "subtitle": "Vedd fel velem a kapcsolatot",
+    "description": "Vedd fel velem a kapcsolatot, és hamarosan válaszolok.",
+    "detailsHeading": "Elérhetőségek",
+    "formHeading": "Írj nekem",
     "name": "Neved",
     "email": "Email címed",
     "message": "Üzeneted",
+    "validationError": "Kérlek, töltsd ki helyesen a mezőket.",
     "send": "Küldés",
     "sending": "Küldés...",
     "success_title": "Köszönöm!",
@@ -39,6 +67,12 @@
   "footer": {
     "pages": "Oldalak",
     "contact": "Kapcsolat",
+    "tagline": "Minden kép egy történetet mesél el. Legyél te a főszereplő.",
+    "gallery": "Galéria",
+    "services": "Szolgáltatások",
+    "about": "Rólam",
+    "booking": "Foglalás",
+    "contactLink": "Kapcsolat",
     "rights": "Minden jog fenntartva."
   }
 }

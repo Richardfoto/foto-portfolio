@@ -1,19 +1,13 @@
-/**
- * This route is responsible for the built-in authoring environment using Sanity Studio.
- * All routes under your studio path is handled by this file using Next.js' catch-all routes:
- * https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes
- *
- * You can learn more about the next-sanity package here:
- * https://github.com/sanity-io/next-sanity
- */
-
-import { NextStudio } from 'next-sanity/studio'
-import config from '../../../sanity.config'
-
-export const dynamic = 'force-static'
-
-export { metadata, viewport } from 'next-sanity/studio'
-
 export default function StudioPage() {
-  return <NextStudio config={config} />
+  return (
+    <main className="min-h-screen flex items-center justify-center px-6 text-center">
+      <div className="max-w-xl space-y-4">
+        <h1 className="text-3xl font-semibold">Sanity Studio ideiglenesen letiltva</h1>
+        <p className="text-zinc-600">
+          A production build jelenleg elhasal a telepített Sanity Studio csomagok es React
+          kozotti inkompatibilitas miatt. A publikus oldal ettol fuggetlenul epulhet.
+        </p>
+      </div>
+    </main>
+  )
 }

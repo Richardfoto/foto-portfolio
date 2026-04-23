@@ -11,7 +11,7 @@ export default function Footer() {
         <div>
           <h3 className="text-2xl font-serif mb-4">Richard Foto</h3>
           <p className="text-zinc-400 text-sm leading-relaxed">
-            Embereket fotózok – valódi pillanatokat, nem pózokat.
+            {t("tagline")}
           </p>
         </div>
         <div>
@@ -23,25 +23,31 @@ export default function Footer() {
               href={`/${locale}/gallery`}
               className="hover:text-white transition-colors"
             >
-              Gallery
+              {t("gallery")}
             </Link>
             <Link
               href={`/${locale}/services`}
               className="hover:text-white transition-colors"
             >
-              Services
+              {t("services")}
             </Link>
             <Link
               href={`/${locale}/about`}
               className="hover:text-white transition-colors"
             >
-              About
+              {t("about")}
+            </Link>
+            <Link
+              href={`/${locale}/booking`}
+              className="hover:text-white transition-colors"
+            >
+              {t("booking")}
             </Link>
             <Link
               href={`/${locale}/contact`}
               className="hover:text-white transition-colors"
             >
-              Contact
+              {t("contactLink")}
             </Link>
           </div>
         </div>
