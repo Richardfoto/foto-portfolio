@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "gallery": "Galéria",
+    "services": "Szolgáltatások",
+    "about": "Rólam",
+    "contact": "Kapcsolat"
+  },
+  "home": {
+    "hero_title": "Richard Foto",
+    "hero_subtitle": "Embereket fotózok – valódi pillanatokat, nem pózokat.",
+    "gallery_button": "Galéria"
+  },
+  "gallery": {
+    "title": "Galéria",
+    "subtitle": "Válassz egy kategóriát",
+    "back": "Vissza a galériához"
+  },
+  "services": {
+    "title": "Szolgáltatások",
+    "subtitle": "Válaszd ki a számodra megfelelő csomagot",
+    "book": "Foglalás"
+  },
+  "about": {
+    "title": "Rólam",
+    "experience": "év tapasztalat"
+  },
+  "contact": {
+    "title": "Kapcsolat",
+    "subtitle": "Vedd fel velem a kapcsolatot",
+    "name": "Neved",
+    "email": "Email címed",
+    "message": "Üzeneted",
+    "send": "Küldés",
+    "sending": "Küldés...",
+    "success_title": "Köszönöm!",
+    "success_message": "Hamarosan felveszem veled a kapcsolatot.",
+    "error": "Hiba történt, próbáld újra."
+  },
+  "footer": {
+    "pages": "Oldalak",
+    "contact": "Kapcsolat",
+    "rights": "Minden jog fenntartva."
+  }
+}

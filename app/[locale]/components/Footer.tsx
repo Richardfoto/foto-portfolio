@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const locale = useLocale();
+
   return (
     <footer className="bg-zinc-900 text-white mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -12,35 +16,38 @@ export default function Footer() {
         </div>
         <div>
           <h4 className="text-xs tracking-widest mb-6 text-zinc-400">
-            OLDALAK
+            {t("pages")}
           </h4>
           <div className="flex flex-col gap-3 text-sm text-zinc-300">
             <Link
-              href="/gallery"
+              href={`/${locale}/gallery`}
               className="hover:text-white transition-colors"
             >
-              Galéria
+              Gallery
             </Link>
             <Link
-              href="/services"
+              href={`/${locale}/services`}
               className="hover:text-white transition-colors"
             >
-              Szolgáltatások
-            </Link>
-            <Link href="/about" className="hover:text-white transition-colors">
-              Rólam
+              Services
             </Link>
             <Link
-              href="/contact"
+              href={`/${locale}/about`}
               className="hover:text-white transition-colors"
             >
-              Kapcsolat
+              About
+            </Link>
+            <Link
+              href={`/${locale}/contact`}
+              className="hover:text-white transition-colors"
+            >
+              Contact
             </Link>
           </div>
         </div>
         <div>
           <h4 className="text-xs tracking-widest mb-6 text-zinc-400">
-            KAPCSOLAT
+            {t("contact")}
           </h4>
           <div className="flex flex-col gap-3 text-sm text-zinc-300">
             <a
@@ -53,7 +60,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-zinc-800 px-4 py-6 text-center text-xs text-zinc-500">
-        © {new Date().getFullYear()} Richard Foto. Minden jog fenntartva.
+        © {new Date().getFullYear()} Richard Foto. {t("rights")}
       </div>
     </footer>
   );
