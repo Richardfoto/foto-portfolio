@@ -59,7 +59,9 @@ export default async function Home(props: { params: LocaleParams }) {
   return (
     <main className="min-h-screen bg-white">
       <section className="flex flex-col items-center justify-center h-screen bg-zinc-900 text-white text-center px-4">
-        <h1 className="text-5xl md:text-7xl font-serif mb-6">{t("hero_title")}</h1>
+        <h1 className="text-5xl md:text-7xl font-serif mb-6">
+          {t("hero_title")}
+        </h1>
         <p className="text-xl text-zinc-400 max-w-md">{t("hero_subtitle")}</p>
         <Link
           href={`/${locale}/gallery`}
@@ -70,13 +72,15 @@ export default async function Home(props: { params: LocaleParams }) {
       </section>
       <section className="max-w-6xl mx-auto px-4 py-24">
         <div className="max-w-3xl">
-          <p className="text-xs tracking-[0.35em] uppercase text-zinc-400 mb-5">
+          <p className="text-xs tracking-[0.35em] uppercase text-zinc-600 mb-5">
             {t("intro_eyebrow")}
           </p>
           <h2 className="text-3xl md:text-5xl font-serif text-zinc-900 mb-6">
             {t("intro_title")}
           </h2>
-          <p className="text-lg text-zinc-600 leading-relaxed">{t("intro_body")}</p>
+          <p className="text-lg text-zinc-600 leading-relaxed">
+            {t("intro_body")}
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
           {[
@@ -93,8 +97,13 @@ export default async function Home(props: { params: LocaleParams }) {
               body: t("intro_what_body"),
             },
           ].map((item) => (
-            <div key={item.title} className="border border-zinc-200 p-8 bg-zinc-50/60">
-              <h3 className="text-2xl font-serif text-zinc-900 mb-4">{item.title}</h3>
+            <div
+              key={item.title}
+              className="border border-zinc-200 p-8 bg-zinc-50/60"
+            >
+              <h3 className="text-2xl font-serif text-zinc-900 mb-4">
+                {item.title}
+              </h3>
               <p className="text-zinc-600 leading-relaxed">{item.body}</p>
             </div>
           ))}
@@ -107,7 +116,9 @@ export default async function Home(props: { params: LocaleParams }) {
         </Link>
       </section>
       <section id="galeria" className="max-w-6xl mx-auto py-24 px-4">
-        <h2 className="text-3xl font-serif text-center mb-16">{galleryT("title")}</h2>
+        <h2 className="text-3xl font-serif text-center mb-16">
+          {galleryT("title")}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleries.map((gallery) => (
             <Link
@@ -130,7 +141,7 @@ export default async function Home(props: { params: LocaleParams }) {
                   </div>
                 )}
                 <div className="pt-4">
-                  <p className="text-xs text-zinc-400 tracking-widest uppercase">
+                  <p className="text-xs text-zinc-600 tracking-widest uppercase">
                     {gallery.category}
                   </p>
                   <h3 className="text-lg font-serif mt-1">{gallery.title}</h3>
