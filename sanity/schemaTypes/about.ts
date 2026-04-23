@@ -6,6 +6,14 @@ export const about = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "heroImage",
+      title: "Hero háttérkép",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
       name: "name",
       title: "Teljes név",
       type: "string",
