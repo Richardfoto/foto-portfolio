@@ -9,16 +9,22 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@portabletext/sanity-bridge": "1.2.14",
     "@sanity/image-url": "^2.1.1",
-    "@sanity/vision": "^5.22.0",
+    "@sanity/vision": "4.22.0",
     "next": "15.5.15",
     "next-intl": "^4.9.1",
-    "next-sanity": "^12.3.0",
+    "next-sanity": "11.6.13",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.2",
-    "sanity": "^5.22.0",
+    "sanity": "4.22.0",
     "styled-components": "^6.4.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@portabletext/sanity-bridge": "1.2.14"
+    }
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -9,7 +9,17 @@
   "home": {
     "hero_title": "Richard Foto",
     "hero_subtitle": "Minden kép egy történetet mesél el. Legyél te a főszereplő.",
-    "gallery_button": "Galéria"
+    "gallery_button": "Galéria",
+    "intro_eyebrow": "Portré, páros és személyes márkafotózás",
+    "intro_title": "Természetes, igényes fotók Budapesten és környékén",
+    "intro_body": "Azért dolgozom, hogy ne csak szép képeket kapj, hanem egy átgondolt, kényelmes folyamatot is. Segítek a hangulat, a helyszín és a képi világ kialakításában, hogy a végeredmény valóban rólad szóljon.",
+    "intro_who_title": "Kitől kapod",
+    "intro_who_body": "Richardtól, aki nyugodt vezetéssel, természetes iránymutatással és igényes utómunkával dolgozik.",
+    "intro_where_title": "Hol dolgozom",
+    "intro_where_body": "Elsősorban Budapesten és környékén, kültéri helyszíneken, városi környezetben vagy előre egyeztetett enteriőrben.",
+    "intro_what_title": "Mit kapsz",
+    "intro_what_body": "Őszinte portrékat, páros képeket vagy üzleti fotókat, amiket jó érzéssel használsz megjelenéshez, emléknek vagy kommunikációhoz.",
+    "intro_cta": "Ismerj meg jobban"
   },
   "gallery": {
     "title": "Galéria",

@@ -68,6 +68,44 @@ export default async function Home(props: { params: LocaleParams }) {
           {t("gallery_button").toUpperCase()}
         </Link>
       </section>
+      <section className="max-w-6xl mx-auto px-4 py-24">
+        <div className="max-w-3xl">
+          <p className="text-xs tracking-[0.35em] uppercase text-zinc-400 mb-5">
+            {t("intro_eyebrow")}
+          </p>
+          <h2 className="text-3xl md:text-5xl font-serif text-zinc-900 mb-6">
+            {t("intro_title")}
+          </h2>
+          <p className="text-lg text-zinc-600 leading-relaxed">{t("intro_body")}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+          {[
+            {
+              title: t("intro_who_title"),
+              body: t("intro_who_body"),
+            },
+            {
+              title: t("intro_where_title"),
+              body: t("intro_where_body"),
+            },
+            {
+              title: t("intro_what_title"),
+              body: t("intro_what_body"),
+            },
+          ].map((item) => (
+            <div key={item.title} className="border border-zinc-200 p-8 bg-zinc-50/60">
+              <h3 className="text-2xl font-serif text-zinc-900 mb-4">{item.title}</h3>
+              <p className="text-zinc-600 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+        <Link
+          href={`/${locale}/about`}
+          className="inline-block mt-12 border border-zinc-900 px-8 py-3 text-sm tracking-widest hover:bg-zinc-900 hover:text-white transition-colors"
+        >
+          {t("intro_cta").toUpperCase()}
+        </Link>
+      </section>
       <section id="galeria" className="max-w-6xl mx-auto py-24 px-4">
         <h2 className="text-3xl font-serif text-center mb-16">{galleryT("title")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,16 +116,16 @@ export default async function Home(props: { params: LocaleParams }) {
             >
               <div className="group overflow-hidden cursor-pointer">
                 {gallery.coverImage && (
-                  <div className="overflow-hidden bg-zinc-100">
+                  <div className="flex h-[26rem] items-center justify-center overflow-hidden bg-zinc-100 p-4 md:h-[28rem]">
                     <Image
                       src={urlFor(gallery.coverImage)
-                        .width(600)
-                        .height(400)
+                        .width(900)
+                        .fit("max")
                         .url()}
                       alt={gallery.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-700"
+                      width={900}
+                      height={1200}
+                      className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                     />
                   </div>
                 )}

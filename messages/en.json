@@ -9,7 +9,17 @@
   "home": {
     "hero_title": "Richard Foto",
     "hero_subtitle": "Every image tells a story. Be the one at its heart.",
-    "gallery_button": "Gallery"
+    "gallery_button": "Gallery",
+    "intro_eyebrow": "Portrait, couple and personal brand photography",
+    "intro_title": "Natural, refined photography in Budapest and nearby",
+    "intro_body": "My goal is not only to deliver beautiful images, but to guide you through a thoughtful and comfortable experience. I help shape the mood, the location, and the visual direction so the final images truly feel like you.",
+    "intro_who_title": "Who you work with",
+    "intro_who_body": "Richard, with calm guidance, natural direction, and careful retouching focused on timeless results.",
+    "intro_where_title": "Where I work",
+    "intro_where_body": "Mainly in Budapest and nearby, outdoors, in urban settings, or in a pre-arranged interior location.",
+    "intro_what_title": "What you receive",
+    "intro_what_body": "Honest portraits, couple sessions, or business images you will feel confident using for your brand, your memories, or your presence online.",
+    "intro_cta": "Learn more"
   },
   "gallery": {
     "title": "Gallery",

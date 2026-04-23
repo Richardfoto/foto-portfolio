@@ -76,13 +76,17 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {images.map((image, index) => (
-            <div key={index} className="overflow-hidden bg-zinc-100">
+            <div
+              key={index}
+              className="flex min-h-[22rem] items-center justify-center overflow-hidden bg-zinc-100 p-4 md:min-h-[28rem]"
+            >
               <Image
-                src={urlFor(image).width(1600).url()}
+                src={urlFor(image).width(1800).fit("max").url()}
                 alt={`${gallery.title} ${index + 1}`}
-                width={1200}
-                height={900}
-                className="w-full h-auto object-contain"
+                width={1800}
+                height={2400}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="block max-h-[75vh] w-full object-contain"
               />
             </div>
           ))}

@@ -59,16 +59,16 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
             >
               <div className="group overflow-hidden cursor-pointer">
                 {gallery.coverImage && (
-                  <div className="overflow-hidden bg-zinc-100">
+                  <div className="flex h-[26rem] items-center justify-center overflow-hidden bg-zinc-100 p-4 md:h-[28rem]">
                     <Image
                       src={urlFor(gallery.coverImage)
-                        .width(600)
-                        .height(400)
+                        .width(900)
+                        .fit("max")
                         .url()}
                       alt={gallery.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-72 object-contain group-hover:scale-105 transition-transform duration-700"
+                      width={900}
+                      height={1200}
+                      className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                     />
                   </div>
                 )}
