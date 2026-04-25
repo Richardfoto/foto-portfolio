@@ -68,7 +68,7 @@ export default async function AboutPage(props: { params: LocaleParams }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Photo */}
           {profileImageUrl && (
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-xl">
+            <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-xl">
               <Image
                 src={profileImageUrl}
                 alt={about.name}
