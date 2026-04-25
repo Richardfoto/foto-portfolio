@@ -16,7 +16,9 @@ const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc){
 export default async function GalleryPage(props: { params: LocaleParams }) {
   const { locale } = await props.params;
   const t = await getTranslations({ locale, namespace: "gallery" });
-  const galleries = await client.fetch(galleriesQuery);
+
+  // 🔥 TÍPUSOS FETCH — nincs több any
+  const galleries = await client.fetch<GalleryCardProps[]>(galleriesQuery);
 
   return (
     <main className="min-h-screen bg-white pt-20">
@@ -29,7 +31,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {galleries.map((gallery: any) => (
+          {galleries.map((gallery) => (
             <GalleryCard key={gallery._id} {...gallery} locale={locale} />
           ))}
         </div>
