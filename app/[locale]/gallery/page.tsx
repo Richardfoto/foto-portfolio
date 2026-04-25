@@ -1,40 +1,14 @@
 import { client } from "@/sanity/lib/client";
-import { urlFor } from "@/sanity/lib/image";
-import type { SanityImageSource } from "@sanity/image-url";
 import { groq } from "next-sanity";
-import Link from "next/link";
-import type { Metadata } from "next";
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import GalleryCard, { type GalleryCardProps } from "../components/GalleryCard";
 
 type LocaleParams = Promise<{ locale: string }>;
 
-type GalleryCard = {
-  _id: string;
-  title: string;
-  category: string;
-  description?: string;
-  coverImage?: SanityImageSource;
-  slugCurrent: string;
-};
-
-export async function generateMetadata(props: {
-  params: LocaleParams;
-}): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({ locale, namespace: "gallery" });
-
-  return {
-    title: t("title"),
-    description: t("subtitle"),
-  };
-}
-
-const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc) {
+const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc){
   _id,
   title,
   category,
-  description,
   coverImage,
   "slugCurrent": slug.current
 }`;
@@ -42,47 +16,24 @@ const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc) {
 export default async function GalleryPage(props: { params: LocaleParams }) {
   const { locale } = await props.params;
   const t = await getTranslations({ locale, namespace: "gallery" });
-  const galleries = await client.fetch<GalleryCard[]>(galleriesQuery);
+  const galleries = await client.fetch(galleriesQuery);
 
   return (
-    <main className="min-h-screen bg-white">
-      <section className="bg-zinc-900 text-white text-center py-32 px-4">
-        <h1 className="text-5xl font-serif mb-4">{t("title")}</h1>
-        <p className="text-zinc-400 max-w-md mx-auto">{t("subtitle")}</p>
-      </section>
-      <section className="max-w-6xl mx-auto py-24 px-4">
+    <main className="min-h-screen bg-white pt-20">
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <p className="text-xs tracking-[0.35em] uppercase text-zinc-500 mb-3">
+            OUR WORK
+          </p>
+          <h1 className="text-6xl font-serif tracking-tight">{t("title")}</h1>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {galleries.map((gallery) => (
-            <Link
-              key={gallery._id}
-              href={`/${locale}/gallery/${gallery.slugCurrent}`}
-            >
-              <div className="group overflow-hidden cursor-pointer">
-                {gallery.coverImage && (
-                  <div className="flex h-[26rem] items-center justify-center overflow-hidden bg-zinc-100 p-4 md:h-[28rem]">
-                    <Image
-                      src={urlFor(gallery.coverImage)
-                        .width(900)
-                        .fit("max")
-                        .url()}
-                      alt={gallery.title}
-                      width={900}
-                      height={1200}
-                      className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                    />
-                  </div>
-                )}
-                <div className="pt-4">
-                  <p className="text-xs text-zinc-400 tracking-widest uppercase">
-                    {gallery.category}
-                  </p>
-                  <h3 className="text-xl font-serif mt-1">{gallery.title}</h3>
-                </div>
-              </div>
-            </Link>
+          {galleries.map((gallery: any) => (
+            <GalleryCard key={gallery._id} {...gallery} locale={locale} />
           ))}
         </div>
-      </section>
+      </div>
     </main>
   );
 }

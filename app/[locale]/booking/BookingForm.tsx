@@ -14,6 +14,7 @@ export default function BookingForm({
   services: ServiceOption[];
 }) {
   const t = useTranslations("booking");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -25,147 +26,153 @@ export default function BookingForm({
   >("idle");
   const [validationError, setValidationError] = useState("");
 
-  function isValidForm() {
-    return (
-      name.trim().length >= 2 &&
-      email.includes("@") &&
-      service.trim().length > 0
-    );
-  }
+  const isValidForm =
+    name.trim().length >= 2 && email.includes("@") && service.trim().length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isValidForm()) {
+
+    if (!isValidForm) {
       setValidationError(t("validationError"));
       return;
     }
 
     setValidationError("");
     setStatus("loading");
-    const res = await fetch("/api/booking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        service,
-        date,
-        message,
-      }),
-    });
-    if (res.ok) {
-      setStatus("success");
-      setName("");
-      setEmail("");
-      setPhone("");
-      setService("");
-      setDate("");
-      setMessage("");
-    } else {
+
+    try {
+      const res = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, service, date, message }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setName("");
+        setEmail("");
+        setPhone("");
+        setService("");
+        setDate("");
+        setMessage("");
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
       setStatus("error");
     }
   }
 
   if (status === "success") {
     return (
-      <div className="border border-zinc-200 p-12 text-center">
-        <p className="font-serif text-2xl mb-4">{t("successTitle")}</p>
-        <p className="text-zinc-500">{t("successMessage")}</p>
+      <div className="text-center py-16">
+        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
+          <span className="text-6xl">✓</span>
+        </div>
+        <h3 className="text-3xl font-serif mb-4">{t("successTitle")}</h3>
+        <p className="text-zinc-600 max-w-xs mx-auto">{t("successMessage")}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-            {t("name").toUpperCase()}
+          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+            {t("name")}
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            minLength={2}
-            className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
+            placeholder="Teljes név"
           />
         </div>
         <div>
-          <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-            {t("email").toUpperCase()}
+          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+            {t("email")}
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
+            placeholder="email@pelda.hu"
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-            {t("phone").toUpperCase()}
+          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+            {t("phone")}
           </label>
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
+            placeholder="+36 30 123 4567"
           />
         </div>
         <div>
-          <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-            {t("date").toUpperCase()}
+          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+            {t("date")}
           </label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
           />
         </div>
       </div>
+
       <div>
-        <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-          {t("service").toUpperCase()}
+        <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          {t("service")}
         </label>
         <select
           value={service}
           onChange={(e) => setService(e.target.value)}
           required
-          className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors bg-white"
+          className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none bg-white"
         >
           <option value="">{t("selectPackage")}</option>
-          {services.map((serviceOption) => (
-            <option key={serviceOption._id} value={serviceOption.title}>
-              {serviceOption.title}
+          {services.map((s) => (
+            <option key={s._id} value={s.title}>
+              {s.title}
             </option>
           ))}
           <option value={t("other")}>{t("other")}</option>
         </select>
       </div>
+
       <div>
-        <label className="block text-xs tracking-widest text-zinc-400 mb-2">
-          {t("message").toUpperCase()}
+        <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          {t("message")}
         </label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          rows={4}
-          className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors resize-none"
+          rows={5}
+          className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none resize-y"
+          placeholder="Írd le röviden, milyen alkalomra szeretnél fotózást..."
         />
       </div>
+
       <button
         type="submit"
-        disabled={status === "loading"}
-        className="w-full bg-zinc-900 text-white py-4 text-sm tracking-widest hover:bg-zinc-700 transition-colors disabled:opacity-50"
+        disabled={status === "loading" || !isValidForm}
+        className="w-full border border-zinc-900 py-5 text-sm tracking-[0.15em] hover:bg-zinc-900 hover:text-white disabled:opacity-50 transition-all"
       >
         {status === "loading" ? t("sending") : t("send")}
       </button>
+
       {validationError && (
         <p className="text-red-500 text-sm text-center">{validationError}</p>
       )}

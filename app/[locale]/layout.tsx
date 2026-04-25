@@ -1,47 +1,39 @@
-import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import type { Metadata } from "next"
+import { Playfair_Display, Inter } from "next/font/google"
+import "./globals.css"
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages } from "next-intl/server"
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-});
+})
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://richardfoto.vercel.app"),
   title: {
-    default: "Richard Foto – Professzionalis fotozas Budapest",
+    default: "Richard Foto",
     template: "%s | Richard Foto",
   },
-  description: "Professzionalis portré, eskuvoi es csaladi fotozas Budapesten.",
-  openGraph: {
-    title: "Richard Foto",
-    description: "Professzionalis fotozas Budapesten",
-    url: "https://richardfoto.vercel.app",
-    siteName: "Richard Foto",
-    locale: "hu_HU",
-    type: "website",
-  },
-};
+  description: "Professzionalis fotozas Budapest",
+}
 
 export default async function LocaleLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
-  const messages = await getMessages({ locale });
+  const { locale } = await params
+  const messages = await getMessages({ locale })
 
   return (
     <html lang={locale} className={`${playfair.variable} ${inter.variable}`}>
@@ -53,5 +45,5 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }
