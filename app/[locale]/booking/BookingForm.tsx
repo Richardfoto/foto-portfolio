@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -14,7 +13,6 @@ export default function BookingForm({
   services: ServiceOption[];
 }) {
   const t = useTranslations("booking");
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -31,7 +29,6 @@ export default function BookingForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!isValidForm) {
       setValidationError(t("validationError"));
       return;
@@ -49,6 +46,7 @@ export default function BookingForm({
 
       if (res.ok) {
         setStatus("success");
+        // űrlap törlése
         setName("");
         setEmail("");
         setPhone("");
@@ -59,6 +57,7 @@ export default function BookingForm({
         setStatus("error");
       }
     } catch (error) {
+      console.error(error);
       setStatus("error");
     }
   }
@@ -77,6 +76,7 @@ export default function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
+      {/* ... a többi mező ugyanaz marad ... */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
@@ -106,6 +106,7 @@ export default function BookingForm({
         </div>
       </div>
 
+      {/* telefon + dátum */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
@@ -132,6 +133,7 @@ export default function BookingForm({
         </div>
       </div>
 
+      {/* szolgáltatás */}
       <div>
         <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
           {t("service")}
@@ -152,6 +154,7 @@ export default function BookingForm({
         </select>
       </div>
 
+      {/* megjegyzés */}
       <div>
         <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
           {t("message")}
@@ -161,7 +164,7 @@ export default function BookingForm({
           onChange={(e) => setMessage(e.target.value)}
           rows={5}
           className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none resize-y"
-          placeholder="Írd le röviden, milyen alkalomra szeretnél fotózást..."
+          placeholder="Írd le röviden..."
         />
       </div>
 

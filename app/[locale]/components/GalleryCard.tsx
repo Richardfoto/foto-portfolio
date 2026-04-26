@@ -1,3 +1,4 @@
+// app/components/GalleryCard.tsx
 import { urlFor } from "@/sanity/lib/image";
 import type { SanityImageSource } from "@sanity/image-url";
 import Image from "next/image";
@@ -20,25 +21,38 @@ export default function GalleryCard({
   locale,
 }: GalleryCardProps) {
   return (
-    <Link href={`/${locale}/gallery/${slugCurrent}`}>
-      <div className="group overflow-hidden cursor-pointer">
+    <Link
+      href={`/${locale}/gallery/${slugCurrent}`}
+      className="group block overflow-hidden"
+    >
+      {/* Aspect ratio + entropy crop – tökéletes emberek/portré fotókhoz */}
+      <div className="relative aspect-[4/5] md:aspect-[5/6] bg-zinc-100 overflow-hidden">
         {coverImage && (
-          <div className="flex h-104 items-center justify-center overflow-hidden bg-zinc-100 p-4 md:h-112">
-            <Image
-              src={urlFor(coverImage).width(900).fit("max").url()}
-              alt={title}
-              width={900}
-              height={1200}
-              className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-            />
-          </div>
+          <Image
+            src={urlFor(coverImage)
+              .width(900)
+              .height(1200)
+              .fit("crop")
+              .crop("entropy") // ← Arcok középre kerülnek
+              .quality(85)
+              .url()}
+            alt={`${title} – ${category} fotózás Budapest`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            priority={false}
+          />
         )}
-        <div className="pt-4">
-          <p className="text-xs text-zinc-600 tracking-widest uppercase">
-            {category}
-          </p>
-          <h3 className="text-lg font-serif mt-1">{title}</h3>
-        </div>
+      </div>
+
+      {/* Információ */}
+      <div className="pt-5 pb-1">
+        <p className="text-xs text-zinc-500 tracking-[0.125em] uppercase font-medium">
+          {category}
+        </p>
+        <h3 className="text-[21px] font-serif leading-tight mt-1.5 tracking-tight">
+          {title}
+        </h3>
       </div>
     </Link>
   );

@@ -24,7 +24,8 @@
   "gallery": {
     "title": "Galéria",
     "subtitle": "Válassz egy kategóriát",
-    "back": "Vissza a galériához"
+    "back": "Vissza a galériához",
+    "description": "Leírás"
   },
   "services": {
     "title": "Szolgáltatások",

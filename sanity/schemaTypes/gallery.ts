@@ -34,6 +34,19 @@ export const gallery = defineType({
       },
       validation: (rule) => rule.required(),
     }),
+
+    // ──────────────────────────────────────
+    // ÚJ MEZŐ: Kiemelt a főoldalon
+    // ──────────────────────────────────────
+    defineField({
+      name: "featured",
+      title: "🔥 Kiemelt a főoldalon?",
+      type: "boolean",
+      description:
+        "Pipáld be, ha ezt a galériát szeretnéd látni a főoldali „Kiválasztott pillanatok” szekcióban (max 8 db)",
+      initialValue: false,
+    }),
+
     defineField({
       name: "coverImage",
       title: "Borítókép",

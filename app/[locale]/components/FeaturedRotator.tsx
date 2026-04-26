@@ -1,69 +1,72 @@
 "use client";
-
-import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import type { SanityImageSource } from "@sanity/image-url";
 
 interface FeaturedItem {
   _id: string;
   title: string;
+  category?: string;
   coverImage: SanityImageSource;
+  slugCurrent: string;
 }
 
 export default function FeaturedRotator({
   featured,
+  locale,
 }: {
   featured: FeaturedItem[];
+  locale: string;
 }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const current = featured[currentIndex];
-
-  const imageUrl = current?.coverImage
-    ? urlFor(current.coverImage).width(1600).height(1200).url()
-    : null;
+  if (featured.length === 0) return null;
 
   return (
-    <div className="relative max-w-5xl mx-auto">
-      {/* Nagy kép */}
-      <div className="relative w-full aspect-16/10 md:aspect-21/13 overflow-hidden rounded-3xl bg-zinc-100 flex items-center justify-center border border-zinc-100">
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            alt={current.title}
-            fill
-            className="object-contain"
-            priority
-          />
-        )}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {featured.map((item) => {
+        const imageUrl = item.coverImage
+          ? urlFor(item.coverImage)
+              .width(900)
+              .height(1200)
+              .fit("max") // ← Nincs vágás!
+              .quality(85)
+              .url()
+          : null;
 
-        {/* Cím overlay */}
-        <div className="absolute bottom-8 left-8 bg-black/70 backdrop-blur-md text-white px-8 py-4 rounded-2xl">
-          <p className="text-xl font-light">{current?.title}</p>
-        </div>
+        return (
+          <Link
+            key={item._id}
+            href={`/${locale}/gallery/${item.slugCurrent}`}
+            className="group block overflow-hidden"
+          >
+            <div className="relative aspect-[4/5] md:aspect-[5/6] bg-zinc-100 overflow-hidden rounded-3xl flex items-center justify-center border border-zinc-200">
+              {imageUrl && (
+                <Image
+                  src={imageUrl}
+                  alt={`${item.title} – ${item.category || ""}`}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-contain transition-transform duration-700 group-hover:scale-105 p-4"
+                />
+              )}
 
-        {/* Bal nyíl */}
-        <button
-          onClick={() =>
-            setCurrentIndex(
-              (prev) => (prev - 1 + featured.length) % featured.length,
-            )
-          }
-          className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-black p-5 rounded-full text-3xl shadow-xl transition-all"
-        >
-          ←
-        </button>
+              {/* Hover overlay + info */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Jobb nyíl */}
-        <button
-          onClick={() =>
-            setCurrentIndex((prev) => (prev + 1) % featured.length)
-          }
-          className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-black p-5 rounded-full text-3xl shadow-xl transition-all"
-        >
-          →
-        </button>
-      </div>
+              <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
+                {item.category && (
+                  <p className="text-xs uppercase tracking-[0.125em] text-white/80 mb-2">
+                    {item.category}
+                  </p>
+                )}
+                <h3 className="text-2xl md:text-3xl font-serif text-white leading-tight tracking-tight">
+                  {item.title}
+                </h3>
+              </div>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
