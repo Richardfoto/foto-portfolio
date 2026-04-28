@@ -1,4 +1,4 @@
-function escapeHtml(value: string) {
+export function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -10,4 +10,3 @@ function escapeHtml(value: string) {
 export function renderField(label: string, value: string) {
   return `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value || "-")}</p>`;
 }
-

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export default function ContactForm() {
   const t = useTranslations("contact");
+  const id = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -47,33 +48,50 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        placeholder={t("name")}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        minLength={2}
-        className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
-      />
-      <input
-        type="email"
-        placeholder={t("email")}
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
-      />
-      <textarea
-        placeholder={t("message")}
-        rows={5}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        required
-        minLength={10}
-        className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors resize-none"
-      />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div>
+        <label htmlFor={`${id}-name`} className="mb-2 block text-sm text-zinc-600">
+          {t("name")}
+        </label>
+        <input
+          id={`${id}-name`}
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          minLength={2}
+          autoComplete="name"
+          className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+        />
+      </div>
+      <div>
+        <label htmlFor={`${id}-email`} className="mb-2 block text-sm text-zinc-600">
+          {t("email")}
+        </label>
+        <input
+          id={`${id}-email`}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+          className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+        />
+      </div>
+      <div>
+        <label htmlFor={`${id}-message`} className="mb-2 block text-sm text-zinc-600">
+          {t("message")}
+        </label>
+        <textarea
+          id={`${id}-message`}
+          rows={5}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+          minLength={10}
+          className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors resize-y"
+        />
+      </div>
       <button
         type="submit"
         disabled={status === "loading"}
@@ -81,12 +99,14 @@ export default function ContactForm() {
       >
         {status === "loading" ? t("sending") : t("send")}
       </button>
-      {validationError && (
-        <p className="text-red-500 text-sm text-center">{validationError}</p>
-      )}
-      {status === "error" && (
-        <p className="text-red-500 text-sm text-center">{t("error")}</p>
-      )}
+      <div aria-live="polite">
+        {validationError && (
+          <p className="text-red-500 text-sm text-center">{validationError}</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500 text-sm text-center">{t("error")}</p>
+        )}
+      </div>
     </form>
   );
 }

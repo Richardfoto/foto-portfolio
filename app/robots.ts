@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { absoluteUrl } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/studio/",
     },
-    sitemap: "https://richardfoto.vercel.app/sitemap.xml",
+    sitemap: absoluteUrl("/sitemap.xml"),
   };
 }

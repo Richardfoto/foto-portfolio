@@ -8,6 +8,20 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import {
+  JsonLd,
+  baseOrganizationSchema,
+  breadcrumbSchema,
+  createMetadata,
+  faqSchema,
+  imageObjectSchema,
+  isLocale,
+  photographerSchema,
+  schemaGraph,
+  site,
+  type Locale,
+} from "@/lib/site";
+import { serviceSchemaNodes, sharedFaqs } from "@/lib/photography-content";
 
 type LocaleParams = Promise<{ locale: string; slug: string }>;
 
@@ -32,23 +46,49 @@ const galleryQuery = groq`*[_type == "gallery" && slug.current == $slug][0]{
 export async function generateMetadata(props: {
   params: LocaleParams;
 }): Promise<Metadata> {
-  const { slug } = await props.params;
+  const { locale: rawLocale, slug } = await props.params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "hu";
   const gallery = await client.fetch<GalleryDetail | null>(galleryQuery, {
     slug,
   });
 
-  if (!gallery) return { title: "Gallery | Richard Foto" };
+  if (!gallery) {
+    return createMetadata({
+      locale,
+      path: `/gallery/${slug}`,
+      title: "Gallery | Richard Foto",
+      description:
+        locale === "hu"
+          ? "Richard Foto galéria Budapesten."
+          : "Richard Foto gallery in Budapest.",
+      noIndex: true,
+    });
+  }
 
-  return {
+  const coverUrl = gallery.coverImage
+    ? urlFor(gallery.coverImage).width(1200).height(630).fit("crop").format("webp").quality(86).url()
+    : undefined;
+
+  return createMetadata({
+    locale,
+    path: `/gallery/${slug}`,
     title: `${gallery.title} | Richard Foto`,
     description:
       gallery.description ??
-      `Professzionális ${gallery.category.toLowerCase()} fotózás Budapesten`,
-  };
+      (locale === "hu"
+        ? `Természetes ${gallery.category.toLowerCase()} fotózás Budapesten Richard Foto szemléletével.`
+        : `Natural ${gallery.category.toLowerCase()} photography in Budapest by Richard Foto.`),
+    keywords:
+      locale === "hu"
+        ? [`${gallery.category} fotózás Budapest`, "Richard Foto galéria"]
+        : [`${gallery.category} photography Budapest`, "Richard Foto gallery"],
+    image: coverUrl,
+  });
 }
 
 export default async function GalleryPage(props: { params: LocaleParams }) {
-  const { locale, slug } = await props.params;
+  const { locale: rawLocale, slug } = await props.params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "hu";
   const t = await getTranslations({ locale, namespace: "gallery" });
 
   const gallery = await client.fetch<GalleryDetail | null>(galleryQuery, {
@@ -65,14 +105,34 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
   const getImageUrl = (image: SanityImageSource | undefined) => {
     if (!image) return null;
     try {
-      return urlFor(image).width(1400).fit("max").quality(85).url();
+      return urlFor(image).width(1400).fit("max").format("webp").quality(85).url();
     } catch {
       return null;
     }
   };
 
+  const firstImageUrl = getImageUrl(images[0]);
+  const graph = schemaGraph([
+    baseOrganizationSchema(locale),
+    photographerSchema(locale),
+    ...serviceSchemaNodes(locale),
+    imageObjectSchema({
+      locale,
+      path: `/gallery/${slug}`,
+      caption: `${gallery.title} - ${gallery.category}`,
+      contentUrl: firstImageUrl ?? undefined,
+    }),
+    breadcrumbSchema(locale, [
+      { name: site.name, path: "/" },
+      { name: t("title"), path: "/gallery" },
+      { name: gallery.title, path: `/gallery/${slug}` },
+    ]),
+    faqSchema(sharedFaqs[locale]),
+  ]);
+
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd data={graph} />
       <section className="bg-zinc-900 text-white text-center py-28 px-4">
         <div className="max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.35em] text-zinc-400 uppercase mb-3">
@@ -118,7 +178,11 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
               >
                 <Image
                   src={imageUrl}
-                  alt={`${gallery.title} – ${gallery.category} ${index + 1}`}
+                  alt={
+                    locale === "hu"
+                      ? `${gallery.title} - ${gallery.category} fotózás Budapest ${index + 1}`
+                      : `${gallery.title} - ${gallery.category} photography Budapest ${index + 1}`
+                  }
                   width={1400}
                   height={2000}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

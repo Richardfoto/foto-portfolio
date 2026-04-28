@@ -1,117 +1,121 @@
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { site } from "@/lib/site";
 
-export default function Footer() {
-  const locale = useLocale();
+interface FooterProps {
+  locale: string;
+}
+
+export default function Footer({ locale }: FooterProps) {
+  const isHu = locale === "hu";
 
   return (
-    <footer className="bg-zinc-950 text-white border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-8 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-16">
-          {/* Brand + Tagline */}
-          <div className="md:col-span-5">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="text-5xl font-serif tracking-[-0.04em]">
-                Richard Foto
-              </div>
-            </div>
-            <p className="text-zinc-400 max-w-sm leading-relaxed text-[15px]">
-              Időtlen pillanatok • Budapest
+    <footer className="bg-white border-t border-neutral-100 py-12 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Felső sor – logo + nav */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
+          <div>
+            <p className="text-2xl font-serif tracking-tight">Richard Foto</p>
+            <p className="text-sm text-neutral-400 mt-1">
+              {isHu
+                ? "Budapesti fotós • Azóta: 2015"
+                : "Budapest photographer • Since 2015"}
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div className="md:col-span-3">
-            <div className="uppercase text-xs tracking-[0.2em] text-zinc-500 mb-6">
-              Oldalak
-            </div>
-            <div className="space-y-3 text-[15px]">
-              <Link
-                href={`/${locale}/gallery`}
-                className="block hover:text-white transition"
-              >
-                Galéria
-              </Link>
-              <Link
-                href={`/${locale}/services`}
-                className="block hover:text-white transition"
-              >
-                Szolgáltatások
-              </Link>
-              <Link
-                href={`/${locale}/about`}
-                className="block hover:text-white transition"
-              >
-                Rólam
-              </Link>
-              <Link
-                href={`/${locale}/booking`}
-                className="block hover:text-white transition"
-              >
-                Foglalás
-              </Link>
-            </div>
+          <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-neutral-500">
+            <Link
+              href={`/${locale}/services`}
+              className="hover:text-neutral-900 transition-colors"
+            >
+              {isHu ? "Szolgáltatások" : "Services"}
+            </Link>
+            <Link
+              href={`/${locale}/gallery`}
+              className="hover:text-neutral-900 transition-colors"
+            >
+              {isHu ? "Galéria" : "Gallery"}
+            </Link>
+            <Link
+              href={`/${locale}/booking`}
+              className="hover:text-neutral-900 transition-colors"
+            >
+              {isHu ? "Foglalás & Árak" : "Book & Pricing"}
+            </Link>
+            <Link
+              href={`/${locale}/about`}
+              className="hover:text-neutral-900 transition-colors"
+            >
+              {isHu ? "Rólam" : "About"}
+            </Link>
+            <Link
+              href={`/${locale}/contact`}
+              className="hover:text-neutral-900 transition-colors"
+            >
+              {isHu ? "Kapcsolat" : "Contact"}
+            </Link>
+          </nav>
+        </div>
+
+        <div className="mb-8 flex flex-col gap-3 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <a href={`mailto:${site.email}`} className="hover:text-neutral-900">
+              {site.email}
+            </a>
+            <a href={site.phoneHref} className="hover:text-neutral-900">
+              {site.phone}
+            </a>
           </div>
-
-          {/* Contact */}
-          <div className="md:col-span-4">
-            <div className="uppercase text-xs tracking-[0.2em] text-zinc-500 mb-6">
-              Kapcsolat
-            </div>
-
-            <div className="space-y-4 text-[15px]">
-              <a
-                href="mailto:richardfoto@icloud.com"
-                className="block hover:text-white transition"
-              >
-                richardfoto@icloud.com
-              </a>
-              <a
-                href="tel:+36308840987"
-                className="block hover:text-white transition"
-              >
-                +36 30 88 40 987
-              </a>
-            </div>
-
-            <div className="flex gap-8 mt-9 text-sm">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                className="hover:text-white transition"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://wa.me/36308840987"
-                target="_blank"
-                className="hover:text-white transition"
-              >
-                WhatsApp
-              </a>
-              <a
-                href="sms:+36308840987"
-                className="hover:text-white transition"
-              >
-                iMessage
-              </a>
-            </div>
+          <div className="flex gap-3">
+            <a
+              href={site.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="inline-flex h-9 w-9 items-center justify-center border border-neutral-200 text-xs font-medium hover:border-neutral-900 hover:text-neutral-900"
+            >
+              IG
+            </a>
+            <a
+              href={site.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="inline-flex h-9 w-9 items-center justify-center border border-neutral-200 text-xs font-medium hover:border-neutral-900 hover:text-neutral-900"
+            >
+              FB
+            </a>
           </div>
         </div>
-      </div>
 
-      {/* Bottom */}
-      <div className="border-t border-white/10 px-8 py-7 text-xs text-zinc-500 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          © {new Date().getFullYear()} Richard Foto — Minden jog fenntartva.
-        </div>
-        <div className="flex gap-6">
-          <Link href="#" className="hover:text-white transition">
-            Adatvédelem
-          </Link>
-          <Link href="#" className="hover:text-white transition">
-            ÁSZF
-          </Link>
+        <hr className="border-neutral-100 mb-8" />
+
+        {/* Alsó sor – jogi linkek + copyright */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-neutral-400">
+          <p>
+            © {new Date().getFullYear()} Richard Foto.{" "}
+            {isHu ? "Minden jog fenntartva." : "All rights reserved."}
+          </p>
+
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link
+              href={`/${locale}/adatvedelmi-nyilatkozat`}
+              className="hover:text-neutral-700 transition-colors"
+            >
+              {isHu ? "Adatvédelmi Nyilatkozat" : "Privacy Policy"}
+            </Link>
+            <Link
+              href={`/${locale}/aszf`}
+              className="hover:text-neutral-700 transition-colors"
+            >
+              {isHu ? "Általános Szerződési Feltételek" : "Terms & Conditions"}
+            </Link>
+            <Link
+              href={`/${locale}/cookie-politika`}
+              className="hover:text-neutral-700 transition-colors"
+            >
+              {isHu ? "Cookie Politika" : "Cookie Policy"}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

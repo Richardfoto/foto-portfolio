@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useId, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
 type ServiceOption = {
   _id: string;
@@ -8,24 +8,58 @@ type ServiceOption = {
 };
 
 export default function BookingForm({
+  contactEmail,
   services,
+  initialService = "",
 }: {
+  contactEmail: string;
   services: ServiceOption[];
+  initialService?: string;
 }) {
   const t = useTranslations("booking");
+  const locale = useLocale();
+  const isHu = locale === "hu";
+  const id = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [service, setService] = useState("");
+  const [service, setService] = useState(initialService);
   const [date, setDate] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
+    "idle" | "loading" | "success" | "fallback"
   >("idle");
   const [validationError, setValidationError] = useState("");
+  const [fallbackMailto, setFallbackMailto] = useState("");
 
   const isValidForm =
     name.trim().length >= 2 && email.includes("@") && service.trim().length > 0;
+
+  function createMailtoLink() {
+    const subject = isHu
+      ? `Foglalási kérés - ${service || "fotózás"}`
+      : `Booking request - ${service || "photo session"}`;
+    const body = [
+      isHu ? "Szia Richard," : "Hi Richard,",
+      "",
+      isHu
+        ? "Szeretnék időpontot egyeztetni fotózásra."
+        : "I would like to arrange a photography session.",
+      "",
+      `${t("name")}: ${name}`,
+      `${t("email")}: ${email}`,
+      `${t("phone")}: ${phone || "-"}`,
+      `${t("service")}: ${service}`,
+      `${t("date")}: ${date || "-"}`,
+      `${t("message")}: ${message || "-"}`,
+      "",
+      isHu ? "Köszönöm!" : "Thank you!",
+    ].join("\n");
+
+    return `mailto:${contactEmail}?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,6 +69,7 @@ export default function BookingForm({
     }
 
     setValidationError("");
+    setFallbackMailto("");
     setStatus("loading");
 
     try {
@@ -46,19 +81,20 @@ export default function BookingForm({
 
       if (res.ok) {
         setStatus("success");
-        // űrlap törlése
         setName("");
         setEmail("");
         setPhone("");
-        setService("");
+        setService(initialService);
         setDate("");
         setMessage("");
       } else {
-        setStatus("error");
+        setFallbackMailto(createMailtoLink());
+        setStatus("fallback");
       }
     } catch (error) {
       console.error(error);
-      setStatus("error");
+      setFallbackMailto(createMailtoLink());
+      setStatus("fallback");
     }
   }
 
@@ -76,75 +112,94 @@ export default function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
-      {/* ... a többi mező ugyanaz marad ... */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div>
-          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          <label
+            htmlFor={`${id}-name`}
+            className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+          >
             {t("name")}
           </label>
           <input
+            id={`${id}-name`}
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
-            placeholder="Teljes név"
+            autoComplete="name"
+            className="w-full border-b border-zinc-300 bg-transparent py-4 text-lg outline-none transition-colors focus:border-zinc-900"
           />
         </div>
         <div>
-          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          <label
+            htmlFor={`${id}-email`}
+            className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+          >
             {t("email")}
           </label>
           <input
+            id={`${id}-email`}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
-            placeholder="email@pelda.hu"
+            autoComplete="email"
+            className="w-full border-b border-zinc-300 bg-transparent py-4 text-lg outline-none transition-colors focus:border-zinc-900"
           />
         </div>
       </div>
 
-      {/* telefon + dátum */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div>
-          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          <label
+            htmlFor={`${id}-phone`}
+            className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+          >
             {t("phone")}
           </label>
           <input
+            id={`${id}-phone`}
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
-            placeholder="+36 30 123 4567"
+            autoComplete="tel"
+            className="w-full border-b border-zinc-300 bg-transparent py-4 text-lg outline-none transition-colors focus:border-zinc-900"
           />
         </div>
         <div>
-          <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+          <label
+            htmlFor={`${id}-date`}
+            className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+          >
             {t("date")}
           </label>
           <input
+            id={`${id}-date`}
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none"
+            className="w-full border-b border-zinc-300 bg-transparent py-4 text-lg outline-none transition-colors focus:border-zinc-900"
           />
         </div>
       </div>
 
-      {/* szolgáltatás */}
       <div>
-        <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+        <label
+          htmlFor={`${id}-service`}
+          className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+        >
           {t("service")}
         </label>
         <select
+          id={`${id}-service`}
           value={service}
           onChange={(e) => setService(e.target.value)}
           required
-          className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none bg-white"
+          className="w-full border-b border-zinc-300 bg-white py-4 text-lg outline-none transition-colors focus:border-zinc-900"
         >
-          <option value="">{t("selectPackage")}</option>
+          <option value="" disabled>
+            {t("selectPackage")}
+          </option>
           {services.map((s) => (
             <option key={s._id} value={s.title}>
               {s.title}
@@ -154,34 +209,52 @@ export default function BookingForm({
         </select>
       </div>
 
-      {/* megjegyzés */}
       <div>
-        <label className="block text-xs tracking-[0.2em] text-zinc-500 mb-2">
+        <label
+          htmlFor={`${id}-message`}
+          className="mb-2 block text-xs uppercase tracking-[0.2em] text-zinc-500"
+        >
           {t("message")}
         </label>
         <textarea
+          id={`${id}-message`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={5}
-          className="w-full border-b border-zinc-300 py-4 text-lg focus:border-zinc-900 outline-none resize-y"
-          placeholder="Írd le röviden..."
+          className="w-full resize-y border-b border-zinc-300 bg-transparent py-4 text-lg outline-none transition-colors focus:border-zinc-900"
         />
       </div>
 
       <button
         type="submit"
         disabled={status === "loading" || !isValidForm}
-        className="w-full border border-zinc-900 py-5 text-sm tracking-[0.15em] hover:bg-zinc-900 hover:text-white disabled:opacity-50 transition-all"
+        className="w-full border border-zinc-900 py-5 text-sm uppercase tracking-[0.15em] transition-all hover:bg-zinc-900 hover:text-white disabled:opacity-50"
       >
         {status === "loading" ? t("sending") : t("send")}
       </button>
 
-      {validationError && (
-        <p className="text-red-500 text-sm text-center">{validationError}</p>
-      )}
-      {status === "error" && (
-        <p className="text-red-500 text-sm text-center">{t("error")}</p>
-      )}
+      <div aria-live="polite">
+        {validationError && (
+          <p className="text-red-500 text-sm text-center">{validationError}</p>
+        )}
+        {status === "fallback" && (
+          <div className="border border-amber-200 bg-amber-50 p-5 text-center">
+            <p className="text-sm leading-6 text-amber-900">
+              {isHu
+                ? "Az automatikus emailküldés most nem elérhető. A foglalási adatokból előkészítettem egy emailt, amit egy kattintással elküldhetsz."
+                : "Automatic email sending is temporarily unavailable. I prepared an email from your booking details that you can send with one click."}
+            </p>
+            {fallbackMailto && (
+              <a
+                href={fallbackMailto}
+                className="mt-4 inline-flex bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white transition-colors hover:bg-zinc-700"
+              >
+                {isHu ? "Email megnyitása" : "Open email"}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </form>
   );
 }

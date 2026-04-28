@@ -23,27 +23,30 @@ export default function Navbar(): import("react").JSX.Element {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-b border-zinc-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+    <nav
+      aria-label={locale === "hu" ? "Fő navigáció" : "Main navigation"}
+      className="fixed inset-x-0 top-0 z-50 border-b border-neutral-950/10 bg-[#fbfaf7]/95 shadow-[0_1px_0_rgba(20,20,20,0.04)] backdrop-blur-xl"
+    >
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
         {/* Logo with subtle lift */}
         <Link
           href={`/${locale}`}
-          className="text-3xl font-serif tracking-[-0.04em] text-zinc-900 hover:-translate-y-0.5 transition-all duration-300 drop-shadow-[0_0_12px_rgb(0,0,0,0.12)]"
+          className="font-serif text-2xl tracking-tight text-neutral-950 transition-transform duration-300 hover:-translate-y-0.5 sm:text-3xl"
         >
           Richard Foto
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-10 text-sm tracking-[0.125em] font-medium">
+        <div className="hidden items-center gap-8 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-700 md:flex">
           <Link
             href={`/${locale}/gallery`}
-            className={`relative transition-colors duration-300 hover:text-zinc-400 ${
-              isActive(`/${locale}/gallery`) ? "text-zinc-900" : ""
+            className={`group relative transition-colors duration-300 hover:text-neutral-950 ${
+              isActive(`/${locale}/gallery`) ? "text-neutral-950" : ""
             }`}
           >
             {t("gallery")}
             <span
-              className={`absolute -bottom-0.5 left-0 h-0.5 bg-zinc-900 transition-all duration-300 ${
+              className={`absolute -bottom-1.5 left-0 h-px bg-neutral-950 transition-all duration-300 ${
                 isActive(`/${locale}/gallery`)
                   ? "w-full"
                   : "w-0 group-hover:w-full"
@@ -53,13 +56,13 @@ export default function Navbar(): import("react").JSX.Element {
 
           <Link
             href={`/${locale}/services`}
-            className={`relative transition-colors duration-300 hover:text-zinc-400 ${
-              isActive(`/${locale}/services`) ? "text-zinc-900" : ""
+            className={`group relative transition-colors duration-300 hover:text-neutral-950 ${
+              isActive(`/${locale}/services`) ? "text-neutral-950" : ""
             }`}
           >
             {t("services")}
             <span
-              className={`absolute -bottom-0.5 left-0 h-0.5 bg-zinc-900 transition-all duration-300 ${
+              className={`absolute -bottom-1.5 left-0 h-px bg-neutral-950 transition-all duration-300 ${
                 isActive(`/${locale}/services`)
                   ? "w-full"
                   : "w-0 group-hover:w-full"
@@ -69,13 +72,13 @@ export default function Navbar(): import("react").JSX.Element {
 
           <Link
             href={`/${locale}/about`}
-            className={`relative transition-colors duration-300 hover:text-zinc-400 ${
-              isActive(`/${locale}/about`) ? "text-zinc-900" : ""
+            className={`group relative transition-colors duration-300 hover:text-neutral-950 ${
+              isActive(`/${locale}/about`) ? "text-neutral-950" : ""
             }`}
           >
             {t("about")}
             <span
-              className={`absolute -bottom-0.5 left-0 h-0.5 bg-zinc-900 transition-all duration-300 ${
+              className={`absolute -bottom-1.5 left-0 h-px bg-neutral-950 transition-all duration-300 ${
                 isActive(`/${locale}/about`)
                   ? "w-full"
                   : "w-0 group-hover:w-full"
@@ -85,13 +88,13 @@ export default function Navbar(): import("react").JSX.Element {
 
           <Link
             href={`/${locale}/booking`}
-            className={`relative transition-colors duration-300 hover:text-zinc-400 ${
-              isActive(`/${locale}/booking`) ? "text-zinc-900" : ""
+            className={`group relative transition-colors duration-300 hover:text-neutral-950 ${
+              isActive(`/${locale}/booking`) ? "text-neutral-950" : ""
             }`}
           >
             {t("booking")}
             <span
-              className={`absolute -bottom-0.5 left-0 h-0.5 bg-zinc-900 transition-all duration-300 ${
+              className={`absolute -bottom-1.5 left-0 h-px bg-neutral-950 transition-all duration-300 ${
                 isActive(`/${locale}/booking`)
                   ? "w-full"
                   : "w-0 group-hover:w-full"
@@ -102,7 +105,12 @@ export default function Navbar(): import("react").JSX.Element {
           {/* Language switch */}
           <button
             onClick={switchLocale}
-            className="px-4 py-2 text-xs font-medium border border-zinc-200 hover:border-zinc-400 rounded-3xl transition-all hover:scale-105 active:scale-95"
+            aria-label={
+              locale === "hu"
+                ? "Váltás angol nyelvre"
+                : "Switch to Hungarian language"
+            }
+            className="border border-neutral-950/20 px-4 py-2 text-xs font-semibold text-neutral-800 transition-all hover:border-neutral-950 hover:bg-neutral-950 hover:text-white active:scale-95"
           >
             {locale === "hu" ? "EN" : "HU"}
           </button>
@@ -110,7 +118,7 @@ export default function Navbar(): import("react").JSX.Element {
           {/* Contact CTA with subtle glow pulse */}
           <Link
             href={`/${locale}/contact`}
-            className="relative bg-zinc-900 text-white px-8 py-3.5 text-sm tracking-widest hover:bg-black hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-zinc-900/30 hover:shadow-xl hover:shadow-zinc-900/40 animate-pulse-slow"
+            className="bg-neutral-950 px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white shadow-[0_12px_30px_rgba(10,10,10,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-black active:scale-95"
           >
             {t("contact")}
           </Link>
@@ -119,49 +127,50 @@ export default function Navbar(): import("react").JSX.Element {
         {/* Mobile Hamburger */}
         <button
           aria-label={open ? "Menü bezárása" : "Menü megnyitása"}
-          className="md:hidden flex flex-col gap-1.5 p-3"
+          aria-expanded={open}
+          className="flex flex-col gap-1.5 border border-neutral-950/15 p-3 md:hidden"
           onClick={() => setOpen(!open)}
         >
           <span
-            className={`block w-7 h-0.5 bg-zinc-900 transition-all duration-300 ${open ? "rotate-45 translate-y-2" : ""}`}
+            className={`block h-0.5 w-6 bg-neutral-950 transition-all duration-300 ${open ? "translate-y-2 rotate-45" : ""}`}
           />
           <span
-            className={`block w-7 h-0.5 bg-zinc-900 transition-all duration-300 ${open ? "opacity-0" : ""}`}
+            className={`block h-0.5 w-6 bg-neutral-950 transition-all duration-300 ${open ? "opacity-0" : ""}`}
           />
           <span
-            className={`block w-7 h-0.5 bg-zinc-900 transition-all duration-300 ${open ? "-rotate-45 -translate-y-2" : ""}`}
+            className={`block h-0.5 w-6 bg-neutral-950 transition-all duration-300 ${open ? "-translate-y-2 -rotate-45" : ""}`}
           />
         </button>
       </div>
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-zinc-100 px-8 py-10 flex flex-col gap-8 text-lg font-medium">
+        <div className="flex flex-col gap-7 border-t border-neutral-950/10 bg-[#fbfaf7] px-6 py-10 text-lg font-medium shadow-[0_24px_80px_rgba(10,10,10,0.12)] md:hidden">
           <Link
             href={`/${locale}/gallery`}
             onClick={() => setOpen(false)}
-            className="py-2"
+            className="border-b border-neutral-950/10 pb-4"
           >
             {t("gallery")}
           </Link>
           <Link
             href={`/${locale}/services`}
             onClick={() => setOpen(false)}
-            className="py-2"
+            className="border-b border-neutral-950/10 pb-4"
           >
             {t("services")}
           </Link>
           <Link
             href={`/${locale}/about`}
             onClick={() => setOpen(false)}
-            className="py-2"
+            className="border-b border-neutral-950/10 pb-4"
           >
             {t("about")}
           </Link>
           <Link
             href={`/${locale}/booking`}
             onClick={() => setOpen(false)}
-            className="py-2"
+            className="border-b border-neutral-950/10 pb-4"
           >
             {t("booking")}
           </Link>
@@ -171,7 +180,7 @@ export default function Navbar(): import("react").JSX.Element {
               switchLocale();
               setOpen(false);
             }}
-            className="text-left py-2 text-zinc-600"
+            className="text-left text-sm uppercase tracking-[0.18em] text-neutral-500"
           >
             {locale === "hu" ? "English version" : "Magyar verzió"}
           </button>
@@ -179,7 +188,7 @@ export default function Navbar(): import("react").JSX.Element {
           <Link
             href={`/${locale}/contact`}
             onClick={() => setOpen(false)}
-            className="mt-6 bg-zinc-900 text-white py-5 text-center tracking-widest text-base"
+            className="mt-3 bg-neutral-950 py-5 text-center text-sm uppercase tracking-[0.2em] text-white"
           >
             {t("contact")}
           </Link>

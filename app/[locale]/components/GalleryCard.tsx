@@ -34,9 +34,14 @@ export default function GalleryCard({
               .height(1200)
               .fit("crop")
               .crop("entropy") // ← Arcok középre kerülnek
+              .format("webp")
               .quality(85)
               .url()}
-            alt={`${title} – ${category} fotózás Budapest`}
+            alt={
+              locale === "hu"
+                ? `${title} - ${category} fotózás Budapest`
+                : `${title} - ${category} photography Budapest`
+            }
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"

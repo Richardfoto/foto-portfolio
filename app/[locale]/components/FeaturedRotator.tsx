@@ -1,72 +1,162 @@
 "use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import type { SanityImageSource } from "@sanity/image-url";
 
-interface FeaturedItem {
+interface Item {
   _id: string;
   title: string;
   category?: string;
-  coverImage: SanityImageSource;
-  slugCurrent: string;
+  coverImage?: SanityImageSource;
 }
+
+type ItemWithImage = Item & { coverImage: SanityImageSource };
 
 export default function FeaturedRotator({
   featured,
-  locale,
+  gallery,
 }: {
-  featured: FeaturedItem[];
-  locale: string;
+  featured: Item[];
+  gallery: Item[];
 }) {
-  if (featured.length === 0) return null;
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const featuredWithImages = (featured ?? []).filter(
+    (item): item is ItemWithImage => Boolean(item.coverImage),
+  );
+
+  if (!featuredWithImages.length) return null;
+
+  const allImages: ItemWithImage[] = [
+    ...featuredWithImages,
+    ...(gallery ?? []).filter(
+      (item): item is ItemWithImage =>
+        Boolean(item.coverImage) &&
+        !featuredWithImages.some((featuredItem) => featuredItem._id === item._id),
+    ),
+  ];
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => setLightboxOpen(false);
+
+  const goToPrev = () =>
+    setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+
+  const goToNext = () =>
+    setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {featured.map((item) => {
-        const imageUrl = item.coverImage
-          ? urlFor(item.coverImage)
-              .width(900)
-              .height(1200)
-              .fit("max") // ← Nincs vágás!
-              .quality(85)
-              .url()
-          : null;
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        {featuredWithImages.slice(0, 2).map((item, index) => {
+          const imageUrl = item.coverImage
+            ? urlFor(item.coverImage).width(2000).format("webp").quality(90).url()
+            : null;
 
-        return (
-          <Link
-            key={item._id}
-            href={`/${locale}/gallery/${item.slugCurrent}`}
-            className="group block overflow-hidden"
-          >
-            <div className="relative aspect-[4/5] md:aspect-[5/6] bg-zinc-100 overflow-hidden rounded-3xl flex items-center justify-center border border-zinc-200">
-              {imageUrl && (
-                <Image
-                  src={imageUrl}
-                  alt={`${item.title} – ${item.category || ""}`}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-contain transition-transform duration-700 group-hover:scale-105 p-4"
-                />
-              )}
-
-              {/* Hover overlay + info */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
-                {item.category && (
-                  <p className="text-xs uppercase tracking-[0.125em] text-white/80 mb-2">
-                    {item.category}
-                  </p>
+          return (
+            <button
+              type="button"
+              key={item._id}
+              onClick={() => openLightbox(index)}
+              className="group block w-full cursor-pointer text-left"
+              aria-label={`Open ${item.title}`}
+            >
+              <div className="relative h-[70vh] w-full overflow-hidden bg-zinc-100 md:h-[80vh]">
+                {imageUrl && (
+                  <Image
+                    src={imageUrl}
+                    alt={item.title}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                  />
                 )}
-                <h3 className="text-2xl md:text-3xl font-serif text-white leading-tight tracking-tight">
-                  {item.title}
-                </h3>
+
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
+
+                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                  {item.category && (
+                    <p className="text-xs uppercase tracking-widest text-white/70 mb-2">
+                      {item.category}
+                    </p>
+                  )}
+                  <h2 className="text-3xl md:text-4xl font-serif text-white leading-tight">
+                    {item.title}
+                  </h2>
+                </div>
               </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-100 bg-black/95 flex items-center justify-center"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeLightbox();
+          }}
+        >
+          <div className="relative w-full h-full flex flex-col items-center justify-center px-4">
+            <button
+              type="button"
+              onClick={closeLightbox}
+              aria-label="Close gallery image"
+              className="absolute top-6 right-6 text-white text-4xl z-50"
+            >
+              ✕
+            </button>
+
+            <div className="relative w-full max-w-6xl h-[80vh]">
+              <Image
+                src={urlFor(allImages[lightboxIndex].coverImage)
+                  .width(2000)
+                  .format("webp")
+                  .quality(90)
+                  .url()}
+                alt={allImages[lightboxIndex].title}
+                fill
+                sizes="100vw"
+                className="object-contain"
+              />
             </div>
-          </Link>
-        );
-      })}
-    </div>
+
+            <p className="text-white mt-6 text-lg text-center">
+              {allImages[lightboxIndex].title}
+            </p>
+
+            <div className="absolute inset-y-0 left-0 flex items-center">
+              <button
+                type="button"
+                onClick={goToPrev}
+                aria-label="Previous image"
+                className="text-white text-4xl px-6"
+              >
+                ←
+              </button>
+            </div>
+
+            <div className="absolute inset-y-0 right-0 flex items-center">
+              <button
+                type="button"
+                onClick={goToNext}
+                aria-label="Next image"
+                className="text-white text-4xl px-6"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
