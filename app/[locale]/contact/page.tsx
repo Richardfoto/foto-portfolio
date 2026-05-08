@@ -137,7 +137,7 @@ export default async function ContactPage(props: { params: LocaleParams }) {
             {copy.formHeading}
           </h2>
           <div className="mt-8">
-            <ContactForm />
+            <ContactForm contactEmail={site.email} locale={locale} />
           </div>
         </section>
       </section>

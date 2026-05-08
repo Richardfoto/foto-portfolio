@@ -3,15 +3,19 @@
 import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
 
-export default function ContactForm() {
+type ContactFormProps = {
+  contactEmail: string;
+  locale: string;
+};
+
+export default function ContactForm({ locale }: ContactFormProps) {
   const t = useTranslations("contact");
   const id = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "success">("idle");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -22,19 +26,32 @@ export default function ContactForm() {
     }
 
     setValidationError("");
-    setStatus("loading");
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, message }),
-    });
-    if (res.ok) {
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Contact request failed");
+      }
+
       setStatus("success");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } else {
-      setStatus("error");
+    } catch {
+      setValidationError(
+        locale === "hu"
+          ? "Nem sikerült elküldeni az üzenetet. Kérlek próbáld újra, vagy írj közvetlenül emailt."
+          : "I could not send the message. Please try again or email me directly.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -94,17 +111,14 @@ export default function ContactForm() {
       </div>
       <button
         type="submit"
-        disabled={status === "loading"}
-        className="w-full bg-zinc-900 text-white py-3 text-sm tracking-widest hover:bg-zinc-700 transition-colors disabled:opacity-50"
+        disabled={isSubmitting}
+        className="w-full bg-zinc-900 py-3 text-sm tracking-widest text-white transition-colors hover:bg-zinc-700"
       >
-        {status === "loading" ? t("sending") : t("send")}
+        {isSubmitting ? t("sending") : t("send")}
       </button>
       <div aria-live="polite">
         {validationError && (
           <p className="text-red-500 text-sm text-center">{validationError}</p>
-        )}
-        {status === "error" && (
-          <p className="text-red-500 text-sm text-center">{t("error")}</p>
         )}
       </div>
     </form>

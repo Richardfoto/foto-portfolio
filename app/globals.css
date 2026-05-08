@@ -113,6 +113,18 @@ body {
   }
 }
 
+@keyframes loading-line {
+  0% {
+    transform: translateX(-110%);
+  }
+  50% {
+    transform: translateX(50%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
 .hero-drift {
   animation: hero-drift 18s ease-out both;
 }
@@ -142,6 +154,37 @@ body {
 .glass-panel {
   background: color-mix(in srgb, black 28%, transparent);
   backdrop-filter: blur(18px);
+}
+
+.image-soft-motion {
+  transition:
+    opacity 700ms ease,
+    filter 700ms ease,
+    transform 900ms ease;
+}
+
+.group:hover .image-soft-motion {
+  opacity: 0.96;
+  filter: saturate(1.06) contrast(1.03);
+}
+
+@keyframes slow-wall-breathe {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: scale(0.985);
+    filter: saturate(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.015);
+    filter: saturate(1.06);
+  }
+}
+
+.slow-wall-image {
+  animation: slow-wall-breathe 18s ease-in-out infinite;
+  transition: opacity 1600ms ease, filter 1600ms ease;
 }
 
 .service-disclosure summary::-webkit-details-marker {

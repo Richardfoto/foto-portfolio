@@ -13,11 +13,10 @@ export function isLocale(value: string): value is Locale {
 export const site = {
   name: "Richard Foto",
   owner: "Richard Varga",
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://richardfoto.vercel.app").replace(
-    /\/$/,
-    "",
-  ),
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@richardfoto.hu",
+  url: (
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://foto-portfolio-psi.vercel.app"
+  ).replace(/\/$/, ""),
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "richardfoto@icloud.com",
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE ?? "+36 30 88 40 987",
   phoneHref: "tel:+36308840987",
   city: "Budapest",
@@ -149,8 +148,8 @@ export function baseOrganizationSchema(locale: Locale) {
     },
     description:
       locale === "hu"
-        ? "Budapesti fotós márka természetes, történetmesélő lifestyle, családi, üzleti, esküvői és személyes portré fotózáshoz."
-        : "Budapest photography brand for natural storytelling lifestyle, family, business, wedding and personal portrait sessions.",
+        ? "Budapesti fotós márka természetes, történetmesélő lifestyle, családi, werk, esküvői és személyes portré fotózáshoz."
+        : "Budapest photography brand for natural storytelling lifestyle, family, werk, wedding and personal portrait sessions.",
   };
 }
 
@@ -175,6 +174,7 @@ export function photographerSchema(locale: Locale) {
             "lifestyle fotózás Budapest",
             "történetmesélő fotózás Budapest",
             "werk fotózás Budapest",
+            "kismama és újszülött fotózás",
             "újszülött fotózás",
             "kismama fotózás",
             "családi fotózás",
@@ -183,7 +183,9 @@ export function photographerSchema(locale: Locale) {
         : [
             "lifestyle photography Budapest",
             "storytelling photography Budapest",
-            "headshot photography Budapest",
+            "werk photography Budapest",
+            "behind the scenes photography Budapest",
+            "maternity and newborn photography",
             "newborn photography",
             "maternity photography",
             "family photography",

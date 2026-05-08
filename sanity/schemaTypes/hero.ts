@@ -16,9 +16,17 @@ export const hero = defineType({
       type: "string",
     }),
     defineField({
+      name: "image",
+      title: "Főoldali hero kép",
+      type: "image",
+      options: { hotspot: true },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "images",
-      title: "Hero képek",
+      title: "Régi hero képek",
       type: "array",
+      hidden: true,
       of: [
         {
           type: "image",

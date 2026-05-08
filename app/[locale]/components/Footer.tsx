@@ -11,7 +11,6 @@ export default function Footer({ locale }: FooterProps) {
   return (
     <footer className="bg-white border-t border-neutral-100 py-12 px-6">
       <div className="max-w-7xl mx-auto">
-        {/* Felső sor – logo + nav */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
           <div>
             <p className="text-2xl font-serif tracking-tight">Richard Foto</p>
@@ -89,7 +88,6 @@ export default function Footer({ locale }: FooterProps) {
 
         <hr className="border-neutral-100 mb-8" />
 
-        {/* Alsó sor – jogi linkek + copyright */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-neutral-400">
           <p>
             © {new Date().getFullYear()} Richard Foto.{" "}

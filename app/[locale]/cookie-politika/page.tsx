@@ -1,4 +1,3 @@
-// app/[locale]/cookie-politika/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -209,10 +208,10 @@ export default async function CookiePolicy(props: { params: LocaleParams }) {
               <p>
                 Kérdés esetén forduljon hozzánk:{" "}
                 <a
-                  href="mailto:hello@richardfoto.hu"
+                  href="mailto:richardfoto@icloud.com"
                   className="underline hover:text-neutral-900 transition-colors"
                 >
-                  hello@richardfoto.hu
+                  richardfoto@icloud.com
                 </a>
               </p>
             </section>
@@ -346,10 +345,10 @@ export default async function CookiePolicy(props: { params: LocaleParams }) {
               <p>
                 For any questions:{" "}
                 <a
-                  href="mailto:hello@richardfoto.hu"
+                  href="mailto:richardfoto@icloud.com"
                   className="underline hover:text-neutral-900 transition-colors"
                 >
-                  hello@richardfoto.hu
+                  richardfoto@icloud.com
                 </a>
               </p>
             </section>

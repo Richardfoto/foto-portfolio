@@ -15,29 +15,31 @@ interface Item {
 type ItemWithImage = Item & { coverImage: SanityImageSource };
 
 export default function FeaturedRotator({
-  featured,
-  gallery,
+  featured = [],
+  gallery = [],
 }: {
-  featured: Item[];
-  gallery: Item[];
+  featured?: Item[];
+  gallery?: Item[];
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const featuredWithImages = (featured ?? []).filter(
-    (item): item is ItemWithImage => Boolean(item.coverImage),
+  const featuredWithImages = featured.filter((item): item is ItemWithImage =>
+    Boolean(item.coverImage),
   );
-
-  if (!featuredWithImages.length) return null;
 
   const allImages: ItemWithImage[] = [
     ...featuredWithImages,
-    ...(gallery ?? []).filter(
+    ...gallery.filter(
       (item): item is ItemWithImage =>
         Boolean(item.coverImage) &&
-        !featuredWithImages.some((featuredItem) => featuredItem._id === item._id),
+        !featuredWithImages.some(
+          (featuredItem) => featuredItem._id === item._id,
+        ),
     ),
   ];
+
+  if (!featuredWithImages.length || !allImages.length) return null;
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -46,49 +48,54 @@ export default function FeaturedRotator({
 
   const closeLightbox = () => setLightboxOpen(false);
 
-  const goToPrev = () =>
+  const goToPrev = () => {
     setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
 
-  const goToNext = () =>
+  const goToNext = () => {
     setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
         {featuredWithImages.slice(0, 2).map((item, index) => {
-          const imageUrl = item.coverImage
-            ? urlFor(item.coverImage).width(2000).format("webp").quality(90).url()
-            : null;
+          const imageUrl = urlFor(item.coverImage)
+            .ignoreImageParams()
+            .width(2000)
+            .fit("max")
+            .format("webp")
+            .quality(90)
+            .url();
 
           return (
             <button
-              type="button"
               key={item._id}
+              type="button"
               onClick={() => openLightbox(index)}
               className="group block w-full cursor-pointer text-left"
               aria-label={`Open ${item.title}`}
             >
               <div className="relative h-[70vh] w-full overflow-hidden bg-zinc-100 md:h-[80vh]">
-                {imageUrl && (
-                  <Image
-                    src={imageUrl}
-                    alt={item.title}
-                    fill
-                    priority={index === 0}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                  />
-                )}
+                <Image
+                  src={imageUrl}
+                  alt={item.title}
+                  fill
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="image-soft-motion object-contain p-2"
+                />
 
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                <div className="absolute inset-x-0 bottom-0 p-8 md:p-10">
                   {item.category && (
-                    <p className="text-xs uppercase tracking-widest text-white/70 mb-2">
+                    <p className="mb-2 text-xs uppercase tracking-widest text-white/70">
                       {item.category}
                     </p>
                   )}
-                  <h2 className="text-3xl md:text-4xl font-serif text-white leading-tight">
+
+                  <h2 className="font-serif text-3xl leading-tight text-white md:text-4xl">
                     {item.title}
                   </h2>
                 </div>
@@ -98,27 +105,29 @@ export default function FeaturedRotator({
         })}
       </div>
 
-      {lightboxOpen && (
+      {lightboxOpen && allImages[lightboxIndex] && (
         <div
-          className="fixed inset-0 z-100 bg-black/95 flex items-center justify-center"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/95"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeLightbox();
           }}
         >
-          <div className="relative w-full h-full flex flex-col items-center justify-center px-4">
+          <div className="relative flex h-full w-full flex-col items-center justify-center px-4">
             <button
               type="button"
               onClick={closeLightbox}
               aria-label="Close gallery image"
-              className="absolute top-6 right-6 text-white text-4xl z-50"
+              className="absolute right-6 top-6 z-50 text-4xl text-white"
             >
               ✕
             </button>
 
-            <div className="relative w-full max-w-6xl h-[80vh]">
+            <div className="relative h-[80vh] w-full max-w-6xl">
               <Image
                 src={urlFor(allImages[lightboxIndex].coverImage)
+                  .ignoreImageParams()
                   .width(2000)
+                  .fit("max")
                   .format("webp")
                   .quality(90)
                   .url()}
@@ -129,7 +138,7 @@ export default function FeaturedRotator({
               />
             </div>
 
-            <p className="text-white mt-6 text-lg text-center">
+            <p className="mt-6 text-center text-lg text-white">
               {allImages[lightboxIndex].title}
             </p>
 
@@ -138,7 +147,7 @@ export default function FeaturedRotator({
                 type="button"
                 onClick={goToPrev}
                 aria-label="Previous image"
-                className="text-white text-4xl px-6"
+                className="px-6 text-4xl text-white"
               >
                 ←
               </button>
@@ -149,7 +158,7 @@ export default function FeaturedRotator({
                 type="button"
                 onClick={goToNext}
                 aria-label="Next image"
-                className="text-white text-4xl px-6"
+                className="px-6 text-4xl text-white"
               >
                 →
               </button>

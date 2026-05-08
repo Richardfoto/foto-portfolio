@@ -1,4 +1,3 @@
-// app/gallery/[slug]/page.tsx
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import type { SanityImageSource } from "@sanity/image-url";
@@ -27,16 +26,24 @@ type LocaleParams = Promise<{ locale: string; slug: string }>;
 
 type GalleryDetail = {
   title: string;
-  category: string;
+  category?: string;
+  categoryHu?: string;
+  categoryEn?: string;
   description?: string;
   coverImage?: SanityImageSource;
   images?: SanityImageSource[];
   location?: string;
 };
 
-const galleryQuery = groq`*[_type == "gallery" && slug.current == $slug][0]{
+const galleryQuery = groq`*[
+  _type == "gallery" &&
+  slug.current == $slug &&
+  (!defined(service->inactive) || service->inactive != true)
+][0]{
   title,
   category,
+  "categoryHu": coalesce(service->titleHu, category),
+  "categoryEn": coalesce(service->titleEn, category),
   description,
   coverImage,
   images,
@@ -65,8 +72,19 @@ export async function generateMetadata(props: {
     });
   }
 
+  const category =
+    locale === "hu"
+      ? gallery.categoryHu ?? gallery.category ?? ""
+      : gallery.categoryEn ?? gallery.category ?? "";
   const coverUrl = gallery.coverImage
-    ? urlFor(gallery.coverImage).width(1200).height(630).fit("crop").format("webp").quality(86).url()
+    ? urlFor(gallery.coverImage)
+        .ignoreImageParams()
+        .width(1200)
+        .height(630)
+        .fit("max")
+        .format("webp")
+        .quality(86)
+        .url()
     : undefined;
 
   return createMetadata({
@@ -76,12 +94,12 @@ export async function generateMetadata(props: {
     description:
       gallery.description ??
       (locale === "hu"
-        ? `Természetes ${gallery.category.toLowerCase()} fotózás Budapesten Richard Foto szemléletével.`
-        : `Natural ${gallery.category.toLowerCase()} photography in Budapest by Richard Foto.`),
+        ? `Természetes ${category.toLowerCase()} Budapesten Richard Foto szemléletével.`
+        : `Natural ${category.toLowerCase()} in Budapest by Richard Foto.`),
     keywords:
       locale === "hu"
-        ? [`${gallery.category} fotózás Budapest`, "Richard Foto galéria"]
-        : [`${gallery.category} photography Budapest`, "Richard Foto gallery"],
+        ? [`${category} Budapest`, "Richard Foto galéria"]
+        : [`${category} Budapest`, "Richard Foto gallery"],
     image: coverUrl,
   });
 }
@@ -95,6 +113,10 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
     slug,
   });
   if (!gallery) notFound();
+  const category =
+    locale === "hu"
+      ? gallery.categoryHu ?? gallery.category ?? ""
+      : gallery.categoryEn ?? gallery.category ?? "";
 
   const images = gallery.images?.length
     ? gallery.images
@@ -105,7 +127,13 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
   const getImageUrl = (image: SanityImageSource | undefined) => {
     if (!image) return null;
     try {
-      return urlFor(image).width(1400).fit("max").format("webp").quality(85).url();
+      return urlFor(image)
+        .ignoreImageParams()
+        .width(1400)
+        .fit("max")
+        .format("webp")
+        .quality(85)
+        .url();
     } catch {
       return null;
     }
@@ -119,7 +147,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
     imageObjectSchema({
       locale,
       path: `/gallery/${slug}`,
-      caption: `${gallery.title} - ${gallery.category}`,
+      caption: `${gallery.title} - ${category}`,
       contentUrl: firstImageUrl ?? undefined,
     }),
     breadcrumbSchema(locale, [
@@ -136,7 +164,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
       <section className="bg-zinc-900 text-white text-center py-28 px-4">
         <div className="max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.35em] text-zinc-400 uppercase mb-3">
-            {gallery.category}
+            {category}
           </p>
           <h1 className="text-5xl md:text-6xl font-serif leading-tight mb-6">
             {gallery.title}
@@ -180,13 +208,13 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
                   src={imageUrl}
                   alt={
                     locale === "hu"
-                      ? `${gallery.title} - ${gallery.category} fotózás Budapest ${index + 1}`
-                      : `${gallery.title} - ${gallery.category} photography Budapest ${index + 1}`
+                      ? `${gallery.title} - ${category} Budapest ${index + 1}`
+                      : `${gallery.title} - ${category} Budapest ${index + 1}`
                   }
                   width={1400}
                   height={2000}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="w-full h-auto object-contain transition-all duration-700 group-hover:scale-[1.02]"
+                  className="image-soft-motion h-auto w-full object-contain"
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent h-20 opacity-0 group-hover:opacity-100 transition-all flex items-end p-6">
                   <p className="text-white text-xs tracking-widest">

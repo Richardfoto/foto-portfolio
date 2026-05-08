@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+api-keys-*.csv
+.sanity/
+BACKUP_*.txt
+GIT_DIFF_AT_BACKUP.patch
+GIT_DIFF_STAT_AT_BACKUP.txt
+GIT_STATUS_AT_BACKUP.txt

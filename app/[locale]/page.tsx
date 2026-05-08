@@ -20,62 +20,96 @@ import {
   type Locale,
 } from "@/lib/site";
 import {
-  photographyServices,
   serviceKeywords,
   serviceSchemaNodes,
   sharedFaqs,
 } from "@/lib/photography-content";
+import { getActivePhotographyServices } from "@/lib/active-services";
+import { getServiceSlug } from "@/lib/service-slugs";
 
 type LocaleParams = Promise<{ locale: string }>;
 
 type AboutHome = {
-  heroImage?: SanityImageSource;
   aboutImage?: SanityImageSource;
+  profileImage?: SanityImageSource;
+};
+
+type HeroHome = {
+  image?: SanityImageSource;
+  images?: SanityImageSource[];
 };
 
 type GalleryItem = {
   _id: string;
   title: string;
   category?: string;
+  serviceId?: string;
   coverImage?: SanityImageSource;
 };
 
-const aboutQuery = groq`*[_type == "about"][0]{ heroImage, aboutImage }`;
-const featuredQuery = groq`*[_type == "gallery" && featured == true] | order(_createdAt desc)[0...8]{
+type HomeSessions = {
+  personalBrandStarterImage?: SanityImageSource;
+  lifestyleStorySessionImage?: SanityImageSource;
+  contentCreatorDayImage?: SanityImageSource;
+  datingBoostImage?: SanityImageSource;
+  modelApplicationImage?: SanityImageSource;
+};
+
+const heroQuery = groq`*[_type == "hero"][0]{ image, images }`;
+const homeSessionsQuery = groq`coalesce(
+  *[_id == "homeSessions"][0],
+  *[_type == "homeSessions" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  personalBrandStarterImage,
+  lifestyleStorySessionImage,
+  contentCreatorDayImage,
+  datingBoostImage,
+  modelApplicationImage
+}`;
+const aboutQuery = groq`coalesce(
+  *[_id == "about"][0],
+  *[_type == "about" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){ aboutImage, profileImage }`;
+const featuredQuery = groq`*[
+  _type == "gallery" &&
+  featured == true &&
+  (!defined(service->inactive) || service->inactive != true)
+] | order(service->order asc, _createdAt desc)[0...8]{
   _id,
   title,
   category,
+  "serviceId": service->serviceId,
   coverImage
 }`;
-const galleryQuery = groq`*[_type == "gallery"] | order(_createdAt desc)[0...50]{
+const galleryQuery = groq`*[
+  _type == "gallery" &&
+  (!defined(service->inactive) || service->inactive != true)
+] | order(service->order asc, _createdAt desc)[0...50]{
   _id,
   title,
   category,
+  "serviceId": service->serviceId,
   coverImage
 }`;
 
 const homeCopy = {
   hu: {
     heroEyebrow: "Budapest • filmes hangulatú fotózás • 2015 óta",
-    heroTitle: "Valódi pillanatok. Időtlen képek.",
+    heroTitle: "Budapest\nfotózás\nValódi pillanatok.",
     heroSubtitle:
       "Csendes, történetmesélő fotózás Budapesten azoknak, akik nem szerepelni szeretnének a kamera előtt, hanem végre önmaguk lenni.",
     primaryCta: "Foglalás indítása",
-    secondaryCta: "Kiválasztott pillanatok",
-    heroCards: [
-      "természetes jelenlét",
-      "filmes szerkesztés",
-      "privát online galéria",
-    ],
-    introTitle: "Nem azt kérem, hogy tudj pózolni.",
+    secondaryCta: "Melyik stílus illik hozzád?",
+    introTitle: "Gyere, meséld el a történeted, és csináljunk egy különleges képet.",
     intro: [
       "Azt figyelem, mikor engeded el a kamerát. Egy félmosolyban, egy mozdulatban, abban a pillanatban, amikor már nem a képre gondolsz, hanem arra, ami éppen történik.",
-      "Richardként nem rendezni szeretném az életedet, hanem finoman keretet adni neki. Megnézem a fényt, a ritmust, a helyzetet, és közben hagyom, hogy a képeknek legyen levegője.",
+      "Megnézem a fényt, a ritmust, a helyzetet, és közben hagyom, hogy a képeknek legyen levegője. Megteremtjük a keretet a pillanatnak.",
       "Ezért a fotózás nem szereplésnek érződik, hanem egy nyugodt, vezetett találkozásnak. A végeredmény pedig nem idegenül tökéletes, hanem felismerhetően te.",
     ],
     introCta: "Richard története",
     trendingEyebrow: "Trending sessions",
-    trendingTitle: "Modern fotózási belépők, ha pontosan tudod, mit szeretnél érezni a képeken.",
+    trendingTitle:
+      "Modern fotózási belépők, ha pontosan tudod, mit szeretnél érezni a képeken.",
     trendingLead:
       "Ezek nem klasszikus csomagnevek, hanem könnyebb indulópontok. Válaszd azt, amelyik legközelebb van az élethelyzetedhez, és a foglalásnál együtt pontosítjuk a részleteket.",
     trendingSessions: [
@@ -86,40 +120,46 @@ const homeCopy = {
         description:
           "Letisztult portrék és werk hangulatú képek weboldalhoz, LinkedInhez, bemutatkozó anyaghoz vagy új márkaindításhoz.",
         cta: "Márkaképeket kérek",
-        serviceId: "business-portrait",
+        serviceId: "personal-brand-starter",
       },
       {
         id: "lifestyle-story-session",
-        title: "Lifestyle Story Session",
-        label: "természetes emlékekhez",
-        description:
-          "Egy séta, otthoni fény, városi részlet vagy közös ritmus. Képek, amelyek nem megállítanak, hanem visszavisznek egy érzéshez.",
+        title: "Lifestyle\nStory\nSession",
+        label: "Egy igazi kép rólad",
+        description: "",
         cta: "Lifestyle sorozatot kérek",
-        serviceId: "family-lifestyle",
+        serviceId: "lifestyle-story-session",
       },
       {
         id: "content-creator-day",
-        title: "Content Creator Day",
-        label: "tartalomhoz és kampányokhoz",
-        description:
-          "Egy vezetett fotózási nap, ahol több hétre előre gondolkodunk: portré, werk, részletek, social és webes felhasználás.",
-        cta: "Tartalomnapot kérek",
-        serviceId: "business-portrait",
+        title: "Content\nCreator Day",
+        label: "",
+        description: "Egy nap akár fél évnyi tartalom",
+        cta: "Marketing Kampány indítása",
+        serviceId: "content-creator-day",
       },
       {
         id: "dating-boost",
-        title: "Dating Boost",
+        title: "Dating\nBoost",
         label: "önazonos portrékhoz",
         description:
           "Könnyed, természetes portrék társkereső profilhoz vagy egyszerűen ahhoz, hogy végre legyenek rólad jó, őszinte képek.",
         cta: "Dating boostot kérek",
         serviceId: "boudoir-branding",
       },
+      {
+        id: "model-application",
+        title: "Vintage Fotózás",
+        label: "Kedvezményes",
+        description: "",
+        cta: "Jelentkezem modellnek",
+        href: "/model",
+      },
     ],
     servicesEyebrow: "Fotózási területek",
-    servicesTitle: "A teljes 10 fókusz, ha konkrétabb irányból érkeznél.",
+    servicesTitle: "Több területen dolgozom, de mindig az összhangot keresem.",
     servicesLead:
-      "A 10 niche SEO-ban és választásban is hasznos, de nem kell az első pillanatban mindent eldöntened. Nyisd le azt, ami érdekel, vagy indulj a fenti sessionök egyikéből.",
+      "Van tapasztalatom és futó projektem többféle fotózási helyzetben, mégis az a legfontosabb, hogy megtaláljuk a közös ritmust. Szeretem, amikor jó flow-ban dolgozunk; sok minden a tervezésen múlik, a hangulat pedig rajtunk. Nyugodtan bízd rám magad, mutatok pár irányt, amiben tudok segíteni.",
     serviceRailLabel: "Válassz történetet",
     captionsLabel: "Képi irány",
     experienceTitle: "A fotózás nem csak az elkészült képekből áll.",
@@ -146,7 +186,7 @@ const homeCopy = {
       },
       {
         title: "Válogatás és átadás",
-        text: "A kész, gondosan utómunkázott képek privát online galériában érkeznek, általában 7-10 munkanapon belül.",
+        text: "A kész, gondosan utómunkázott képek privát online galériában érkeznek, maximum 7 munkanapon belül.",
       },
     ],
     whyTitle: "Miért Richard Foto?",
@@ -164,7 +204,7 @@ const homeCopy = {
         text: "Letisztult képek, amelyek nem trendet akarnak követni, hanem emléket őriznek.",
       },
     ],
-    stats: ["2015 óta", "10+ fotózási terület", "7-10 napos átadás"],
+    stats: ["2015 óta", "több fotózási irány", "max. 7 napos átadás"],
     testimonial:
       "Richard teljesen feloldott a kamera előtt. A képek nem beállítottak, mégis gyönyörűen összefogják azt az időszakot, amit szerettünk volna megőrizni.",
     giftTitle: "Fotózást ajándékba?",
@@ -179,25 +219,21 @@ const homeCopy = {
   },
   en: {
     heroEyebrow: "Budapest • cinematic photography • since 2015",
-    heroTitle: "Real moments. Timeless images.",
+    heroTitle: "Budapest\nphotography\nReal moments.",
     heroSubtitle:
       "Quiet storytelling photography in Budapest for people who do not want to perform in front of the camera, but finally feel like themselves.",
     primaryCta: "Start booking",
-    secondaryCta: "Selected moments",
-    heroCards: [
-      "natural presence",
-      "cinematic editing",
-      "private online gallery",
-    ],
-    introTitle: "I do not need you to know how to pose.",
+    secondaryCta: "Which style fits you?",
+    introTitle: "Come tell me your story, and let us create a special image.",
     intro: [
       "I look for the moment when you stop thinking about the camera. A half-smile, a gesture, a quiet pause: the point where the photograph starts to feel like you.",
-      "As Richard, I do not want to stage your life. I create a calm frame, watch the light and rhythm, and leave enough room for something honest to appear.",
+      "I watch the light, the rhythm and the situation, while leaving enough room for the images to breathe. Together, we create a frame for the moment.",
       "That is why the session feels less like performing and more like a guided conversation. The final images are not strangely perfect; they are recognisably yours.",
     ],
     introCta: "Richard's story",
     trendingEyebrow: "Trending sessions",
-    trendingTitle: "Modern session entries for people who know what they want the images to feel like.",
+    trendingTitle:
+      "Modern session entries for people who know what they want the images to feel like.",
     trendingLead:
       "These are not rigid package names; they are easier starting points. Choose the one closest to your current season, and we will refine the details during booking.",
     trendingSessions: [
@@ -208,40 +244,47 @@ const homeCopy = {
         description:
           "Clean portraits and werk-style imagery for websites, LinkedIn, introductions or the beginning of a new brand chapter.",
         cta: "Request brand images",
-        serviceId: "business-portrait",
+        serviceId: "personal-brand-starter",
       },
       {
         id: "lifestyle-story-session",
-        title: "Lifestyle Story Session",
-        label: "for natural memories",
-        description:
-          "A walk, at-home light, city details or shared rhythm. Images that do not freeze you, but bring back a feeling.",
+        title: "Lifestyle\nStory\nSession",
+        label: "A real image of you",
+        description: "",
         cta: "Request a lifestyle story",
-        serviceId: "family-lifestyle",
+        serviceId: "lifestyle-story-session",
       },
       {
         id: "content-creator-day",
-        title: "Content Creator Day",
-        label: "for content and campaigns",
-        description:
-          "A guided photography day planned ahead: portraits, werk moments, details, social content and web-ready imagery.",
-        cta: "Request a content day",
-        serviceId: "business-portrait",
+        title: "Content\nCreator Day",
+        label: "",
+        description: "One day, up to half a year of content",
+        cta: "Start a marketing campaign",
+        serviceId: "content-creator-day",
       },
       {
         id: "dating-boost",
-        title: "Dating Boost",
+        title: "Dating\nBoost",
         label: "for honest personal portraits",
         description:
           "Relaxed, natural portraits for dating profiles or simply for finally having strong, honest photographs of yourself.",
         cta: "Request a dating boost",
         serviceId: "boudoir-branding",
       },
+      {
+        id: "model-application",
+        title: "Vintage Session",
+        label: "Discounted",
+        description: "",
+        cta: "Apply as a model",
+        href: "/model",
+      },
     ],
     servicesEyebrow: "Photography fields",
-    servicesTitle: "The full 10-focus menu, if you arrive with a more specific direction.",
+    servicesTitle:
+      "I work across different fields, but I always look for the right connection.",
     servicesLead:
-      "The 10 niches are useful for SEO and choice, but you do not need to decide everything at once. Open the direction that interests you, or begin with one of the sessions above.",
+      "I have experience and ongoing projects in several kinds of photography, but the most important part is finding a shared rhythm with the person in front of me. I love when the flow is good; a lot comes down to planning, and the mood is something we create together. You can relax and trust the process. Here are a few directions where I can help.",
     serviceRailLabel: "Choose your story",
     captionsLabel: "Visual direction",
     experienceTitle: "A session is more than the finished photographs.",
@@ -268,7 +311,7 @@ const homeCopy = {
       },
       {
         title: "Selection and delivery",
-        text: "Your carefully edited images arrive in a private online gallery, usually within 7-10 business days.",
+        text: "Your carefully edited images arrive in a private online gallery within maximum 7 business days.",
       },
     ],
     whyTitle: "Why choose Richard Foto?",
@@ -286,7 +329,7 @@ const homeCopy = {
         text: "Clean images that do not chase a trend, but preserve a memory.",
       },
     ],
-    stats: ["Since 2015", "10+ photography fields", "7-10 day delivery"],
+    stats: ["Since 2015", "several photography directions", "max. 7 day delivery"],
     testimonial:
       "Richard made me comfortable in front of the camera. The images are not staged, yet they beautifully hold the season we wanted to remember.",
     giftTitle: "A photo session as a gift?",
@@ -342,8 +385,12 @@ function getSanityImageUrl(
   height?: number,
 ) {
   if (!image) return null;
-  const builder = urlFor(image).width(width).format("webp").quality(88);
-  return height ? builder.height(height).fit("crop").url() : builder.url();
+  const builder = urlFor(image)
+    .ignoreImageParams()
+    .width(width)
+    .format("webp")
+    .quality(88);
+  return height ? builder.height(height).fit("max").url() : builder.url();
 }
 
 export default async function Home(props: { params: LocaleParams }) {
@@ -351,20 +398,59 @@ export default async function Home(props: { params: LocaleParams }) {
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "hu";
   const copy = homeCopy[locale];
 
-  const [about, featured, gallery] = await Promise.all([
+  const [hero, homeSessions, about, activeServices, featured, gallery] = await Promise.all([
+    client.fetch<HeroHome | null>(heroQuery),
+    client.fetch<HomeSessions | null>(homeSessionsQuery),
     client.fetch<AboutHome | null>(aboutQuery),
+    getActivePhotographyServices(),
     client.fetch<GalleryItem[]>(featuredQuery),
     client.fetch<GalleryItem[]>(galleryQuery),
   ]);
+  const serviceLabelById = new Map(
+    activeServices.map((service) => [service.id, service.title[locale]]),
+  );
+  const localizeGalleryCategory = (item: GalleryItem): GalleryItem => {
+    const serviceLabel = item.serviceId
+      ? serviceLabelById.get(item.serviceId)
+      : undefined;
 
-  const heroImageUrl = getSanityImageUrl(about?.heroImage, 2200, 1300);
-  const aboutImageUrl = getSanityImageUrl(about?.aboutImage, 900, 1100);
-  const galleryImages = (gallery ?? []).filter((item) => item.coverImage);
+    return {
+      ...item,
+      title:
+        item.serviceId === "business-portrait"
+          ? "Werkfotózás"
+          : item.title,
+      category:
+        serviceLabel ??
+        item.category,
+    };
+  };
+  const localizedFeatured = featured.map(localizeGalleryCategory);
+  const localizedGallery = gallery.map(localizeGalleryCategory);
+
+  const heroImageUrl = getSanityImageUrl(
+    hero?.image ?? hero?.images?.[0],
+    2200,
+    1300,
+  );
+  const aboutImageUrl = getSanityImageUrl(
+    about?.aboutImage ?? about?.profileImage,
+    900,
+    1100,
+  );
+  const galleryImages = localizedGallery.filter((item) => item.coverImage);
+  const sessionImages: Record<string, SanityImageSource | undefined> = {
+    "personal-brand-starter": homeSessions?.personalBrandStarterImage,
+    "lifestyle-story-session": homeSessions?.lifestyleStorySessionImage,
+    "content-creator-day": homeSessions?.contentCreatorDayImage,
+    "dating-boost": homeSessions?.datingBoostImage,
+    "model-application": homeSessions?.modelApplicationImage,
+  };
 
   const graph = schemaGraph([
     baseOrganizationSchema(locale),
     photographerSchema(locale),
-    ...serviceSchemaNodes(locale),
+    ...serviceSchemaNodes(locale, activeServices),
     imageObjectSchema({
       locale,
       path: "/",
@@ -374,9 +460,7 @@ export default async function Home(props: { params: LocaleParams }) {
           : "Richard Foto storytelling lifestyle photography Budapest",
       contentUrl: heroImageUrl ?? undefined,
     }),
-    breadcrumbSchema(locale, [
-      { name: site.name, path: "/" },
-    ]),
+    breadcrumbSchema(locale, [{ name: site.name, path: "/" }]),
     faqSchema(sharedFaqs[locale]),
   ]);
 
@@ -396,7 +480,7 @@ export default async function Home(props: { params: LocaleParams }) {
             fill
             priority
             sizes="100vw"
-            className="hero-drift object-cover opacity-70"
+            className="image-soft-motion object-contain p-4 opacity-70"
           />
         ) : (
           <div className="absolute inset-0 bg-neutral-950" aria-hidden="true" />
@@ -407,7 +491,7 @@ export default async function Home(props: { params: LocaleParams }) {
           <p className="reveal-up mb-7 max-w-xl text-xs uppercase tracking-[0.32em] text-white/70">
             {copy.heroEyebrow}
           </p>
-          <h1 className="reveal-up max-w-5xl font-serif text-5xl leading-[0.96] tracking-tight [animation-delay:90ms] sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="reveal-up max-w-5xl whitespace-pre-line font-serif text-5xl leading-[0.96] tracking-tight [animation-delay:90ms] sm:text-6xl md:text-7xl lg:text-8xl">
             {copy.heroTitle}
           </h1>
           <p className="reveal-up mt-8 max-w-2xl text-lg leading-8 text-white/82 [animation-delay:180ms] md:text-xl">
@@ -421,22 +505,11 @@ export default async function Home(props: { params: LocaleParams }) {
               {copy.primaryCta}
             </Link>
             <Link
-              href="#selected-moments"
+              href={`/${locale}/services`}
               className="inline-flex items-center justify-center border border-white/70 px-8 py-4 text-sm uppercase tracking-[0.2em] text-white transition-colors hover:bg-white hover:text-neutral-950"
             >
               {copy.secondaryCta}
             </Link>
-          </div>
-
-          <div className="reveal-up mt-16 grid max-w-3xl gap-3 [animation-delay:340ms] sm:grid-cols-3">
-            {copy.heroCards.map((card) => (
-              <div
-                key={card}
-                className="glass-panel border border-white/18 px-4 py-4 text-xs uppercase tracking-[0.2em] text-white/82"
-              >
-                {card}
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -475,7 +548,7 @@ export default async function Home(props: { params: LocaleParams }) {
             width={1200}
             height={720}
             sizes="(max-width: 768px) 100vw, 1152px"
-            className="h-auto w-full object-cover shadow-[0_28px_80px_rgba(0,0,0,0.12)]"
+            className="image-soft-motion h-auto w-full object-contain shadow-[0_28px_80px_rgba(0,0,0,0.12)]"
           />
         </section>
       )}
@@ -498,10 +571,14 @@ export default async function Home(props: { params: LocaleParams }) {
 
           <div className="mt-16 grid gap-5 lg:grid-cols-3">
             {copy.trendingSessions.map((session, index) => {
-              const image = galleryImages[index]?.coverImage;
+              const image = sessionImages[session.id] ?? galleryImages[index]?.coverImage;
               const imageUrl = getSanityImageUrl(image, 1200, 1300);
               const isFeature = index === 0;
               const titleId = `trending-${session.id}`;
+              const imageContext =
+                locale === "hu"
+                  ? `${session.title} fotózás Budapest természetes, filmes hangulatban`
+                  : `${session.title} photography in Budapest with a natural cinematic mood`;
 
               return (
                 <article
@@ -513,44 +590,68 @@ export default async function Home(props: { params: LocaleParams }) {
                 >
                   <div
                     className={`relative ${
-                      isFeature ? "aspect-[4/5] lg:aspect-[8/5]" : "aspect-[4/5]"
+                      isFeature ? "aspect-4/5 lg:aspect-8/5" : "aspect-4/5"
                     }`}
                   >
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
-                        alt={
-                          locale === "hu"
-                            ? `${session.title} fotózás Budapest természetes, filmes hangulatban`
-                            : `${session.title} photography in Budapest with a natural cinematic mood`
-                        }
+                        alt={imageContext}
                         fill
                         sizes={
                           isFeature
                             ? "(max-width: 1024px) 100vw, 62vw"
                             : "(max-width: 1024px) 100vw, 31vw"
                         }
-                        className="object-cover opacity-80 transition-transform duration-1000 ease-out group-hover:scale-[1.035]"
+                        className="image-soft-motion object-contain p-2 opacity-80"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-neutral-900" aria-hidden="true" />
+                      <div
+                        className="absolute inset-0 bg-neutral-900"
+                        aria-hidden="true"
+                      />
                     )}
                     <div className="absolute inset-0 bg-linear-to-t from-black/82 via-black/18 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-                      <p className="mb-4 max-w-md text-xs uppercase tracking-[0.24em] text-white/55">
-                        {session.label}
-                      </p>
+                    <div
+                      className={`absolute inset-x-0 top-0 p-6 md:p-8 ${
+                        session.id === "lifestyle-story-session" ? "text-right" : ""
+                      }`}
+                    >
+                      {session.label && (
+                        <p
+                          className={`max-w-md text-xs uppercase leading-5 tracking-[0.24em] text-white/65 ${
+                            session.id === "lifestyle-story-session" ? "ml-auto" : ""
+                          }`}
+                        >
+                          {session.label}
+                        </p>
+                      )}
                       <h3
                         id={titleId}
-                        className="max-w-xl font-serif text-3xl leading-tight tracking-tight md:text-5xl"
+                        className={`${session.label ? "mt-4" : ""} max-w-xl whitespace-pre-line font-serif leading-tight tracking-tight ${
+                          session.id === "model-application"
+                            ? "text-3xl md:text-[2rem] lg:text-[2.15rem]"
+                            : "text-3xl md:text-5xl"
+                        } ${session.id === "lifestyle-story-session" ? "ml-auto" : ""}`}
                       >
                         {session.title}
                       </h3>
-                      <p className="mt-5 max-w-2xl text-sm leading-7 text-white/72 md:text-base">
-                        {session.description}
-                      </p>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                      {session.description && (
+                        <p className="mt-5 max-w-2xl text-sm leading-7 text-white/72 md:text-base">
+                          {session.description}
+                        </p>
+                      )}
                       <Link
-                        href={`/${locale}/booking?service=${session.serviceId}`}
+                        href={
+                          "href" in session
+                            ? `/${locale}${session.href}`
+                            : `/${locale}/services/${getServiceSlug(
+                                session.serviceId,
+                                locale,
+                              )}`
+                        }
                         className="mt-7 inline-flex border border-white/60 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white transition-colors hover:bg-white hover:text-neutral-950"
                       >
                         {session.cta}
@@ -575,12 +676,22 @@ export default async function Home(props: { params: LocaleParams }) {
                 {locale === "hu" ? "Válogatott munkák" : "Selected work"}
               </p>
               <h2 className="font-serif text-4xl tracking-tight md:text-6xl">
-                {locale === "hu" ? "Kiválasztott pillanatok" : "Selected moments"}
+                {locale === "hu"
+                  ? "Kiválasztott pillanatok"
+                  : "Selected moments"}
               </h2>
             </div>
             <FeaturedRotator
-              featured={(featured ?? []).filter((item) => item.coverImage) as GalleryItem[]}
-              gallery={(gallery ?? []).filter((item) => item.coverImage) as GalleryItem[]}
+              featured={
+                localizedFeatured.filter(
+                  (item) => item.coverImage,
+                ) as GalleryItem[]
+              }
+              gallery={
+                localizedGallery.filter(
+                  (item) => item.coverImage,
+                ) as GalleryItem[]
+              }
             />
           </div>
         </section>
@@ -604,7 +715,7 @@ export default async function Home(props: { params: LocaleParams }) {
               {copy.experienceItems.map((item) => (
                 <li
                   key={item}
-                  className="story-line relative border-t border-neutral-950/15 pt-4 text-sm uppercase tracking-[0.16em] text-neutral-700 after:absolute after:left-0 after:top-[-1px] after:h-px after:w-24 after:bg-neutral-950"
+                  className="story-line relative border-t border-neutral-950/15 pt-4 text-sm uppercase tracking-[0.16em] text-neutral-700 after:absolute after:left-0 after:-top-px after:h-px after:w-24 after:bg-neutral-950"
                 >
                   {item}
                 </li>
@@ -629,7 +740,9 @@ export default async function Home(props: { params: LocaleParams }) {
                   {String(index + 1).padStart(2, "0")}
                 </p>
                 <h3 className="font-serif text-2xl">{step.title}</h3>
-                <p className="mt-5 text-sm leading-7 text-white/62">{step.text}</p>
+                <p className="mt-5 text-sm leading-7 text-white/62">
+                  {step.text}
+                </p>
               </article>
             ))}
           </div>
@@ -649,7 +762,10 @@ export default async function Home(props: { params: LocaleParams }) {
             </div>
             <div className="grid gap-6 sm:grid-cols-3">
               {copy.values.map((value) => (
-                <article key={value.title} className="border-t border-neutral-200 pt-6">
+                <article
+                  key={value.title}
+                  className="border-t border-neutral-200 pt-6"
+                >
                   <h3 className="font-serif text-2xl">{value.title}</h3>
                   <p className="mt-4 text-sm leading-7 text-neutral-600">
                     {value.text}
@@ -683,7 +799,9 @@ export default async function Home(props: { params: LocaleParams }) {
             </h2>
           </div>
           <div className="self-end">
-            <p className="text-lg leading-8 text-neutral-600">{copy.giftText}</p>
+            <p className="text-lg leading-8 text-neutral-600">
+              {copy.giftText}
+            </p>
             <Link
               href={`/${locale}/booking?service=gift-voucher`}
               className="mt-8 inline-flex bg-neutral-950 px-8 py-4 text-sm uppercase tracking-[0.2em] text-white transition-colors hover:bg-neutral-800"
@@ -711,7 +829,7 @@ export default async function Home(props: { params: LocaleParams }) {
           </div>
 
           <div className="mt-14 divide-y divide-neutral-200 border-y border-neutral-200">
-            {photographyServices.map((service, index) => (
+            {activeServices.map((service, index) => (
               <details
                 id={service.anchor}
                 key={service.id}
@@ -720,7 +838,7 @@ export default async function Home(props: { params: LocaleParams }) {
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6">
                   <div className="grid gap-4 md:grid-cols-[9rem_1fr] md:items-baseline">
                     <span className="text-xs uppercase tracking-[0.24em] text-neutral-400">
-                      {String(index + 1).padStart(2, "0")} / 10
+                      {String(index + 1).padStart(2, "0")} / {activeServices.length}
                     </span>
                     <h3 className="font-serif text-2xl leading-tight tracking-tight md:text-4xl">
                       {service.title[locale]}
@@ -748,7 +866,7 @@ export default async function Home(props: { params: LocaleParams }) {
                       ))}
                     </ul>
                     <Link
-                      href={`/${locale}/booking?service=${service.id}`}
+                      href={`/${locale}/services/${getServiceSlug(service.id, locale)}`}
                       className="mt-7 inline-flex text-xs uppercase tracking-[0.18em] text-neutral-950 underline-offset-8 hover:underline"
                     >
                       {copy.accordionCta}

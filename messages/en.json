@@ -4,7 +4,8 @@
     "services": "Services",
     "about": "About",
     "booking": "Booking",
-    "contact": "Contact"
+    "contact": "Contact",
+    "model": "Apply as Model"
   },
   "home": {
     "hero_title": "Richard Foto",
@@ -47,16 +48,22 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
-    "service": "Package",
+    "service": "Service",
+    "session": "Session package",
     "date": "Preferred date",
-    "message": "Notes",
-    "selectPackage": "Choose a package...",
+    "message": "Additional notes",
+    "serviceHelp": "Choose the photography direction that feels closest to what you need.",
+    "sessionHelp": "Choose the scale of the session. If you are unsure, Standard is the best starting point.",
+    "dateHelp": "This is not a final booking, just your preferred day for coordination.",
+    "messageHelp": "Briefly describe your goal: how you would use the images, whether there is a fixed deadline, location or special request.",
+    "selectPackage": "Choose a service...",
+    "selectSession": "Choose a session package...",
     "other": "Other",
-    "send": "Send booking request",
+    "send": "Send inquiry",
     "sending": "Sending...",
     "successTitle": "Thank you!",
-    "successMessage": "I will get back to you soon about your booking.",
-    "validationError": "Please fill out the required fields correctly.",
+    "successMessage": "Your inquiry has arrived. I usually reply within 1-2 business days.",
+    "validationError": "Please choose a service, session package, future date and add your contact details.",
     "error": "Something went wrong, please try again."
   },
   "contact": {
@@ -69,10 +76,10 @@
     "email": "Your email",
     "message": "Your message",
     "validationError": "Please fill out the fields correctly.",
-    "send": "Send",
+    "send": "Send message",
     "sending": "Sending...",
     "success_title": "Thank you!",
-    "success_message": "I will get back to you soon.",
+    "success_message": "Your message has arrived.",
     "error": "Something went wrong, please try again."
   },
   "footer": {

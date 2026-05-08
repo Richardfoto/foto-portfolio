@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import type { SanityImageSource } from "@sanity/image-url";
+import { groq } from "next-sanity";
 import BookingForm from "./BookingForm";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
 import {
   JsonLd,
   baseOrganizationSchema,
@@ -15,68 +20,217 @@ import {
   type Locale,
 } from "@/lib/site";
 import {
-  photographyServices,
   serviceSchemaNodes,
   sharedFaqs,
 } from "@/lib/photography-content";
+import { getActivePhotographyServices } from "@/lib/active-services";
 
 type LocaleParams = Promise<{ locale: string }>;
 type BookingSearchParams = Promise<{
   service?: string | string[];
 }>;
 
+type BookingSettingsDocument = {
+  eyebrowHu?: string;
+  eyebrowEn?: string;
+  titleHu?: string;
+  titleEn?: string;
+  introHu?: string;
+  introEn?: string;
+  headerImage?: SanityImageSource;
+};
+
+const bookingSettingsQuery = groq`coalesce(
+  *[_id == "bookingSettings"][0],
+  *[_type == "bookingSettings" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  eyebrowHu,
+  eyebrowEn,
+  titleHu,
+  titleEn,
+  introHu,
+  introEn,
+  headerImage
+}`;
+
 const bookingCopy = {
   hu: {
-    title: "Foglalás",
+    title: "Kezdjük el a közös projektet!",
     description:
-      "Foglalj lifestyle, werk, üzleti portré, családi, újszülött, kismama, esküvői, termék vagy rendezvény fotózást Budapesten Richard Fotóval.",
-    eyebrow: "Időpont egyeztetés",
+      "Foglalj lifestyle, werk, családi, kismama és újszülött, esküvői, termék vagy rendezvény fotózást Budapesten Richard Fotóval.",
+    eyebrow: "Forgatás egyeztetése",
     intro:
-      "Írj pár sort arról, mire készülsz. Nem kell mindent tudnod előre; segítek a szolgáltatás, helyszín, ritmus és képi hangulat tisztázásában.",
-    chooserTitle: "Válaszd ki, milyen történettel érkezel.",
+      "Válaszd ki a csomagot és a dátumot, aztán egyeztessünk időpontot.",
+    flowTitle: "A foglalás menete 5 lépésben",
+    flowLead:
+      "Ez még nem végleges szerződés vagy automatikus foglalás, hanem egy tiszta érdeklődés. Te jelzed az irányt, én visszaírok az elérhető időpontokról és a pontos keretekről.",
+    flowCards: [
+      {
+        title: "Szolgáltatás",
+        text: "Válaszd ki, milyen fotózási irány érdekel.",
+      },
+      {
+        title: "Csomag",
+        text: "A Standard alapból be van állítva, csak akkor módosítsd, ha mást szeretnél.",
+      },
+      {
+        title: "Dátum",
+        text: "Adj meg egy preferált napot. Ez még egyeztethető.",
+      },
+      {
+        title: "Megjegyzés",
+        text: "Írj pár szót a célról, helyszínről vagy határidőről.",
+      },
+      {
+        title: "Elérhetőség",
+        text: "Add meg, hová válaszolhatok, majd küldd el az érdeklődést.",
+      },
+    ],
+    chooserTitle: "1. Válaszd ki, milyen történettel érkezel.",
     chooserLead:
-      "A 10 fotózási fókusz nem menüfal, hanem gyors útvonal. Kattints arra, ami most a legközelebb áll hozzád, és az űrlapban már előkészítve jelenik meg.",
+      "A választási lehetőségek gyors útvonalak. Kattints arra, ami most a legközelebb áll hozzád, és az űrlapban már előkészítve jelenik meg.",
     selectedLabel: "Kiválasztva",
+    continueLabel: "Kiválasztom",
+    selectedTitle: "Kiválasztott irány",
+    selectedFallback: "Még nincs kiválasztva szolgáltatás",
+    selectedFallbackText:
+      "Válassz egy irányt fent, vagy hagyd üresen és az űrlapban kézzel add meg.",
+    homeGroup: "Főoldali kiemelt ajánlatok",
+    servicesGroup: "Szolgáltatások",
+    giftGroup: "Ajándék",
     giftVoucher: "Ajándékutalvány",
+    homeOptions: [
+      { _id: "personal-brand-starter", title: "Personal Brand Starter" },
+      { _id: "lifestyle-story-session", title: "Lifestyle Story Session" },
+      { _id: "content-creator-day", title: "Content Creator Day" },
+      { _id: "boudoir-branding", title: "Dating Boost / Boudoir" },
+      { _id: "model-application", title: "Kedvezményes Vintage Fotózás" },
+    ],
     processTitle: "Mi történik a foglalás után?",
     steps: [
-      "Visszaírok, és pontosítjuk az elképzelést.",
-      "Kiválasztjuk a megfelelő szolgáltatást és időpontot.",
-      "A fotózás előtt kapsz gyakorlati javaslatokat.",
-      "A kész képek privát online galériában érkeznek.",
+      "Megkapom az érdeklődésedet emailben.",
+      "Visszaírok az elérhető időpontokkal.",
+      "Pontosítjuk a szolgáltatást, helyszínt és hangulatot.",
+      "Véglegesítjük az időpontot és a kereteket.",
+      "A fotózás után privát online galériában kapod meg a képeket.",
     ],
     sideTitle: "Nem kell kész brief.",
     sideText:
       "Elég egy érzés, egy dátum vagy egy alkalom. Ha bizonytalan vagy, az üzenet alapján segítek eldönteni, melyik fotózási forma lesz a legjobb.",
     formEyebrow: "2-3 perc",
-    formTitle: "Foglalási kérés",
+    formTitle: "Csak pár kattintásra vagyunk. Érdeklődj.",
+    formLead:
+      "A küldés után az érdeklődés közvetlenül megérkezik hozzám emailben. Átnézem, mire készülsz, és általában 1-2 munkanapon belül visszajelzek az időpontokról és a következő lépésekről.",
+    trustNote:
+      "Nem kell kész brief: elég a szolgáltatás, a csomag és egy körülbelüli dátum. A részleteket együtt pontosítjuk.",
+    bottomCtaEyebrow: "Direkt kapcsolat",
+    bottomCtaTitle: "Ha inkább egyszerűen írnál, küldj emailt.",
+    bottomCtaText:
+      "Írhatsz közvetlenül is, de az űrlap segít abban, hogy az első válaszomban már konkrétabb időpontot és irányt tudjak adni.",
+    bottomCta: "Email írása Richardnak",
   },
   en: {
-    title: "Booking",
+    title: "Let us start the project together.",
     description:
-      "Book lifestyle, werk, business portrait, family, newborn, maternity, wedding, product or event photography in Budapest with Richard Foto.",
-    eyebrow: "Session inquiry",
+      "Book lifestyle, werk, family, maternity and newborn, wedding, product or event photography in Budapest with Richard Foto.",
+    eyebrow: "Plan a shoot",
     intro:
-      "Write a few lines about what you are planning. You do not need to know everything in advance; I will help clarify the service, location, rhythm and visual mood.",
-    chooserTitle: "Choose the story you are arriving with.",
+      "Choose the package and preferred date, then let us find a time that works.",
+    flowTitle: "Booking in 5 steps",
+    flowLead:
+      "This is not an automatic final booking yet. It is a clear inquiry: you choose the direction, and I reply with availability and exact next steps.",
+    flowCards: [
+      {
+        title: "Service",
+        text: "Choose the photography direction you are interested in.",
+      },
+      {
+        title: "Package",
+        text: "Standard is selected by default; change it only if you want another scale.",
+      },
+      {
+        title: "Date",
+        text: "Add a preferred day. It is still flexible.",
+      },
+      {
+        title: "Notes",
+        text: "Add a few words about the goal, location or deadline.",
+      },
+      {
+        title: "Contact",
+        text: "Add where I can reply, then send the inquiry.",
+      },
+    ],
+    chooserTitle: "1. Choose the story you are arriving with.",
     chooserLead:
-      "The 10 photography focuses are not a wall of options; they are a faster route. Choose the one that feels closest right now, and the form will open with it already prepared.",
+      "These options are faster routes into the right conversation. Choose the one that feels closest right now, and the form will open with it already prepared.",
     selectedLabel: "Selected",
+    continueLabel: "Select this",
+    selectedTitle: "Selected direction",
+    selectedFallback: "No service selected yet",
+    selectedFallbackText:
+      "Choose a direction above, or leave it open and select one manually in the form.",
+    homeGroup: "Featured homepage offers",
+    servicesGroup: "Services",
+    giftGroup: "Gift",
     giftVoucher: "Gift voucher",
+    homeOptions: [
+      { _id: "personal-brand-starter", title: "Personal Brand Starter" },
+      { _id: "lifestyle-story-session", title: "Lifestyle Story Session" },
+      { _id: "content-creator-day", title: "Content Creator Day" },
+      { _id: "boudoir-branding", title: "Dating Boost / Boudoir" },
+      { _id: "model-application", title: "Discounted Vintage Session" },
+    ],
     processTitle: "What happens after booking?",
     steps: [
-      "I reply and we refine the idea.",
-      "We choose the right service and date.",
-      "Before the session, you receive practical guidance.",
-      "The finished images arrive in a private online gallery.",
+      "I receive your inquiry by email.",
+      "I reply with available dates.",
+      "We refine the service, location and mood.",
+      "We confirm the date and exact details.",
+      "After the session, the images arrive in a private online gallery.",
     ],
     sideTitle: "You do not need a finished brief.",
     sideText:
       "A feeling, a date or an occasion is enough. If you are unsure, I will help you choose the best format based on your message.",
     formEyebrow: "2-3 minutes",
-    formTitle: "Booking request",
+    formTitle: "We are only a few clicks away. Send an inquiry.",
+    formLead:
+      "After submitting, the inquiry arrives directly to me by email. I review what you are planning and usually reply within 1-2 business days with availability and next steps.",
+    trustNote:
+      "You do not need a finished brief: the service, package and approximate date are enough. We refine the details together.",
+    bottomCtaEyebrow: "Direct contact",
+    bottomCtaTitle: "If you prefer, you can simply email me.",
+    bottomCtaText:
+      "You can write directly too, but the form helps me reply with a clearer date and direction from the first response.",
+    bottomCta: "Email Richard",
   },
 } as const;
+
+const hungarianCountySeats = [
+  "Békéscsaba",
+  "Budapest",
+  "Debrecen",
+  "Eger",
+  "Győr",
+  "Kaposvár",
+  "Kecskemét",
+  "Miskolc",
+  "Nyíregyháza",
+  "Pécs",
+  "Salgótarján",
+  "Szeged",
+  "Székesfehérvár",
+  "Szekszárd",
+  "Szolnok",
+  "Szombathely",
+  "Tatabánya",
+  "Veszprém",
+  "Zalaegerszeg",
+] as const;
+
+function textOrFallback(value: string | undefined, fallback: string) {
+  return value?.trim() || fallback;
+}
 
 export async function generateMetadata(props: {
   params: LocaleParams;
@@ -112,21 +266,54 @@ export default async function BookingPage(props: {
     ? searchParams.service[0]
     : searchParams?.service;
 
-  const services = photographyServices.map((service) => ({
-    _id: service.id,
-    title: service.title[locale],
-  }));
-  const serviceOptions = [
-    ...services,
-    { _id: "gift-voucher", title: copy.giftVoucher },
+  const [activeServices, bookingSettings] = await Promise.all([
+    getActivePhotographyServices(),
+    client.fetch<BookingSettingsDocument | null>(bookingSettingsQuery),
+  ]);
+  const headerEyebrow = textOrFallback(
+    locale === "hu" ? bookingSettings?.eyebrowHu : bookingSettings?.eyebrowEn,
+    copy.eyebrow,
+  );
+  const headerTitle = textOrFallback(
+    locale === "hu" ? bookingSettings?.titleHu : bookingSettings?.titleEn,
+    copy.title,
+  );
+  const headerIntro = textOrFallback(
+    locale === "hu" ? bookingSettings?.introHu : bookingSettings?.introEn,
+    copy.intro,
+  );
+  const headerImageUrl = bookingSettings?.headerImage
+    ? urlFor(bookingSettings.headerImage)
+        .ignoreImageParams()
+        .width(2200)
+        .height(1200)
+        .fit("max")
+        .format("webp")
+        .quality(88)
+        .url()
+    : null;
+  const homepageServiceIds = new Set<string>(
+    copy.homeOptions.map((option) => option._id),
+  );
+  const services = activeServices
+    .filter((service) => !homepageServiceIds.has(service.id))
+    .map((service) => ({
+      _id: service.id,
+      title: service.title[locale],
+    }));
+  const serviceGroups = [
+    { title: copy.homeGroup, options: copy.homeOptions },
+    { title: copy.servicesGroup, options: services },
+    { title: copy.giftGroup, options: [{ _id: "gift-voucher", title: copy.giftVoucher }] },
   ];
+  const serviceOptions = serviceGroups.flatMap((group) => group.options);
   const selectedService =
     serviceOptions.find((service) => service._id === serviceParam) ?? null;
 
   const graph = schemaGraph([
     baseOrganizationSchema(locale),
     photographerSchema(locale),
-    ...serviceSchemaNodes(locale),
+    ...serviceSchemaNodes(locale, activeServices),
     imageObjectSchema({
       locale,
       path: "/booking",
@@ -146,32 +333,98 @@ export default async function BookingPage(props: {
     <main className="min-h-screen bg-white text-neutral-950">
       <JsonLd data={graph} />
 
-      <section className="bg-neutral-950 px-6 py-28 text-white md:py-36">
-        <div className="reveal-up mx-auto max-w-5xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/45">
-            {copy.eyebrow}
-          </p>
-          <h1 className="font-serif text-5xl tracking-tight md:text-7xl">
-            {copy.title}
-          </h1>
-          <p className="mt-8 max-w-3xl text-lg leading-8 text-white/68">
-            {copy.intro}
-          </p>
+      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 px-6 text-white">
+        {headerImageUrl ? (
+          <Image
+            src={headerImageUrl}
+            alt={
+              locale === "hu"
+                ? "Richard Foto foglalás oldal header kép"
+                : "Richard Foto booking page header image"
+            }
+            fill
+            priority
+            sizes="100vw"
+            className="image-soft-motion object-cover opacity-68"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,255,255,0.16),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%)]" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/72 via-neutral-950/18 to-neutral-950/8" />
+        <div className="reveal-up relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-6xl pb-14 pt-24 md:pb-20 md:pt-28">
+          <div className="self-start">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/55">
+              {headerEyebrow}
+            </p>
+            <h1 className="max-w-4xl font-serif text-5xl leading-none tracking-tight md:text-7xl">
+              {headerTitle}
+            </h1>
+          </div>
+          <div className="self-end">
+            <p className="max-w-3xl border-l border-white/35 pl-5 text-lg leading-8 text-white/74">
+              {headerIntro}
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="overflow-hidden border-y border-neutral-200 bg-white py-5">
-        <div className="marquee-track flex gap-4 pr-4">
-          {[...serviceOptions, ...serviceOptions].map((service, index) => (
-            <a
-              key={`${service._id}-${index}`}
-              href={`#${service._id}`}
-              className="whitespace-nowrap border border-neutral-200 px-5 py-3 text-xs uppercase tracking-[0.18em] text-neutral-500 transition-colors hover:border-neutral-950 hover:text-neutral-950"
+      <section
+        aria-label={
+          locale === "hu"
+            ? "Magyarországi megyeszékhelyek"
+            : "Hungarian county seats"
+        }
+        className="overflow-hidden border-y border-neutral-200 bg-[#fbfaf7] py-4"
+      >
+        <div
+          className="marquee-track flex gap-3 pr-3"
+          style={{ animationDuration: "92s" }}
+        >
+          {[...hungarianCountySeats, ...hungarianCountySeats].map((city, index) => (
+            <span
+              key={`${city}-${index}`}
+              className="whitespace-nowrap border border-neutral-200 bg-white px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-neutral-500 md:text-xs"
             >
-              {service.title}
-            </a>
+              {city}
+            </span>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-14 md:py-20">
+        <section
+          aria-labelledby="booking-form-heading"
+          className="reveal-on-scroll bg-white"
+        >
+          <p className="mb-4 text-xs uppercase tracking-[0.3em] text-neutral-400">
+            {copy.formEyebrow}
+          </p>
+          <h2
+            id="booking-form-heading"
+            className="font-serif text-3xl tracking-tight"
+          >
+            {copy.formTitle}
+          </h2>
+          <div className="mt-6 grid gap-4 border-y border-neutral-200 bg-[#fbfaf7] p-5 text-sm leading-7 text-neutral-600 md:grid-cols-2 md:p-6">
+            <p>{copy.formLead}</p>
+            <p>{copy.trustNote}</p>
+          </div>
+          <div className="mt-8">
+            <BookingForm
+              key={selectedService?.title ?? "empty-booking-form"}
+              contactEmail={site.email}
+              serviceGroups={serviceGroups}
+              initialService={selectedService?.title ?? ""}
+              selectedTitle={copy.selectedTitle}
+              selectedFallback={copy.selectedFallback}
+              selectedFallbackText={copy.selectedFallbackText}
+              sideText={copy.sideText}
+              flowTitle={copy.flowTitle}
+              flowLead={copy.flowLead}
+              flowCards={copy.flowCards}
+            />
+          </div>
+        </section>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20 md:py-28">
@@ -189,106 +442,81 @@ export default async function BookingPage(props: {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {serviceOptions.map((service, index) => {
-            const isSelected = service._id === selectedService?._id;
+        <div className="mt-14 space-y-12">
+          {serviceGroups.map((group) => (
+            <div key={group.title}>
+              <h3 className="mb-4 text-xs uppercase tracking-[0.24em] text-neutral-400">
+                {group.title}
+              </h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {group.options.map((service, index) => {
+                  const isSelected = service._id === selectedService?._id;
 
-            return (
-              <Link
-                id={service._id}
-                key={service._id}
-                href={`/${locale}/booking?service=${service._id}#booking-form-heading`}
-                className={`group reveal-on-scroll border px-5 py-5 transition-all hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.08)] ${
-                  isSelected
-                    ? "border-neutral-950 bg-neutral-950 text-white"
-                    : "border-neutral-200 bg-white text-neutral-950 hover:border-neutral-950"
-                }`}
-              >
-                <span
-                  className={`block text-xs uppercase tracking-[0.24em] ${
-                    isSelected ? "text-white/55" : "text-neutral-400"
-                  }`}
-                >
-                  {isSelected
-                    ? copy.selectedLabel
-                    : String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="mt-6 block font-serif text-2xl leading-tight tracking-tight">
-                  {service.title}
-                </span>
-                <span
-                  className={`mt-5 block text-xs uppercase tracking-[0.18em] underline-offset-8 group-hover:underline ${
-                    isSelected ? "text-white/70" : "text-neutral-500"
-                  }`}
-                >
-                  {locale === "hu" ? "Ezzel kérek ajánlatot" : "Request this"}
-                </span>
-              </Link>
-            );
-          })}
+                  return (
+                    <Link
+                      id={service._id}
+                      key={service._id}
+                      href={`/${locale}/booking?service=${service._id}#booking-date`}
+                      className={`group reveal-on-scroll border px-5 py-5 transition-all hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.08)] ${
+                        isSelected
+                          ? "border-neutral-950 bg-neutral-950 text-white"
+                          : "border-neutral-200 bg-white text-neutral-950 hover:border-neutral-950"
+                      }`}
+                    >
+                      <span
+                        className={`block text-xs uppercase tracking-[0.24em] ${
+                          isSelected ? "text-white/55" : "text-neutral-400"
+                        }`}
+                      >
+                        {isSelected
+                          ? copy.selectedLabel
+                          : String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="mt-6 block font-serif text-2xl leading-tight tracking-tight">
+                        {service.title}
+                      </span>
+                      <span
+                        className={`mt-5 block text-xs uppercase tracking-[0.18em] underline-offset-8 group-hover:underline ${
+                          isSelected ? "text-white/70" : "text-neutral-500"
+                        }`}
+                      >
+                        {copy.continueLabel}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-14 px-6 pb-20 md:grid-cols-[0.8fr_1.2fr] md:pb-28">
-        <aside className="reveal-on-scroll">
-          <h2 className="font-serif text-3xl tracking-tight">
-            {copy.processTitle}
-          </h2>
-          <ol className="mt-8 space-y-5">
-            {copy.steps.map((step, index) => (
-              <li
-                key={step}
-                className="story-line relative border-t border-neutral-200 pt-5 text-neutral-600"
-              >
-                <span className="mb-3 block text-xs uppercase tracking-[0.2em] text-neutral-400">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-10 bg-neutral-50 p-6 text-sm leading-7 text-neutral-600">
-            <h3 className="font-serif text-2xl text-neutral-950">
-              {copy.sideTitle}
-            </h3>
-            <p className="mt-4">{copy.sideText}</p>
-          </div>
-          <div className="mt-10 border-t border-neutral-200 pt-8 text-sm leading-7 text-neutral-500">
-            <p>
-              <a href={`mailto:${site.email}`} className="hover:text-neutral-950">
-                {site.email}
-              </a>
-            </p>
-            <p>
-              <a href={site.phoneHref} className="hover:text-neutral-950">
-                {site.phone}
-              </a>
-            </p>
-          </div>
-        </aside>
-
-        <section
-          aria-labelledby="booking-form-heading"
-          className="reveal-on-scroll bg-white"
-        >
-          <p className="mb-4 text-xs uppercase tracking-[0.3em] text-neutral-400">
-            {copy.formEyebrow}
+      <section className="bg-neutral-950 px-6 py-20 text-center text-white md:py-24">
+        <div className="mx-auto max-w-3xl">
+          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-white/45">
+            {copy.bottomCtaEyebrow}
           </p>
-          <h2
-            id="booking-form-heading"
-            className="font-serif text-3xl tracking-tight"
-          >
-            {copy.formTitle}
+          <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+            {copy.bottomCtaTitle}
           </h2>
-          <div className="mt-8">
-            <BookingForm
-              key={selectedService?.title ?? "empty-booking-form"}
-              contactEmail={site.email}
-              services={serviceOptions}
-              initialService={selectedService?.title ?? ""}
-            />
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/65">
+            {copy.bottomCtaText}
+          </p>
+          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+            <a
+              href={`mailto:${site.email}`}
+              className="bg-white px-7 py-4 text-sm uppercase tracking-[0.18em] text-neutral-950 transition-colors hover:bg-neutral-200"
+            >
+              {copy.bottomCta}
+            </a>
+            <a
+              href={site.phoneHref}
+              className="border border-white/40 px-7 py-4 text-sm uppercase tracking-[0.18em] text-white transition-colors hover:bg-white hover:text-neutral-950"
+            >
+              {site.phone}
+            </a>
           </div>
-        </section>
+        </div>
       </section>
     </main>
   );

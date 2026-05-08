@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { absoluteUrl, locales, localizedPath, type Locale } from "@/lib/site";
+import { getActivePhotographyServices } from "@/lib/active-services";
+import { getServiceSlug } from "@/lib/service-slugs";
 
 type GallerySlug = {
   slug: string;
@@ -13,6 +15,7 @@ const staticRoutes = [
   "/gallery",
   "/services",
   "/about",
+  "/model",
   "/contact",
   "/booking",
   "/adatvedelmi-nyilatkozat",
@@ -27,11 +30,16 @@ function urlFor(locale: Locale, path: string) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const galleries = await client.fetch<GallerySlug[]>(
-    groq`*[_type == "gallery" && defined(slug.current)]{
+    groq`*[
+      _type == "gallery" &&
+      defined(slug.current) &&
+      (!defined(service->inactive) || service->inactive != true)
+    ]{
       "slug": slug.current,
       _updatedAt
     }`,
   );
+  const services = await getActivePhotographyServices();
 
   const staticEntries = locales.flatMap((locale) =>
     staticRoutes.map((path) => ({
@@ -52,5 +60,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticEntries, ...galleryEntries];
+  const serviceEntries = locales.flatMap((locale) =>
+    services.map((service) => ({
+      url: urlFor(locale, `/services/${getServiceSlug(service.id, locale)}`),
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: service.featuredSession ? 0.72 : 0.7,
+    })),
+  );
+
+  return [...staticEntries, ...galleryEntries, ...serviceEntries];
 }

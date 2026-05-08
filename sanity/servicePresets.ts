@@ -1,0 +1,71 @@
+export const featuredServicePresets = [
+  {
+    id: "service-personal-brand-starter",
+    serviceId: "personal-brand-starter",
+    title: "Personal Brand Starter",
+    order: -4,
+    anchor: "personal-brand-starter",
+    titleHu: "Personal Brand Starter",
+    titleEn: "Personal Brand Starter",
+    shortTitleHu: "Personal Brand",
+    shortTitleEn: "Personal Brand",
+    descriptionHu:
+      "Letisztult, természetes márkaképek weboldalhoz, LinkedInhez, bemutatkozó anyaghoz vagy új márkaindításhoz. Gyors, fókuszált induló csomag szakmai jelenléthez.",
+    descriptionEn:
+      "Clean, natural brand images for websites, LinkedIn, introductions or the beginning of a new brand chapter. A focused starter session for professional presence.",
+    ctaHu: "Márkaképeket kérek",
+    ctaEn: "Request brand images",
+    captionsHu: [
+      "Vállalkozói portré és szakmai jelenlét",
+      "Weboldalhoz, LinkedInhez és bemutatkozáshoz",
+    ],
+    captionsEn: [
+      "Founder portrait and professional presence",
+      "For websites, LinkedIn and introductions",
+    ],
+    keywordsHu: ["personal brand fotózás Budapest", "szakmai portré starter"],
+    keywordsEn: ["personal brand photography Budapest", "professional portrait starter"],
+  },
+  {
+    id: "service-lifestyle-story-session",
+    serviceId: "lifestyle-story-session",
+    title: "Lifestyle Story Session",
+    order: -3,
+    anchor: "lifestyle-story-session",
+    titleHu: "Lifestyle Story Session",
+    titleEn: "Lifestyle Story Session",
+    shortTitleHu: "Lifestyle Story",
+    shortTitleEn: "Lifestyle Story",
+    descriptionHu:
+      "Egy séta, otthoni fény, városi részlet vagy közös pillanat. Természetes képsorozat azoknak, akik nem merev portrékat, hanem évekkel később is visszahozható emléket szeretnének.",
+    descriptionEn:
+      "A walk, at-home light, city details or shared moments. A natural session for people who want a memory they can return to, not stiff portraits.",
+    ctaHu: "Lifestyle sorozatot kérek",
+    ctaEn: "Request a lifestyle story",
+    captionsHu: ["Természetes lifestyle történet", "Otthon, városban vagy közös pillanatban"],
+    captionsEn: ["Natural lifestyle story", "At home, in the city or in a shared moment"],
+    keywordsHu: ["lifestyle story session Budapest", "természetes lifestyle fotózás"],
+    keywordsEn: ["lifestyle story session Budapest", "natural lifestyle photography"],
+  },
+  {
+    id: "service-content-creator-day",
+    serviceId: "content-creator-day",
+    title: "Content Creator Day",
+    order: -2,
+    anchor: "content-creator-day",
+    titleHu: "Content Creator Day",
+    titleEn: "Content Creator Day",
+    shortTitleHu: "Content Creator",
+    shortTitleEn: "Content Creator",
+    descriptionHu:
+      "Egy vezetett fotózási nap, ahol több hétre előre gondolkodunk: portré, werk, részletek, social és webes felhasználás. Kifejezetten tartalomhoz és kampányokhoz.",
+    descriptionEn:
+      "A guided photography day planned ahead: portraits, werk moments, details, social content and web-ready imagery. Built especially for content and campaigns.",
+    ctaHu: "Tartalomnapot kérek",
+    ctaEn: "Request a content day",
+    captionsHu: ["Tartalom több hétre előre", "Portré, werk, részletek és social anyag"],
+    captionsEn: ["Content planned weeks ahead", "Portraits, werk, details and social assets"],
+    keywordsHu: ["content creator fotózás Budapest", "social media fotózás"],
+    keywordsEn: ["content creator photography Budapest", "social media photography"],
+  },
+] as const;

@@ -1,10 +1,14 @@
 import { absoluteUrl, localizedPath, site, type Locale } from "./site";
+import { getServiceSlug } from "./service-slugs";
 
 type LocalizedText = Record<Locale, string>;
 
 export type PhotographyService = {
   id: string;
   anchor: string;
+  imageServiceId?: string;
+  relatedServiceIds?: string[];
+  featuredSession?: boolean;
   title: LocalizedText;
   shortTitle: LocalizedText;
   description: LocalizedText;
@@ -14,122 +18,203 @@ export type PhotographyService = {
   keywords: Record<Locale, string[]>;
 };
 
-export const photographyServices: PhotographyService[] = [
+export const featuredSessionServices: PhotographyService[] = [
   {
-    id: "newborn",
-    anchor: "newborn-photography",
+    id: "personal-brand-starter",
+    anchor: "personal-brand-starter",
+    featuredSession: true,
     title: {
-      hu: "Újszülött fotózás",
-      en: "Newborn Photography",
+      hu: "Personal Brand Starter",
+      en: "Personal Brand Starter",
     },
     shortTitle: {
-      hu: "Újszülött",
-      en: "Newborn",
+      hu: "Personal Brand",
+      en: "Personal Brand",
     },
     description: {
-      hu: "Az első napok csendesek, törékenyek és nagyon gyorsan elmúlnak. Az újszülött fotózás nálam nem erőltetett pózokról szól, hanem az otthon melegéről, az apró mozdulatokról és arról a különös nyugalomról, amely csak az első hetekben létezik. Természetes fényben, türelemmel dolgozom, hogy a képek évek múlva is a valódi kezdet hangulatát őrizzék.",
-      en: "The first days are quiet, fragile and gone almost before you notice them. My newborn photography is not about forced posing, but about the warmth of home, tiny gestures and the rare stillness of the first weeks. I work patiently in natural light, preserving the beginning as it truly felt.",
+      hu: "Letisztult, természetes márkaképek weboldalhoz, LinkedInhez, bemutatkozó anyaghoz vagy új márkaindításhoz. Gyors, fókuszált induló csomag szakmai jelenléthez.",
+      en: "Clean, natural brand images for websites, LinkedIn, introductions or the beginning of a new brand chapter. A focused starter session for professional presence.",
     },
     captions: {
-      hu: [
-        "Újszülött életkép természetes fényben, Budapest",
-        "Csendes otthoni pillanat az első hetekből",
-      ],
-      en: [
-        "Newborn lifestyle moment in natural light, Budapest",
-        "Quiet at-home memory from the first weeks",
-      ],
+      hu: ["Vállalkozói portré és szakmai jelenlét", "Weboldalhoz, LinkedInhez és bemutatkozáshoz"],
+      en: ["Founder portrait and professional presence", "For websites, LinkedIn and introductions"],
     },
     alt: {
-      hu: "természetes újszülött fotózás Budapesten otthoni környezetben",
-      en: "natural newborn photography in Budapest at home",
+      hu: "personal brand starter fotózás Budapest szakmai portrékkal",
+      en: "personal brand starter photography Budapest with professional portraits",
     },
     cta: {
-      hu: "Újszülött fotózás egyeztetése",
-      en: "Plan a newborn session",
+      hu: "Márkaképeket kérek",
+      en: "Request brand images",
     },
     keywords: {
-      hu: ["újszülött fotózás Budapest", "természetes baba fotózás"],
-      en: ["newborn photography Budapest", "natural baby photography"],
+      hu: ["personal brand fotózás Budapest", "szakmai portré starter"],
+      en: ["personal brand photography Budapest", "professional portrait starter"],
     },
   },
   {
-    id: "maternity",
-    anchor: "maternity-photography",
+    id: "lifestyle-story-session",
+    anchor: "lifestyle-story-session",
+    featuredSession: true,
     title: {
-      hu: "Kismama fotózás",
-      en: "Maternity Photography",
+      hu: "Lifestyle Story Session",
+      en: "Lifestyle Story Session",
     },
     shortTitle: {
-      hu: "Kismama",
-      en: "Maternity",
+      hu: "Lifestyle Story",
+      en: "Lifestyle Story",
     },
     description: {
-      hu: "A várandósság egyszerre nagyon személyes és láthatóan ünnepi időszak. A kismama fotózás célja, hogy ne egy szerepet mutasson, hanem azt az erőt, finomságot és várakozást, amely ebben az időben benned van. Lehet városi séta, Duna-parti fény, otthoni csend vagy enteriőr; a ritmust mindig hozzád igazítom.",
-      en: "Pregnancy is intimate and quietly ceremonial at the same time. A maternity session should not show a role, but the strength, softness and anticipation you carry in this chapter. It can be a walk in the city, light by the Danube, the quiet of home or a refined interior; the rhythm always follows you.",
+      hu: "Egy séta, otthoni fény, városi részlet vagy közös ritmus. Természetes képsorozat azoknak, akik nem merev portrékat, hanem visszaidézhető hangulatot szeretnének.",
+      en: "A walk, at-home light, city details or shared rhythm. A natural session for people who want images that bring back a feeling rather than stiff portraits.",
+    },
+    captions: {
+      hu: ["Természetes lifestyle történet", "Otthon, városban vagy közös ritmusban"],
+      en: ["Natural lifestyle story", "At home, in the city or in a shared rhythm"],
+    },
+    alt: {
+      hu: "lifestyle story session Budapest természetes fotózás",
+      en: "lifestyle story session Budapest natural photography",
+    },
+    cta: {
+      hu: "Lifestyle sorozatot kérek",
+      en: "Request a lifestyle story",
+    },
+    keywords: {
+      hu: ["lifestyle story session Budapest", "természetes lifestyle fotózás"],
+      en: ["lifestyle story session Budapest", "natural lifestyle photography"],
+    },
+  },
+  {
+    id: "content-creator-day",
+    anchor: "content-creator-day",
+    featuredSession: true,
+    title: {
+      hu: "Content Creator Day",
+      en: "Content Creator Day",
+    },
+    shortTitle: {
+      hu: "Content Creator",
+      en: "Content Creator",
+    },
+    description: {
+      hu: "Egy vezetett fotózási nap, ahol több hétre előre gondolkodunk: portré, werk, részletek, social és webes felhasználás. Kifejezetten tartalomhoz és kampányokhoz.",
+      en: "A guided photography day planned ahead: portraits, werk moments, details, social content and web-ready imagery. Built especially for content and campaigns.",
+    },
+    captions: {
+      hu: ["Tartalom több hétre előre", "Portré, werk, részletek és social anyag"],
+      en: ["Content planned weeks ahead", "Portraits, werk, details and social assets"],
+    },
+    alt: {
+      hu: "content creator day fotózás Budapest social media tartalomhoz",
+      en: "content creator day photography Budapest for social media content",
+    },
+    cta: {
+      hu: "Tartalomnapot kérek",
+      en: "Request a content day",
+    },
+    keywords: {
+      hu: ["content creator fotózás Budapest", "social media fotózás"],
+      en: ["content creator photography Budapest", "social media photography"],
+    },
+  },
+];
+
+export const photographyServices: PhotographyService[] = [
+  {
+    id: "maternity",
+    anchor: "maternity-newborn-photography",
+    relatedServiceIds: ["maternity", "newborn"],
+    title: {
+      hu: "Kismama és újszülött fotózás",
+      en: "Maternity and Newborn Photography",
+    },
+    shortTitle: {
+      hu: "Kismama / újszülött",
+      en: "Maternity / newborn",
+    },
+    description: {
+      hu: "A kismama és újszülött fotózás együtt egy teljesebb kezdettörténet: a várakozás csendje, az első napok törékenysége és az otthon melege egy képi ívvé áll össze. Lehet külön kismama sorozat, külön újszülött fotózás, vagy tudatosan egymásra épített csomag, ha szeretnéd megőrizni ezt az időszakot a várandósságtól az első hetekig. Természetes fényben, türelemmel dolgozom, erőltetett pózok helyett finom, személyes és időtálló képekkel.",
+      en: "Maternity and newborn photography together create a fuller beginning story: the quiet anticipation, the fragile first days and the warmth of home become one visual arc. It can be a maternity session, a newborn session, or a carefully connected package if you want to preserve this chapter from pregnancy to the first weeks. I work patiently in natural light, focusing on personal, timeless images instead of forced posing.",
     },
     captions: {
       hu: [
-        "Kismama portré lágy budapesti fényben",
-        "Várandósság története természetes, filmes hangulatban",
+        "Kismama és újszülött történet természetes fényben",
+        "Várandósságtól az első hetekig, finom filmes hangulatban",
       ],
       en: [
-        "Maternity portrait in soft Budapest light",
-        "Pregnancy story with a natural cinematic mood",
+        "Maternity and newborn story in natural light",
+        "From pregnancy to the first weeks with a soft cinematic mood",
       ],
     },
     alt: {
-      hu: "kismama fotózás Budapest természetes filmes hangulatban",
-      en: "maternity photography Budapest in a natural cinematic style",
+      hu: "kismama és újszülött fotózás Budapest természetes filmes hangulatban",
+      en: "maternity and newborn photography Budapest in a natural cinematic style",
     },
     cta: {
-      hu: "Kismama fotózás foglalása",
-      en: "Book a maternity session",
+      hu: "Kismama vagy újszülött fotózás foglalása",
+      en: "Book maternity or newborn photography",
     },
     keywords: {
-      hu: ["kismama fotózás Budapest", "várandós fotózás Budapest"],
-      en: ["maternity photography Budapest", "pregnancy photography Budapest"],
+      hu: [
+        "kismama fotózás Budapest",
+        "újszülött fotózás Budapest",
+        "várandós fotózás Budapest",
+        "természetes baba fotózás",
+      ],
+      en: [
+        "maternity photography Budapest",
+        "newborn photography Budapest",
+        "pregnancy photography Budapest",
+        "natural baby photography",
+      ],
     },
   },
   {
     id: "business-portrait",
-    anchor: "business-portrait-werk-headshot",
+    anchor: "werk-photography",
     title: {
-      hu: "Üzleti portré, werk és headshot fotózás",
-      en: "Business Portrait, Werk and Headshot Photography",
+      hu: "Werk fotózás",
+      en: "Werk Photography",
     },
     shortTitle: {
-      hu: "Üzleti portré / werk",
-      en: "Business portrait / werk",
+      hu: "Werk fotózás",
+      en: "Werk photography",
     },
     description: {
-      hu: "Egy jó üzleti portré nem merev, hanem pontos: megmutatja a szakmai jelenlétedet, de nem veszi el belőle az emberit. A werk fotózás Budapest kreatív, vállalkozói és céges közegeiben különösen erős eszköz, mert nem csak arcot ad a márkának, hanem folyamatot, figyelmet és hitelességet is. Headshot, LinkedIn portré, csapatfotó vagy személyes márkaanyag esetén is letisztult, használható képi világot építünk.",
-      en: "A strong business portrait is not stiff; it is precise. It shows your professional presence without removing the human part. Werk photography in Budapest is especially valuable for creatives, founders and companies because it gives a brand not only a face, but process, attention and credibility. Whether you need headshots, LinkedIn portraits, team imagery or personal brand content, we build a clean and useful visual language.",
+      hu: "A werk fotózás a színfalak mögötti munka vizuális dokumentációja: folyamatok, technikai részletek, alkotói döntések, kézmozdulatok, fények, eszközök és a háttérben történő koncentrált munka. Nem klasszikus portré kategória, hanem olyan képi anyag, amely megmutatja, hogyan készül valami, milyen figyelem van mögötte, és milyen hangulatból születik a végeredmény. Kreatív projektekhez, márkakommunikációhoz, kampányokhoz és webes tartalomhoz különösen erős.",
+      en: "Werk photography documents what happens behind the scenes: process, technical details, creative decisions, hands at work, light, tools and the focused effort behind the final result. It is not a classic portrait category, but visual material that shows how something is made, what kind of attention sits behind it and what atmosphere shapes the outcome. It is especially useful for creative projects, brand communication, campaigns and web content.",
     },
     captions: {
       hu: [
-        "Üzleti portré természetes fénnyel, Budapest",
         "Werk fotózás alkotói folyamat közben",
+        "Színfalak mögötti technikai részletek",
       ],
       en: [
-        "Business portrait with natural light, Budapest",
         "Werk photography during a real creative process",
+        "Behind-the-scenes technical details",
       ],
     },
     alt: {
-      hu: "werk fotózás Budapest üzleti portré és headshot természetes stílusban",
-      en: "werk photography Budapest business portrait and headshot in a natural style",
+      hu: "werk fotózás Budapest színfalak mögötti technikai részletekkel",
+      en: "werk photography Budapest with behind-the-scenes technical details",
     },
     cta: {
-      hu: "Üzleti portré egyeztetése",
-      en: "Plan business portraits",
+      hu: "Werk fotózás egyeztetése",
+      en: "Plan werk photography",
     },
     keywords: {
-      hu: ["werk fotózás Budapest", "üzleti portré fotózás", "headshot Budapest"],
+      hu: [
+        "werk fotózás Budapest",
+        "kulisszák mögötti fotózás",
+        "színfalak mögötti fotózás",
+        "márka werk fotózás",
+      ],
       en: [
         "werk photography Budapest",
-        "business portrait Budapest",
-        "headshot photography Budapest",
+        "behind the scenes photography Budapest",
+        "brand werk photography",
+        "creative process photography",
       ],
     },
   },
@@ -183,8 +268,8 @@ export const photographyServices: PhotographyService[] = [
       en: "Engagement / couples",
     },
     description: {
-      hu: "A páros fotózás akkor működik, ha nem kell szerepelnetek benne. Séta, beszélgetés, egymásra figyelés: ezekből születnek azok a képek, amelyek nem csak szépek, hanem felismerhetően ti vagytok. Jegyes fotózásnál különösen fontos, hogy a képek természetesek maradjanak, mégis legyen bennük egy finom, ünnepi várakozás.",
-      en: "Couples photography works best when you do not have to perform. A walk, a conversation, the way you notice each other: these are the moments that create images that are beautiful and unmistakably yours. For engagement sessions, I keep the photographs natural while preserving the quiet anticipation of what is coming.",
+      hu: "A páros fotózás akkor működik, ha nem kell szerepelnetek benne. Séta, beszélgetés, egymásra figyelés: ezekből születnek azok a képek, amelyek nem csak szépek, hanem felismerhetően ti vagytok. Jegyes fotózásnál különösen fontos, hogy a képek természetesek maradjanak, mégis legyen bennük egy finom, ünnepi várakozás. Esküvői fotózással együtt is tervezhető, ha szeretnétek, hogy az egymás felé vezető út és a nagy nap egy képi történetté álljon össze.",
+      en: "Couples photography works best when you do not have to perform. A walk, a conversation, the way you notice each other: these are the moments that create images that are beautiful and unmistakably yours. For engagement sessions, I keep the photographs natural while preserving the quiet anticipation of what is coming. It can also be planned together with wedding photography if you want the story leading to the day and the day itself to feel connected.",
     },
     captions: {
       hu: [
@@ -221,8 +306,8 @@ export const photographyServices: PhotographyService[] = [
       en: "Wedding",
     },
     description: {
-      hu: "Az esküvő napján a legfontosabb pillanatok sokszor nem akkor történnek, amikor mindenki a kamerába néz. Egy kézszorítás, egy félmosoly, egy szülő tekintete vagy a csend az igen előtt épp annyira része a történetnek, mint a nagy jelenetek. Esküvői fotósként diszkréten dolgozom, hogy a nap ritmusa megmaradjon, a képek pedig évek múlva is visszavigyenek oda.",
-      en: "On a wedding day, the most important moments often happen when nobody is looking at the camera. A hand held tightly, a half-smile, a parent's glance or the silence before the vows can carry as much meaning as the grand scenes. As a wedding photographer, I work discreetly so the day keeps its rhythm and the images can take you back years later.",
+      hu: "Az esküvő napján a legfontosabb pillanatok sokszor nem akkor történnek, amikor mindenki a kamerába néz. Egy kézszorítás, egy félmosoly, egy szülő tekintete vagy a csend az igen előtt épp annyira része a történetnek, mint a nagy jelenetek. Esküvői fotósként diszkréten dolgozom, hogy a nap ritmusa megmaradjon, a képek pedig évek múlva is visszavigyenek oda. Jegyes vagy páros sorozattal együtt is kérhető, így már a készülődés előtti időszakból is lehet egy természetes, személyes képi alapotok.",
+      en: "On a wedding day, the most important moments often happen when nobody is looking at the camera. A hand held tightly, a half-smile, a parent's glance or the silence before the vows can carry as much meaning as the grand scenes. As a wedding photographer, I work discreetly so the day keeps its rhythm and the images can take you back years later. It can also be paired with an engagement or couples session, so the time before the wedding becomes part of the same personal visual story.",
     },
     captions: {
       hu: [
@@ -363,40 +448,50 @@ export const photographyServices: PhotographyService[] = [
   },
   {
     id: "boudoir-branding",
-    anchor: "boudoir-intimate-personal-branding",
+    anchor: "dating-boost-boudoir",
     title: {
-      hu: "Boudoir, intim portré és personal branding fotózás",
-      en: "Boudoir, Intimate Portrait and Personal Branding Photography",
+      hu: "Dating Boost / Boudoir fotózás",
+      en: "Dating Boost / Boudoir Photography",
     },
     shortTitle: {
-      hu: "Boudoir / branding",
-      en: "Boudoir / branding",
+      hu: "Dating Boost / Boudoir",
+      en: "Dating Boost / Boudoir",
     },
     description: {
-      hu: "Az intim portré nem a túlzásról szól, hanem a bizalomról. Boudoir vagy personal branding fotózásnál olyan teret teremtek, ahol nem kell szerepet játszanod, mégis erős, elegáns és személyes képek születhetnek. A hangsúly a finom irányításon, a természetes testbeszéden és azon van, hogy a végeredmény valóban hozzád tartozzon.",
-      en: "Intimate portraiture is not about excess; it is about trust. For boudoir or personal branding photography, I create a space where you do not need to perform, yet the images can feel strong, elegant and deeply personal. The focus is on gentle direction, natural body language and a result that truly belongs to you.",
+      hu: "A Dating Boost / Boudoir irány azoknak szól, akik szeretnének magukról erős, ízléses és önazonos képeket társkereső profilhoz, személyes márkához vagy egyszerűen saját maguknak. Nem harsány és nem kellemetlenül direkt: inkább magabiztos, természetes, elegáns portréhangulat, finom vezetéssel és jó ritmussal.",
+      en: "The Dating Boost / Boudoir direction is for people who want confident, tasteful and recognisably personal images for a dating profile, personal brand or simply for themselves. It is not loud or overly direct: the mood is natural, elegant and assured, with gentle guidance and a calm rhythm.",
     },
     captions: {
       hu: [
-        "Boudoir portré elegáns, bizalmi hangulatban",
-        "Personal branding fotózás személyes történettel",
+        "Dating profilhoz és személyes márkához",
+        "Elegáns, természetes boudoir hangulat",
       ],
       en: [
-        "Boudoir portrait with an elegant atmosphere of trust",
-        "Personal branding photography with a personal story",
+        "For dating profiles and personal brands",
+        "Elegant, natural boudoir mood",
       ],
     },
     alt: {
-      hu: "boudoir fotózás Budapest intim portré és personal branding stílusban",
-      en: "boudoir photography Budapest intimate portrait and personal branding style",
+      hu: "dating boost és boudoir fotózás Budapest természetes elegáns portrékkal",
+      en: "dating boost and boudoir photography Budapest with natural elegant portraits",
     },
     cta: {
-      hu: "Személyes portré egyeztetése",
-      en: "Plan a personal portrait session",
+      hu: "Dating Boost / Boudoir egyeztetés",
+      en: "Plan Dating Boost / Boudoir",
     },
     keywords: {
-      hu: ["boudoir fotózás Budapest", "personal branding fotózás Budapest"],
-      en: ["boudoir photography Budapest", "personal branding photography Budapest"],
+      hu: [
+        "dating profil fotózás Budapest",
+        "boudoir fotózás Budapest",
+        "társkereső portré fotózás",
+        "elegáns portré fotózás Budapest",
+      ],
+      en: [
+        "dating profile photography Budapest",
+        "boudoir photography Budapest",
+        "dating portrait photography",
+        "elegant portrait photography Budapest",
+      ],
     },
   },
 ];
@@ -416,7 +511,7 @@ export const sharedFaqs: Record<Locale, Array<{ question: string; answer: string
     {
       question: "Mikor kapom meg a képeket?",
       answer:
-        "A legtöbb portré, lifestyle és családi sorozat 7-10 munkanapon belül készül el privát online galériában. Nagyobb eseményeknél az átadási időt előre egyeztetjük.",
+        "A legtöbb portré, lifestyle és családi sorozat maximum 7 munkanapon belül készül el privát online galériában. Nagyobb eseményeknél az átadási időt előre egyeztetjük.",
     },
   ],
   en: [
@@ -433,19 +528,25 @@ export const sharedFaqs: Record<Locale, Array<{ question: string; answer: string
     {
       question: "When will I receive the images?",
       answer:
-        "Most portrait, lifestyle and family sessions are delivered within 7-10 business days in a private online gallery. Larger events are scheduled individually.",
+        "Most portrait, lifestyle and family sessions are delivered within maximum 7 business days in a private online gallery. Larger events are scheduled individually.",
     },
   ],
 };
 
-export function serviceKeywords(locale: Locale) {
+export function serviceKeywords(
+  locale: Locale,
+  services: PhotographyService[] = photographyServices,
+) {
   return Array.from(
-    new Set(photographyServices.flatMap((service) => service.keywords[locale])),
+    new Set(services.flatMap((service) => service.keywords[locale])),
   );
 }
 
-export function serviceSchemaNodes(locale: Locale) {
-  return photographyServices.map((service) => ({
+export function serviceSchemaNodes(
+  locale: Locale,
+  services: PhotographyService[] = photographyServices,
+) {
+  return services.map((service) => ({
     "@type": "Service",
     "@id": `${site.url}/#service-${service.id}`,
     name: service.title[locale],
@@ -453,6 +554,6 @@ export function serviceSchemaNodes(locale: Locale) {
     provider: { "@id": `${site.url}/#photographer` },
     areaServed: { "@type": "City", name: "Budapest" },
     serviceType: service.keywords[locale],
-    url: absoluteUrl(`${localizedPath(locale, "/")}#${service.anchor}`),
+    url: absoluteUrl(localizedPath(locale, `/services/${getServiceSlug(service.id, locale)}`)),
   }));
 }

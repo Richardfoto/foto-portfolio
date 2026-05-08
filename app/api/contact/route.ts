@@ -1,34 +1,38 @@
-import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { escapeHtml, renderField } from "@/lib/email";
 import { validateContactPayload } from "@/lib/forms";
-
-let resend: Resend | null = null;
-
-function getResend() {
-  if (!process.env.RESEND_API_KEY) return null;
-  resend ??= new Resend(process.env.RESEND_API_KEY);
-  return resend;
-}
+import {
+  forwardLocalEmailRequest,
+  getContactEmail,
+  getResend,
+  getResendFromEmail,
+} from "@/lib/resend-config";
 
 export async function POST(request: Request) {
   try {
-    const validation = validateContactPayload(await request.json());
+    const payload = await request.json();
+    const validation = validateContactPayload(payload);
 
     if (!validation.ok) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     const resendClient = getResend();
-    if (!resendClient || !process.env.CONTACT_EMAIL) {
+    const contactEmail = getContactEmail();
+    if (!resendClient || !contactEmail) {
+      const forwarded = await forwardLocalEmailRequest("/api/contact", payload);
+      if (forwarded?.ok) {
+        return NextResponse.json({ success: true });
+      }
+
       console.error("CONTACT_EMAIL or RESEND_API_KEY is not configured");
       return NextResponse.json({ error: "CONFIG_ERROR" }, { status: 500 });
     }
 
     const { name, email, message } = validation.data;
     const { error } = await resendClient.emails.send({
-      from: "Richard Foto <onboarding@resend.dev>",
-      to: process.env.CONTACT_EMAIL,
+      from: getResendFromEmail(),
+      to: contactEmail,
       subject: `Új üzenet: ${name}`,
       replyTo: email,
       html: `

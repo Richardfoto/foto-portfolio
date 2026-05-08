@@ -1,9 +1,11 @@
-// app/gallery/page.tsx
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
 import { getTranslations } from "next-intl/server";
-import GalleryCard, { type GalleryCardProps } from "../components/GalleryCard";
+import GalleryWall, { type GalleryWallItem } from "./GalleryWall";
+import CameraSettingsTicker from "./CameraSettingsTicker";
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import {
   JsonLd,
   baseOrganizationSchema,
@@ -18,16 +20,103 @@ import {
   type Locale,
 } from "@/lib/site";
 import { serviceSchemaNodes, sharedFaqs } from "@/lib/photography-content";
+import { urlFor } from "@/sanity/lib/image";
+import AboutFeedbackForm from "../about/AboutFeedbackForm";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type LocaleParams = Promise<{ locale: string }>;
 
-const galleriesQuery = groq`*[_type == "gallery"] | order(_createdAt desc){
-  _id,
-  title,
-  category,
-  coverImage,
-  "slugCurrent": slug.current
+type GalleryWallDocument = {
+  titleHu?: string;
+  titleEn?: string;
+  leadHu?: string;
+  leadEn?: string;
+  heroImage?: Parameters<typeof urlFor>[0];
+  heroCaptionHu?: string;
+  heroCaptionEn?: string;
+  items?: Array<{
+    _key?: string;
+    active?: boolean;
+    image?: Parameters<typeof urlFor>[0];
+    size?: GalleryWallItem["size"];
+    storyTitleHu?: string;
+    storyTitleEn?: string;
+    storyHu?: string;
+    storyEn?: string;
+  }>;
+};
+
+const galleryWallQuery = groq`coalesce(
+  *[_id == "galleryWall"][0],
+  *[_type == "galleryWall" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  titleHu,
+  titleEn,
+  leadHu,
+  leadEn,
+  heroImage,
+  heroCaptionHu,
+  heroCaptionEn,
+  items[]{
+    _key,
+    active,
+    image,
+    size,
+    storyTitleHu,
+    storyTitleEn,
+    storyHu,
+    storyEn
+  }
 }`;
+
+function imageUrl(image: Parameters<typeof urlFor>[0] | undefined, width = 1600) {
+  if (!image) return null;
+  return urlFor(image)
+    .ignoreImageParams()
+    .width(width)
+    .fit("max")
+    .auto("format")
+    .quality(88)
+    .url();
+}
+
+function galleryWallTitle(value: string | undefined, locale: Locale) {
+  const title = value?.trim();
+  if (
+    !title ||
+    title === "A képek közötti ritmus" ||
+    title === "The rhythm between images" ||
+    title === "Örök emléket kapsz" ||
+    title === "You receive a lasting memory"
+  ) {
+    return locale === "hu" ? "Üdvözöllek a víziómban" : "Welcome to my vision";
+  }
+
+  return title;
+}
+
+function galleryWallLead(value: string | undefined, locale: Locale) {
+  const lead = value?.trim();
+  if (
+    !lead ||
+    lead ===
+      "Nem kategóriákat nézel, hanem hangulatokat: fényeket, mozdulatokat, arcokat, részleteket és kis történeteket." ||
+    lead ===
+      "Nem kategóriákat nézel, hanem emlékeket: fényeket, mozdulatokat, arcokat és részleteket, amelyek visszahoznak egy valódi pillanatot." ||
+    lead ===
+      "You are not browsing categories, but memories: light, movement, faces and details that bring back a real moment." ||
+    lead ===
+      "You are not browsing categories, but moods: light, movement, faces, details and small stories."
+  ) {
+    return locale === "hu"
+      ? "Ez a személyes válogatásom: képek, hangulatok és pillanatok, amelyek közel állnak hozzám. Ha megszólít valamelyik irány, megtaláljuk hozzá a te történeted saját atmoszféráját is."
+      : "This is my personal selection: images, moods and moments that feel close to me. If one of these directions speaks to you, we can find the atmosphere that belongs to your own story too.";
+  }
+
+  return lead;
+}
 
 export async function generateMetadata(props: {
   params: LocaleParams;
@@ -46,18 +135,6 @@ export async function generateMetadata(props: {
       locale === "hu"
         ? "Richard Foto galéria: természetes lifestyle, portré, családi, werk, esküvői és történetmesélő fotózás Budapesten."
         : "Richard Foto gallery: natural lifestyle, portrait, family, werk, wedding and storytelling photography in Budapest.",
-    keywords:
-      locale === "hu"
-        ? [
-            "fotó galéria Budapest",
-            "lifestyle fotózás Budapest",
-            "történetmesélő fotózás Budapest",
-          ]
-        : [
-            "photography gallery Budapest",
-            "lifestyle photography Budapest",
-            "storytelling photography Budapest",
-          ],
   });
 }
 
@@ -66,7 +143,46 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "hu";
   const t = await getTranslations({ locale, namespace: "gallery" });
 
-  const galleries = await client.fetch<GalleryCardProps[]>(galleriesQuery);
+  const wall = await client.fetch<GalleryWallDocument | null>(galleryWallQuery);
+
+  const wallItems = (wall?.items ?? [])
+    .filter((item) => item.active !== false && item.image)
+    .map((item, index) => {
+      const url = imageUrl(item.image, 1800);
+      if (!url) return null;
+
+      return {
+        id: item._key ?? `wall-${index}`,
+        imageUrl: url,
+        title:
+          locale === "hu"
+            ? item.storyTitleHu || "Képtörténet"
+            : item.storyTitleEn || item.storyTitleHu || "Image story",
+        story: locale === "hu" ? item.storyHu : item.storyEn || item.storyHu,
+        size: item.size ?? "medium",
+      } satisfies GalleryWallItem;
+    })
+    .filter(Boolean) as GalleryWallItem[];
+
+  const items = wallItems.slice(0, 6);
+  const heroImageUrl = imageUrl(wall?.heroImage, 2200) ?? items[0]?.imageUrl ?? null;
+  const title = galleryWallTitle(
+    locale === "hu" ? wall?.titleHu : wall?.titleEn || wall?.titleHu,
+    locale,
+  );
+  const lead = galleryWallLead(
+    locale === "hu" ? wall?.leadHu : wall?.leadEn || wall?.leadHu,
+    locale,
+  );
+  const heroCaption =
+    locale === "hu"
+      ? wall?.heroCaptionHu
+      : wall?.heroCaptionEn || wall?.heroCaptionHu;
+  const heroTitle =
+    locale === "hu" && title === "Üdvözöllek a víziómban"
+      ? "Üdvözöllek\na víziómban"
+      : title;
+
   const graph = schemaGraph([
     baseOrganizationSchema(locale),
     photographerSchema(locale),
@@ -87,35 +203,108 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
   ]);
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-[#f7f4ee] pt-20 text-neutral-950">
       <JsonLd data={graph} />
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <p className="text-xs tracking-[0.35em] uppercase text-zinc-500 mb-3">
-            OUR WORK
-          </p>
-          <h1 className="text-6xl md:text-7xl font-serif tracking-tight text-zinc-900">
-            {t("title")}
-          </h1>
-          <p className="mt-4 text-lg text-zinc-600 max-w-2xl mx-auto">
-            {t("subtitle") || "Időtlen pillanatok, amiket örökre megőrzünk"}
-          </p>
-        </div>
 
-        {/* Galéria grid – a javított GalleryCard-dal */}
-        {galleries.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {galleries.map((gallery) => (
-              <GalleryCard key={gallery._id} {...gallery} locale={locale} />
-            ))}
+      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 text-white">
+        {heroImageUrl && (
+          <Image
+            src={heroImageUrl}
+            alt={
+              locale === "hu"
+                ? "Richard Foto kiemelt galéria"
+                : "Richard Foto featured gallery"
+            }
+            fill
+            priority
+            sizes="100vw"
+            className="image-soft-motion object-contain p-4 opacity-100"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/62 via-black/10 to-transparent" />
+        <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-screen-xl px-4 pb-14 pt-12 md:pb-20 md:pt-14">
+          <div className="self-start">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
+              Love letter
+            </p>
+            <h1 className="max-w-3xl whitespace-pre-line font-serif text-5xl leading-none tracking-tight md:text-7xl">
+              {heroTitle}
+            </h1>
           </div>
+
+          <div className="mt-10 grid gap-8 self-end md:grid-cols-[0.95fr_1.05fr] md:items-end">
+            <div className="max-w-2xl">
+              {heroCaption && (
+                <p className="mb-5 border-l border-white/35 pl-4 text-xs uppercase leading-6 tracking-[0.18em] text-white/55">
+                  {heroCaption}
+                </p>
+              )}
+              <p className="text-lg leading-8 text-white/72">{lead}</p>
+            </div>
+            <div className="md:col-start-2">
+              <CameraSettingsTicker locale={locale} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-screen-xl px-4 py-16 md:py-24">
+        {items.length > 0 ? (
+          <GalleryWall items={items} locale={locale} />
         ) : (
-          <div className="text-center py-24 text-zinc-400">
+          <div className="py-24 text-center text-zinc-400">
             Még nincsenek feltöltve galériák.
           </div>
         )}
       </div>
+
+      <section className="bg-[#f7f4ee] px-4 pb-20 md:pb-28">
+        <div className="mx-auto grid max-w-screen-xl gap-10 border-t border-neutral-200 pt-14 md:grid-cols-[0.9fr_1.1fr] md:pt-20">
+          <div>
+            <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+              {locale === "hu" ? "Fotózás után" : "After the session"}
+            </p>
+            <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
+              {locale === "hu"
+                ? "Ha már van közös képünk, írhatsz róla pár őszinte mondatot."
+                : "If we already have a shared image, you can send a few honest words about it."}
+            </h2>
+            <p className="mt-6 max-w-xl text-sm leading-7 text-neutral-600">
+              {locale === "hu"
+                ? "A visszajelzésed emailben érkezik meg hozzám. Semmi nem kerül ki automatikusan a weboldalra; ha később idézném, pontosan látom, hogy név nélkül vagy keresztnévvel engedted."
+                : "Your feedback arrives by email. Nothing is published automatically on the website; if I later quote it, I will know whether you allowed it anonymously or with your first name."}
+            </p>
+          </div>
+          <div>
+            <AboutFeedbackForm contactEmail={site.email} locale={locale} />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-neutral-950 px-4 py-20 text-center text-white md:py-24">
+        <p className="mb-5 text-xs uppercase tracking-[0.3em] text-white/45">
+          {locale === "hu" ? "Következő lépés" : "Next step"}
+        </p>
+        <h2 className="mx-auto max-w-3xl font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+          {locale === "hu"
+            ? "Ha ilyen emléket szeretnél, innen induljunk."
+            : "If you want this kind of memory, this is where we begin."}
+        </h2>
+        <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            href={`/${locale}/services`}
+            className="bg-white px-7 py-4 text-sm uppercase tracking-[0.18em] text-neutral-950 transition-colors hover:bg-neutral-200"
+          >
+            {locale === "hu" ? "Szolgáltatások" : "Services"}
+          </Link>
+          <Link
+            href={`/${locale}/booking`}
+            className="border border-white/40 px-7 py-4 text-sm uppercase tracking-[0.18em] text-white transition-colors hover:bg-white hover:text-neutral-950"
+          >
+            {locale === "hu" ? "Foglalás" : "Booking"}
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

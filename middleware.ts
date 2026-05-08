@@ -1,15 +1,24 @@
-// middleware.ts
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 const intlMiddleware = createMiddleware({
   locales: ["hu", "en"],
   defaultLocale: "hu",
-  localePrefix: "always", // ← Ez fontos!
+  localePrefix: "always",
 });
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/hu";
+    return NextResponse.rewrite(url);
+  }
+
+  if (pathname === "/opengraph-image") {
+    return NextResponse.next();
+  }
 
   if (/^\/(hu|en)\/studio(?=\/|$)/.test(pathname)) {
     const url = request.nextUrl.clone();
@@ -26,8 +35,6 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all pathnames except for
-    // - … (files in the public folder)
     "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

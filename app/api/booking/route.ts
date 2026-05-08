@@ -1,34 +1,38 @@
-import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { escapeHtml, renderField } from "@/lib/email";
 import { validateBookingPayload } from "@/lib/forms";
-
-let resend: Resend | null = null;
-
-function getResend() {
-  if (!process.env.RESEND_API_KEY) return null;
-  resend ??= new Resend(process.env.RESEND_API_KEY);
-  return resend;
-}
+import {
+  forwardLocalEmailRequest,
+  getContactEmail,
+  getResend,
+  getResendFromEmail,
+} from "@/lib/resend-config";
 
 export async function POST(request: Request) {
   try {
-    const validation = validateBookingPayload(await request.json());
+    const payload = await request.json();
+    const validation = validateBookingPayload(payload);
 
     if (!validation.ok) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     const resendClient = getResend();
-    if (!resendClient || !process.env.CONTACT_EMAIL) {
+    const contactEmail = getContactEmail();
+    if (!resendClient || !contactEmail) {
+      const forwarded = await forwardLocalEmailRequest("/api/booking", payload);
+      if (forwarded?.ok) {
+        return NextResponse.json({ success: true });
+      }
+
       console.error("CONTACT_EMAIL or RESEND_API_KEY is not configured");
       return NextResponse.json({ error: "CONFIG_ERROR" }, { status: 500 });
     }
 
     const { name, email, phone, service, date, message } = validation.data;
     const { error } = await resendClient.emails.send({
-      from: "Richard Foto <onboarding@resend.dev>",
-      to: process.env.CONTACT_EMAIL,
+      from: getResendFromEmail(),
+      to: contactEmail,
       subject: `Új foglalás: ${name} - ${service}`,
       replyTo: email,
       html: `

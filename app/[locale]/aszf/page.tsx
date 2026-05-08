@@ -1,4 +1,3 @@
-// app/[locale]/aszf/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -145,7 +144,7 @@ export default async function Terms(props: { params: LocaleParams }) {
               </h2>
               <p>
                 A szerkesztett képek privát online galérián keresztül kerülnek
-                átadásra a fotózástól számított 7–10 munkanapon belül. A galéria
+                átadásra a fotózástól számított maximum 7 munkanapon belül. A galéria
                 60 napig érhető el; ez idő alatt az ügyfél letöltheti a képeket.
               </p>
             </section>
@@ -184,10 +183,10 @@ export default async function Terms(props: { params: LocaleParams }) {
               <p>
                 Kérdés esetén:{" "}
                 <a
-                  href="mailto:hello@richardfoto.hu"
+                  href="mailto:richardfoto@icloud.com"
                   className="underline hover:text-neutral-900 transition-colors"
                 >
-                  hello@richardfoto.hu
+                  richardfoto@icloud.com
                 </a>
               </p>
             </section>
@@ -255,7 +254,7 @@ export default async function Terms(props: { params: LocaleParams }) {
               </h2>
               <p>
                 Edited images are delivered via a private online gallery within
-                7–10 business days of the session. The gallery remains
+                maximum 7 business days of the session. The gallery remains
                 accessible for 60 days, during which the client may download all
                 images.
               </p>
@@ -294,10 +293,10 @@ export default async function Terms(props: { params: LocaleParams }) {
               <p>
                 For any questions:{" "}
                 <a
-                  href="mailto:hello@richardfoto.hu"
+                  href="mailto:richardfoto@icloud.com"
                   className="underline hover:text-neutral-900 transition-colors"
                 >
-                  hello@richardfoto.hu
+                  richardfoto@icloud.com
                 </a>
               </p>
             </section>
