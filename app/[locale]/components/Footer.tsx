@@ -14,7 +14,7 @@ export default function Footer({ locale }: FooterProps) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
           <div>
             <p className="text-2xl font-serif tracking-tight">Richard Foto</p>
-            <p className="text-sm text-neutral-400 mt-1">
+            <p className="text-sm text-neutral-500 mt-1">
               {isHu
                 ? "Budapesti fotós • Azóta: 2015"
                 : "Budapest photographer • Since 2015"}
@@ -88,7 +88,7 @@ export default function Footer({ locale }: FooterProps) {
 
         <hr className="border-neutral-100 mb-8" />
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-neutral-400">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-neutral-500">
           <p>
             © {new Date().getFullYear()} Richard Foto.{" "}
             {isHu ? "Minden jog fenntartva." : "All rights reserved."}
@@ -97,19 +97,19 @@ export default function Footer({ locale }: FooterProps) {
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <Link
               href={`/${locale}/adatvedelmi-nyilatkozat`}
-              className="hover:text-neutral-700 transition-colors"
+              className="hover:text-neutral-900 transition-colors"
             >
               {isHu ? "Adatvédelmi Nyilatkozat" : "Privacy Policy"}
             </Link>
             <Link
               href={`/${locale}/aszf`}
-              className="hover:text-neutral-700 transition-colors"
+              className="hover:text-neutral-900 transition-colors"
             >
               {isHu ? "Általános Szerződési Feltételek" : "Terms & Conditions"}
             </Link>
             <Link
               href={`/${locale}/cookie-politika`}
-              className="hover:text-neutral-700 transition-colors"
+              className="hover:text-neutral-900 transition-colors"
             >
               {isHu ? "Cookie Politika" : "Cookie Policy"}
             </Link>

@@ -11,6 +11,7 @@ export type BookingPayload = {
   service: string;
   date?: string;
   message?: string;
+  locale?: "hu" | "en";
 };
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,6 +52,8 @@ export function validateBookingPayload(input: unknown) {
   const service = normalizeString(payload.service);
   const date = normalizeString(payload.date);
   const message = normalizeString(payload.message);
+  const rawLocale = normalizeString(payload.locale);
+  const locale = rawLocale === "en" ? "en" : "hu";
 
   if (!name || !email || !service) {
     return { ok: false as const, error: "MISSING_FIELDS" };
@@ -73,7 +76,6 @@ export function validateBookingPayload(input: unknown) {
 
   return {
     ok: true as const,
-    data: { name, email, phone, service, date, message } satisfies BookingPayload,
+    data: { name, email, phone, service, date, message, locale } satisfies BookingPayload,
   };
 }
-

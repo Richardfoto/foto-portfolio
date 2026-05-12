@@ -24,22 +24,13 @@ export default function FeaturedRotator({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const featuredWithImages = featured.filter((item): item is ItemWithImage =>
-    Boolean(item.coverImage),
-  );
+  const selectedImages = (
+    featured.length ? featured : gallery
+  )
+    .filter((item): item is ItemWithImage => Boolean(item.coverImage))
+    .slice(0, 2);
 
-  const allImages: ItemWithImage[] = [
-    ...featuredWithImages,
-    ...gallery.filter(
-      (item): item is ItemWithImage =>
-        Boolean(item.coverImage) &&
-        !featuredWithImages.some(
-          (featuredItem) => featuredItem._id === item._id,
-        ),
-    ),
-  ];
-
-  if (!featuredWithImages.length || !allImages.length) return null;
+  if (!selectedImages.length) return null;
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -49,17 +40,17 @@ export default function FeaturedRotator({
   const closeLightbox = () => setLightboxOpen(false);
 
   const goToPrev = () => {
-    setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+    setLightboxIndex((prev) => (prev === 0 ? selectedImages.length - 1 : prev - 1));
   };
 
   const goToNext = () => {
-    setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+    setLightboxIndex((prev) => (prev === selectedImages.length - 1 ? 0 : prev + 1));
   };
 
   return (
     <>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
-        {featuredWithImages.slice(0, 2).map((item, index) => {
+        {selectedImages.map((item, index) => {
           const imageUrl = urlFor(item.coverImage)
             .ignoreImageParams()
             .width(2000)
@@ -105,7 +96,7 @@ export default function FeaturedRotator({
         })}
       </div>
 
-      {lightboxOpen && allImages[lightboxIndex] && (
+      {lightboxOpen && selectedImages[lightboxIndex] && (
         <div
           className="fixed inset-0 z-100 flex items-center justify-center bg-black/95"
           onClick={(e) => {
@@ -124,14 +115,14 @@ export default function FeaturedRotator({
 
             <div className="relative h-[80vh] w-full max-w-6xl">
               <Image
-                src={urlFor(allImages[lightboxIndex].coverImage)
+                src={urlFor(selectedImages[lightboxIndex].coverImage)
                   .ignoreImageParams()
                   .width(2000)
                   .fit("max")
                   .format("webp")
                   .quality(90)
                   .url()}
-                alt={allImages[lightboxIndex].title}
+                alt={selectedImages[lightboxIndex].title}
                 fill
                 sizes="100vw"
                 className="object-contain"
@@ -139,7 +130,7 @@ export default function FeaturedRotator({
             </div>
 
             <p className="mt-6 text-center text-lg text-white">
-              {allImages[lightboxIndex].title}
+              {selectedImages[lightboxIndex].title}
             </p>
 
             <div className="absolute inset-y-0 left-0 flex items-center">

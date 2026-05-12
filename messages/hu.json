@@ -62,7 +62,7 @@
     "send": "Érdeklődést küldök",
     "sending": "Küldés...",
     "successTitle": "Köszönöm!",
-    "successMessage": "Megérkezett hozzám az érdeklődésed. Általában 1-2 munkanapon belül válaszolok.",
+    "successMessage": "Megérkezett hozzám az érdeklődésed, és küldtem róla egy automatikus visszaigazoló emailt is. Hamarosan felveszem veled a kapcsolatot.",
     "validationError": "Kérlek, válassz szolgáltatást, session csomagot, jövőbeli időpontot, és add meg az elérhetőséged.",
     "error": "Hiba történt, próbáld újra."
   },

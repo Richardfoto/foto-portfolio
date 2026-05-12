@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import type { SanityImageSource } from "@sanity/image-url";
 import { groq } from "next-sanity";
 import BookingForm from "./BookingForm";
@@ -86,16 +85,11 @@ const bookingCopy = {
         text: "Add meg, hová válaszolhatok, majd küldd el az érdeklődést.",
       },
     ],
-    chooserTitle: "1. Válaszd ki, milyen történettel érkezel.",
-    chooserLead:
-      "A választási lehetőségek gyors útvonalak. Kattints arra, ami most a legközelebb áll hozzád, és az űrlapban már előkészítve jelenik meg.",
-    selectedLabel: "Kiválasztva",
-    continueLabel: "Kiválasztom",
     selectedTitle: "Kiválasztott irány",
     selectedFallback: "Még nincs kiválasztva szolgáltatás",
     selectedFallbackText:
       "Válassz egy irányt fent, vagy hagyd üresen és az űrlapban kézzel add meg.",
-    homeGroup: "Főoldali kiemelt ajánlatok",
+    homeGroup: "Kiemelt fotózási irányok",
     servicesGroup: "Szolgáltatások",
     giftGroup: "Ajándék",
     giftVoucher: "Ajándékutalvány",
@@ -161,16 +155,11 @@ const bookingCopy = {
         text: "Add where I can reply, then send the inquiry.",
       },
     ],
-    chooserTitle: "1. Choose the story you are arriving with.",
-    chooserLead:
-      "These options are faster routes into the right conversation. Choose the one that feels closest right now, and the form will open with it already prepared.",
-    selectedLabel: "Selected",
-    continueLabel: "Select this",
     selectedTitle: "Selected direction",
     selectedFallback: "No service selected yet",
     selectedFallbackText:
       "Choose a direction above, or leave it open and select one manually in the form.",
-    homeGroup: "Featured homepage offers",
+    homeGroup: "Featured photography directions",
     servicesGroup: "Services",
     giftGroup: "Gift",
     giftVoucher: "Gift voucher",
@@ -425,70 +414,6 @@ export default async function BookingPage(props: {
             />
           </div>
         </section>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-        <div className="reveal-on-scroll grid gap-10 md:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
-              {locale === "hu" ? "Első lépés" : "First step"}
-            </p>
-            <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
-              {copy.chooserTitle}
-            </h2>
-          </div>
-          <p className="self-end text-lg leading-8 text-neutral-600">
-            {copy.chooserLead}
-          </p>
-        </div>
-
-        <div className="mt-14 space-y-12">
-          {serviceGroups.map((group) => (
-            <div key={group.title}>
-              <h3 className="mb-4 text-xs uppercase tracking-[0.24em] text-neutral-400">
-                {group.title}
-              </h3>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {group.options.map((service, index) => {
-                  const isSelected = service._id === selectedService?._id;
-
-                  return (
-                    <Link
-                      id={service._id}
-                      key={service._id}
-                      href={`/${locale}/booking?service=${service._id}#booking-date`}
-                      className={`group reveal-on-scroll border px-5 py-5 transition-all hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.08)] ${
-                        isSelected
-                          ? "border-neutral-950 bg-neutral-950 text-white"
-                          : "border-neutral-200 bg-white text-neutral-950 hover:border-neutral-950"
-                      }`}
-                    >
-                      <span
-                        className={`block text-xs uppercase tracking-[0.24em] ${
-                          isSelected ? "text-white/55" : "text-neutral-400"
-                        }`}
-                      >
-                        {isSelected
-                          ? copy.selectedLabel
-                          : String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span className="mt-6 block font-serif text-2xl leading-tight tracking-tight">
-                        {service.title}
-                      </span>
-                      <span
-                        className={`mt-5 block text-xs uppercase tracking-[0.18em] underline-offset-8 group-hover:underline ${
-                          isSelected ? "text-white/70" : "text-neutral-500"
-                        }`}
-                      >
-                        {copy.continueLabel}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="bg-neutral-950 px-6 py-20 text-center text-white md:py-24">

@@ -162,6 +162,7 @@ export default function BookingForm({
           service: `${service.trim()} - ${sessionPackage.trim()}`,
           date,
           message: note.trim(),
+          locale,
         }),
       });
 

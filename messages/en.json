@@ -62,7 +62,7 @@
     "send": "Send inquiry",
     "sending": "Sending...",
     "successTitle": "Thank you!",
-    "successMessage": "Your inquiry has arrived. I usually reply within 1-2 business days.",
+    "successMessage": "Your inquiry has arrived, and I also sent you an automatic confirmation email. I will get back to you soon.",
     "validationError": "Please choose a service, session package, future date and add your contact details.",
     "error": "Something went wrong, please try again."
   },

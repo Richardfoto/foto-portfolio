@@ -383,13 +383,14 @@ function getSanityImageUrl(
   image: SanityImageSource | undefined,
   width: number,
   height?: number,
+  quality = 84,
 ) {
   if (!image) return null;
   const builder = urlFor(image)
     .ignoreImageParams()
     .width(width)
     .format("webp")
-    .quality(88);
+    .quality(quality);
   return height ? builder.height(height).fit("max").url() : builder.url();
 }
 
@@ -430,13 +431,15 @@ export default async function Home(props: { params: LocaleParams }) {
 
   const heroImageUrl = getSanityImageUrl(
     hero?.image ?? hero?.images?.[0],
-    2200,
-    1300,
+    1600,
+    1000,
+    69,
   );
   const aboutImageUrl = getSanityImageUrl(
     about?.aboutImage ?? about?.profileImage,
     900,
     1100,
+    84,
   );
   const galleryImages = localizedGallery.filter((item) => item.coverImage);
   const sessionImages: Record<string, SanityImageSource | undefined> = {
@@ -479,6 +482,7 @@ export default async function Home(props: { params: LocaleParams }) {
             }
             fill
             priority
+            fetchPriority="high"
             sizes="100vw"
             className="image-soft-motion object-contain p-4 opacity-70"
           />
@@ -516,7 +520,7 @@ export default async function Home(props: { params: LocaleParams }) {
 
       <section className="reveal-on-scroll mx-auto grid max-w-6xl gap-14 px-6 py-24 md:grid-cols-[0.95fr_1.05fr] md:py-32">
         <div>
-          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
             {site.name}
           </p>
           <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
@@ -572,7 +576,7 @@ export default async function Home(props: { params: LocaleParams }) {
           <div className="mt-16 grid gap-5 lg:grid-cols-3">
             {copy.trendingSessions.map((session, index) => {
               const image = sessionImages[session.id] ?? galleryImages[index]?.coverImage;
-              const imageUrl = getSanityImageUrl(image, 1200, 1300);
+              const imageUrl = getSanityImageUrl(image, 1000, 1200, 82);
               const isFeature = index === 0;
               const titleId = `trending-${session.id}`;
               const imageContext =
@@ -600,8 +604,8 @@ export default async function Home(props: { params: LocaleParams }) {
                         fill
                         sizes={
                           isFeature
-                            ? "(max-width: 1024px) 100vw, 62vw"
-                            : "(max-width: 1024px) 100vw, 31vw"
+                            ? "(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(100vw - 48px), 744px"
+                            : "(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(100vw - 48px), 360px"
                         }
                         className="image-soft-motion object-contain p-2 opacity-80"
                       />
@@ -672,7 +676,7 @@ export default async function Home(props: { params: LocaleParams }) {
         >
           <div className="mx-auto max-w-5xl">
             <div className="mb-12 text-center">
-              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
                 {locale === "hu" ? "Válogatott munkák" : "Selected work"}
               </p>
               <h2 className="font-serif text-4xl tracking-tight md:text-6xl">
@@ -736,7 +740,7 @@ export default async function Home(props: { params: LocaleParams }) {
                 key={step.title}
                 className="reveal-on-scroll border-t border-white/15 pt-6"
               >
-                <p className="mb-8 text-xs uppercase tracking-[0.28em] text-white/35">
+                <p className="mb-8 text-xs uppercase tracking-[0.28em] text-white/55">
                   {String(index + 1).padStart(2, "0")}
                 </p>
                 <h3 className="font-serif text-2xl">{step.title}</h3>
@@ -753,7 +757,7 @@ export default async function Home(props: { params: LocaleParams }) {
         <div className="reveal-on-scroll mx-auto max-w-6xl">
           <div className="grid gap-12 md:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
                 {locale === "hu" ? "Értékek" : "Values"}
               </p>
               <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
@@ -791,7 +795,7 @@ export default async function Home(props: { params: LocaleParams }) {
       <section className="bg-neutral-100 px-6 py-24 md:py-32">
         <div className="reveal-on-scroll mx-auto grid max-w-6xl gap-10 md:grid-cols-[1fr_0.8fr]">
           <div>
-            <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+            <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
               {locale === "hu" ? "Ajándék" : "Gift"}
             </p>
             <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
@@ -816,7 +820,7 @@ export default async function Home(props: { params: LocaleParams }) {
         <div className="mx-auto max-w-6xl">
           <div className="reveal-on-scroll grid gap-10 md:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-400">
+              <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
                 {copy.servicesEyebrow}
               </p>
               <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
@@ -837,7 +841,7 @@ export default async function Home(props: { params: LocaleParams }) {
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6">
                   <div className="grid gap-4 md:grid-cols-[9rem_1fr] md:items-baseline">
-                    <span className="text-xs uppercase tracking-[0.24em] text-neutral-400">
+                    <span className="text-xs uppercase tracking-[0.24em] text-neutral-500">
                       {String(index + 1).padStart(2, "0")} / {activeServices.length}
                     </span>
                     <h3 className="font-serif text-2xl leading-tight tracking-tight md:text-4xl">
@@ -857,7 +861,7 @@ export default async function Home(props: { params: LocaleParams }) {
                     {service.description[locale]}
                   </p>
                   <div>
-                    <h4 className="text-xs uppercase tracking-[0.22em] text-neutral-400">
+                    <h4 className="text-xs uppercase tracking-[0.22em] text-neutral-500">
                       {copy.captionsLabel}
                     </h4>
                     <ul className="mt-4 space-y-3 text-sm leading-6 text-neutral-500">
