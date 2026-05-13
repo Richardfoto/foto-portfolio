@@ -195,6 +195,763 @@ body {
   transform: rotate(45deg);
 }
 
+.site-shell:has(.fm-root)::before,
+.site-shell:has(.fm-root) > nav,
+.site-shell:has(.fm-root) > footer {
+  display: none;
+}
+
+.site-shell:has(.fm-root) #main-content {
+  min-height: 100svh;
+}
+
+body:has(.fm-root) {
+  background: #090806;
+  overflow-x: hidden;
+}
+
+.fm-root {
+  --fm-background: #090806;
+  --fm-paper: #fff8e8;
+  --fm-ink: #090806;
+  --fm-ash: #b4aa98;
+  --fm-ember: #d75330;
+  --fm-moss: #8b8d67;
+
+  position: relative;
+  min-height: 100svh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(215, 83, 48, 0.22), transparent 26rem),
+    radial-gradient(circle at 82% 8%, rgba(139, 141, 103, 0.16), transparent 30rem),
+    var(--fm-background);
+  color: var(--fm-paper);
+  font-family: var(--font-inter), Arial, sans-serif;
+}
+
+.fm-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.15;
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.fm-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fm-image-cover {
+  object-fit: cover;
+}
+
+.fm-cursor-orb {
+  position: fixed;
+  z-index: 70;
+  left: 0;
+  top: 0;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 999px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(215, 83, 48, 0.22), transparent 68%);
+  filter: blur(10px);
+  mix-blend-mode: screen;
+}
+
+.fm-chapter-nav {
+  position: fixed;
+  z-index: 90;
+  inset: 0 auto 0 0;
+  width: 13rem;
+  padding: 1.35rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(245, 239, 227, 0.12);
+  color: var(--fm-paper);
+  mix-blend-mode: difference;
+}
+
+.fm-brand {
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: 1.45rem;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+
+.fm-chapter-nav div {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.fm-chapter-nav a:not(.fm-brand) {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  align-items: center;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245, 239, 227, 0.58);
+  transition: color 0.35s ease;
+}
+
+.fm-chapter-nav a:not(.fm-brand):hover {
+  color: var(--fm-paper);
+}
+
+.fm-hero {
+  position: relative;
+  min-height: 100svh;
+  padding-left: 12.4rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+}
+
+.fm-hero-image,
+.fm-hero-vignette {
+  position: absolute;
+  inset: 0;
+}
+
+.fm-hero-image {
+  opacity: 0.58;
+  will-change: transform;
+}
+
+.fm-hero-vignette {
+  background:
+    linear-gradient(90deg, rgba(9, 8, 6, 0.95), rgba(9, 8, 6, 0.1) 42%, rgba(9, 8, 6, 0.95)),
+    linear-gradient(0deg, rgba(9, 8, 6, 0.92), transparent 38%, rgba(9, 8, 6, 0.72));
+}
+
+.fm-hero-content {
+  position: relative;
+  z-index: 2;
+  width: min(76vw, 86rem);
+  padding: 5.5rem 4rem 5.5rem 3rem;
+}
+
+.fm-eyebrow,
+.fm-section-heading p,
+.fm-manifesto-text p,
+.fm-film-panel p,
+.fm-frame-process-heading p,
+.fm-frame-process-card p,
+.fm-booking p {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(245, 239, 227, 0.58);
+}
+
+.fm-hero h1 {
+  margin-top: 1.3rem;
+  max-width: 78rem;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(4.1rem, 10.4vw, 13rem);
+  line-height: 0.79;
+  letter-spacing: -0.085em;
+  color: var(--fm-paper);
+}
+
+.fm-line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.fm-hero-word {
+  display: block;
+}
+
+.fm-hero-lead {
+  margin-top: 2rem;
+  max-width: 34rem;
+  font-size: clamp(1.08rem, 1.3vw, 1.45rem);
+  line-height: 1.55;
+  color: rgba(245, 239, 227, 0.74);
+}
+
+.fm-scroll-note {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 3;
+  display: grid;
+  gap: 0.35rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 239, 227, 0.72);
+}
+
+.fm-manifesto {
+  position: relative;
+  min-height: 120svh;
+  padding: 18rem 5vw 10rem 17.2rem;
+  overflow: clip;
+}
+
+.fm-manifesto-text {
+  position: relative;
+  z-index: 2;
+  max-width: 56rem;
+}
+
+.fm-manifesto h2,
+.fm-section-heading h2,
+.fm-booking h2 {
+  margin-top: 1rem;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(3.5rem, 8vw, 10rem);
+  line-height: 0.86;
+  letter-spacing: -0.08em;
+}
+
+.fm-manifesto-text span,
+.fm-section-heading span {
+  display: block;
+  margin-top: 2rem;
+  max-width: 38rem;
+  font-size: clamp(1.1rem, 1.5vw, 1.45rem);
+  line-height: 1.7;
+  color: rgba(245, 239, 227, 0.68);
+}
+
+.fm-magnetic-image {
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 2.4rem 7rem rgba(0, 0, 0, 0.35);
+}
+
+.fm-magnetic-image img {
+  transition:
+    transform 1.1s cubic-bezier(0.215, 0.61, 0.355, 1),
+    filter 1.1s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.fm-magnetic-image:hover img {
+  transform: scale(1.07);
+  filter: saturate(1.12) contrast(1.04);
+}
+
+.fm-manifesto-image {
+  position: absolute;
+  right: 4.5vw;
+  top: 12rem;
+  width: min(32vw, 36rem);
+  aspect-ratio: 3 / 4;
+  transform: rotate(2.5deg);
+  border: 1px solid rgba(245, 239, 227, 0.18);
+  padding: 0.8rem;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.08), rgba(9, 8, 6, 0.65)),
+    #11100e;
+}
+
+.fm-manifesto-image::before {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid rgba(245, 239, 227, 0.14);
+  pointer-events: none;
+}
+
+.fm-manifesto-image::after {
+  content: "FRAME / WORK / LIGHT";
+  position: absolute;
+  left: 1.1rem;
+  bottom: 0.9rem;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(245, 239, 227, 0.62);
+  mix-blend-mode: screen;
+}
+
+.fm-manifesto-image img {
+  padding: 0.5rem;
+}
+
+.fm-manifesto-ring {
+  position: absolute;
+  left: 18rem;
+  bottom: 8rem;
+  width: 29rem;
+  height: 29rem;
+  border: 1px solid rgba(245, 239, 227, 0.22);
+  border-radius: 999px;
+}
+
+.fm-frame-process-heading {
+  position: relative;
+  z-index: 2;
+  margin-top: 8rem;
+  max-width: 44rem;
+}
+
+.fm-frame-process-heading h3 {
+  margin-top: 0.8rem;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(2.8rem, 5.4vw, 6.6rem);
+  line-height: 0.86;
+  letter-spacing: -0.075em;
+}
+
+.fm-frame-process-heading span {
+  display: block;
+  margin-top: 1.4rem;
+  font-size: 1.08rem;
+  line-height: 1.65;
+  color: rgba(245, 239, 227, 0.68);
+}
+
+.fm-frame-process {
+  position: relative;
+  z-index: 2;
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 76rem;
+  border-top: 1px solid rgba(245, 239, 227, 0.16);
+  border-left: 1px solid rgba(245, 239, 227, 0.16);
+}
+
+.fm-frame-process-card {
+  min-height: 18rem;
+  padding: 1.6rem;
+  border-right: 1px solid rgba(245, 239, 227, 0.16);
+  border-bottom: 1px solid rgba(245, 239, 227, 0.16);
+  background: rgba(9, 8, 6, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.fm-frame-process-card h3 {
+  margin-top: 4.2rem;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(1.85rem, 2.7vw, 3.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+.fm-frame-process-card span {
+  display: block;
+  margin-top: 1.2rem;
+  line-height: 1.55;
+  color: rgba(245, 239, 227, 0.66);
+}
+
+.fm-horizontal-stage {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--fm-paper);
+  color: var(--fm-ink);
+}
+
+.fm-horizontal-track {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  will-change: transform;
+}
+
+.fm-film-panel {
+  width: 92vw;
+  min-width: 92vw;
+  height: 100svh;
+  padding: 6vw;
+  display: grid;
+  align-content: center;
+  position: relative;
+}
+
+.fm-film-panel p {
+  color: rgba(9, 8, 6, 0.55);
+}
+
+.fm-film-panel h2,
+.fm-film-panel h3 {
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.08em;
+}
+
+.fm-film-panel h2 {
+  max-width: 70rem;
+  font-size: clamp(5rem, 12vw, 13rem);
+  line-height: 0.78;
+}
+
+.fm-film-panel h3 {
+  margin-top: 1rem;
+  max-width: 46rem;
+  font-size: clamp(3rem, 6vw, 7rem);
+  line-height: 0.86;
+}
+
+.fm-film-panel span {
+  display: block;
+  margin-top: 2rem;
+  max-width: 35rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: rgba(9, 8, 6, 0.62);
+}
+
+.fm-panel-image,
+.fm-panel-split {
+  grid-template-columns: minmax(20rem, 0.85fr) minmax(25rem, 1fr);
+  gap: 5vw;
+  align-items: center;
+}
+
+.fm-panel-image {
+  overflow: hidden;
+}
+
+.fm-panel-image .fm-magnetic-image,
+.fm-panel-split .fm-magnetic-image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+
+.fm-panel-image .fm-magnetic-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0.34;
+  transform: scale(1.06);
+}
+
+.fm-panel-image > div:last-child {
+  position: relative;
+  z-index: 2;
+}
+
+.fm-panel-echo {
+  position: absolute;
+  inset: 1.6rem 1.6rem auto 1.6rem;
+  z-index: 1;
+  display: flex;
+  gap: 1rem;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  mix-blend-mode: screen;
+  opacity: 0.45;
+  animation: fm-panel-echo-scroll 22s linear infinite;
+}
+
+.fm-panel-echo span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.fm-panel-split {
+  background: #11100e;
+  color: var(--fm-paper);
+}
+
+.fm-panel-split p,
+.fm-panel-split span {
+  color: rgba(245, 239, 227, 0.62);
+}
+
+.fm-hero::after,
+.fm-manifesto::after,
+.fm-why-me-wall::after,
+.fm-booking::after {
+  content: "";
+  position: absolute;
+  left: 13rem;
+  right: 0;
+  bottom: 0;
+  height: 1.25rem;
+  background:
+    linear-gradient(90deg, transparent 0 1rem, rgba(245, 239, 227, 0.18) 1rem 1.55rem, transparent 1.55rem 3rem) 0 0 / 3rem 100% repeat-x,
+    linear-gradient(90deg, rgba(9, 8, 6, 0.08), rgba(9, 8, 6, 0.08));
+  opacity: 0.55;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.fm-marquee-section {
+  overflow: hidden;
+  padding: 5.5rem 0 6.4rem;
+  background: var(--fm-ember);
+  color: var(--fm-ink);
+  transform: rotate(-1.8deg) scale(1.05);
+  transform-origin: center;
+  border-top: 1px solid rgba(9, 8, 6, 0.18);
+  border-bottom: 1px solid rgba(9, 8, 6, 0.18);
+}
+
+.fm-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: fm-marquee-scroll 26s linear infinite;
+}
+
+.fm-marquee-group {
+  display: flex;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 8vw, 9rem);
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+}
+
+.fm-why-me-wall {
+  position: relative;
+  padding: 15rem 5vw 14rem 16.8rem;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(215, 83, 48, 0.12), transparent 22rem),
+    linear-gradient(180deg, rgba(255, 248, 232, 0.98), rgba(243, 238, 229, 0.96));
+  color: var(--fm-ink);
+}
+
+.fm-section-heading {
+  max-width: 78rem;
+}
+
+.fm-why-me-wall .fm-section-heading p {
+  color: rgba(9, 8, 6, 0.52);
+}
+
+.fm-why-me-wall .fm-section-heading span {
+  color: rgba(9, 8, 6, 0.64);
+}
+
+.fm-why-me-card {
+  position: relative;
+  display: grid;
+  gap: 1.4rem;
+  min-height: 44rem;
+  margin-top: 5rem;
+  max-width: 72rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.fm-why-me-image {
+  position: relative;
+  min-height: 34rem;
+}
+
+.fm-booking {
+  position: relative;
+  min-height: 100svh;
+  padding: 9rem 5vw 8rem 16.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background:
+    linear-gradient(180deg, rgba(9, 8, 6, 0.45), rgba(9, 8, 6, 0.98)),
+    url("https://cdn.sanity.io/images/au19aoqa/production/170249db2ec5f9f9fba1aad60fc7fef09ceb58ab-3740x2496.jpg")
+      center / cover;
+}
+
+.fm-booking a {
+  width: fit-content;
+  border: 1px solid rgba(245, 239, 227, 0.48);
+  padding: 1.2rem 1.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.fm-booking a:hover {
+  background: var(--fm-paper);
+  color: var(--fm-ink);
+}
+
+@keyframes fm-panel-echo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-12%);
+  }
+}
+
+@keyframes fm-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 1024px) {
+  .fm-chapter-nav {
+    inset: 0 0 auto;
+    width: 100%;
+    height: 4.8rem;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid rgba(245, 239, 227, 0.12);
+    backdrop-filter: blur(18px);
+  }
+
+  .fm-chapter-nav div {
+    display: none;
+  }
+
+  .fm-hero,
+  .fm-manifesto,
+  .fm-booking {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .fm-hero-content {
+    width: 100%;
+    padding: 9rem 0.5rem 4rem;
+  }
+
+  .fm-manifesto {
+    min-height: auto;
+    padding-top: 9rem;
+    padding-bottom: 10rem;
+  }
+
+  .fm-frame-process {
+    grid-template-columns: 1fr;
+  }
+
+  .fm-frame-process-card {
+    min-height: auto;
+  }
+
+  .fm-manifesto-image {
+    position: relative;
+    right: auto;
+    top: auto;
+    margin-top: 4rem;
+    width: min(82vw, 28rem);
+  }
+
+  .fm-manifesto-ring,
+  .fm-cursor-orb {
+    display: none;
+  }
+
+  .fm-horizontal-stage {
+    height: auto;
+  }
+
+  .fm-horizontal-track {
+    display: grid;
+    width: 100%;
+    height: auto;
+  }
+
+  .fm-film-panel {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 80svh;
+    padding: 7rem 1rem;
+  }
+
+  .fm-panel-image,
+  .fm-panel-split {
+    grid-template-columns: 1fr;
+  }
+
+  .fm-why-me-wall {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 9rem;
+    padding-bottom: 11rem;
+  }
+
+  .fm-why-me-card {
+    min-height: 24rem;
+    margin-top: 3.5rem;
+  }
+
+  .fm-why-me-image {
+    min-height: 22rem;
+  }
+
+  .fm-hero::after,
+  .fm-manifesto::after,
+  .fm-why-me-wall::after,
+  .fm-booking::after {
+    left: 0;
+  }
+
+  .fm-marquee-section {
+    padding: 3.2rem 0;
+  }
+
+  .fm-marquee-group {
+    gap: 1.5rem;
+    padding-right: 1.5rem;
+    font-size: clamp(2.4rem, 10vw, 4.4rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .fm-hero h1 {
+    font-size: clamp(3.35rem, 15vw, 5.8rem);
+  }
+
+  .fm-manifesto h2,
+  .fm-section-heading h2,
+  .fm-booking h2,
+  .fm-film-panel h2 {
+    font-size: clamp(3.5rem, 11vw, 5rem);
+    letter-spacing: -0.075em;
+  }
+
+  .fm-film-panel h3 {
+    font-size: clamp(2.2rem, 8vw, 3.2rem);
+  }
+
+  .fm-hero-lead,
+  .fm-manifesto-text span,
+  .fm-section-heading span {
+    font-size: 1rem;
+  }
+
+  .fm-scroll-note {
+    display: none;
+  }
+
+  .fm-marquee-section {
+    padding: 3.1rem 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -205,6 +962,10 @@ body {
   }
 
   .marquee-track {
+    transform: none !important;
+  }
+
+  .fm-marquee-track {
     transform: none !important;
   }
 }

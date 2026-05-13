@@ -98,7 +98,7 @@ const homeCopy = {
     heroTitle: "Budapest\nfotózás\nValódi pillanatok.",
     heroSubtitle:
       "Csendes, történetmesélő fotózás Budapesten azoknak, akik nem szerepelni szeretnének a kamera előtt, hanem végre önmaguk lenni.",
-    primaryCta: "Foglalás indítása",
+    primaryCta: "Forgatás menete",
     secondaryCta: "Melyik stílus illik hozzád?",
     introTitle: "Gyere, meséld el a történeted, és csináljunk egy különleges képet.",
     intro: [
@@ -222,7 +222,7 @@ const homeCopy = {
     heroTitle: "Budapest\nphotography\nReal moments.",
     heroSubtitle:
       "Quiet storytelling photography in Budapest for people who do not want to perform in front of the camera, but finally feel like themselves.",
-    primaryCta: "Start booking",
+    primaryCta: "Filming flow",
     secondaryCta: "Which style fits you?",
     introTitle: "Come tell me your story, and let us create a special image.",
     intro: [
@@ -503,7 +503,7 @@ export default async function Home(props: { params: LocaleParams }) {
           </p>
           <div className="reveal-up mt-12 flex flex-col gap-4 [animation-delay:260ms] sm:flex-row">
             <Link
-              href={`/${locale}/booking`}
+              href={`/${locale}/forgatas-menete`}
               className="inline-flex items-center justify-center bg-white px-8 py-4 text-sm uppercase tracking-[0.2em] text-neutral-950 transition-colors hover:bg-neutral-200"
             >
               {copy.primaryCta}
@@ -518,7 +518,10 @@ export default async function Home(props: { params: LocaleParams }) {
         </div>
       </section>
 
-      <section className="reveal-on-scroll mx-auto grid max-w-6xl gap-14 px-6 py-24 md:grid-cols-[0.95fr_1.05fr] md:py-32">
+      <section
+        id="presentation-start"
+        className="reveal-on-scroll mx-auto grid max-w-6xl gap-14 px-6 py-24 scroll-mt-28 md:grid-cols-[0.95fr_1.05fr] md:py-32"
+      >
         <div>
           <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
             {site.name}
