@@ -1433,6 +1433,23 @@ body:has(.process-root) > .site-shell > footer,
     rgba(255, 248, 232, 0.045);
 }
 
+.process-scene-02 .process-scene-content {
+  gap: 1rem;
+}
+
+.process-scene-02 .process-word-stack {
+  gap: 0.2rem;
+  padding: 0.55rem 0;
+}
+
+.process-scene-02 .process-word-stack span {
+  font-size: clamp(1.35rem, 1.85vw, 2.2rem);
+}
+
+.process-scene-02 .process-points li {
+  padding: 0.65rem 0;
+}
+
 .process-scene-03 .process-scene-frame {
   background:
     linear-gradient(120deg, rgba(255, 248, 232, 0.12), transparent 38%),

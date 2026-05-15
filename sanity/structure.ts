@@ -18,6 +18,7 @@ export const structure: StructureResolver = (S) => {
     "hero",
     "about",
     "homeSessions",
+    "forgatasMenete",
     "gallery",
     "service",
     "galleryWall",
@@ -83,6 +84,7 @@ export const structure: StructureResolver = (S) => {
               singleton("homeSessions", "Kiemelt csempék képei"),
             ]),
         ),
+      singleton("forgatasMenete", "Forgatás menete"),
       S.divider(),
       S.listItem()
         .title("Galéria")

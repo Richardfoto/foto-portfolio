@@ -98,7 +98,7 @@ const homeCopy = {
     heroTitle: "Budapest\nfotózás\nValódi pillanatok.",
     heroSubtitle:
       "Minden egy kávéval kezdődik, és egy történettel ér véget. Vezetett, mégis kötetlen hangulatú fotózás.",
-    primaryCta: "Forgatás menete",
+    primaryCta: "Röviden, Igy képzeld el",
     secondaryCta: "Melyik stílus illik hozzád?",
     introTitle: "Gyere, meséld el a történeted, és csináljunk egy különleges képet.",
     intro: [
@@ -156,7 +156,7 @@ const homeCopy = {
       },
     ],
     servicesEyebrow: "Fotózási területek",
-    servicesTitle: "Több területen dolgozom, de mindig az összhangot keresem.",
+    servicesTitle: "Modern és klasszikus csomagok, az igényekhez igazodva",
     servicesLead:
       "Van tapasztalatom és futó projektem többféle fotózási helyzetben, mégis az a legfontosabb, hogy megtaláljuk a közös ritmust. Szeretem, amikor jó flow-ban dolgozunk; sok minden a tervezésen múlik, a hangulat pedig rajtunk. Nyugodtan bízd rám magad, mutatok pár irányt, amiben tudok segíteni.",
     serviceRailLabel: "Válassz történetet",
@@ -518,132 +518,6 @@ export default async function Home(props: { params: LocaleParams }) {
         </div>
       </section>
 
-      <Link
-        id="presentation-start"
-        href={`/${locale}${copy.introHref}`}
-        aria-label={
-          locale === "hu"
-            ? "Forgatás menete megnyitása"
-            : "Open filming flow"
-        }
-        className="group reveal-on-scroll relative mx-auto my-20 block max-w-6xl scroll-mt-28 overflow-hidden border border-neutral-950 bg-neutral-950 text-[#f7f0df] shadow-[0_34px_100px_rgba(20,20,20,0.24)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_48px_130px_rgba(20,20,20,0.32)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral-950 md:my-28"
-      >
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 opacity-60 transition-transform duration-700 group-hover:scale-[1.015]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 12% 20%, rgba(183,157,102,0.34), transparent 24%), radial-gradient(circle at 85% 78%, rgba(240,236,228,0.16), transparent 28%), linear-gradient(115deg, rgba(255,255,255,0.08), transparent 42%)",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-8 opacity-45"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(90deg, transparent 0 18px, rgba(247,240,223,0.78) 18px 28px, transparent 28px 46px)",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-8 opacity-45"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(90deg, transparent 0 18px, rgba(247,240,223,0.78) 18px 28px, transparent 28px 46px)",
-          }}
-        />
-
-        <div className="relative grid min-h-[520px] gap-0 md:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative flex min-h-[380px] flex-col justify-between overflow-hidden px-6 py-16 sm:px-10 md:min-h-[520px] md:px-12 md:py-20">
-            <div
-              aria-hidden="true"
-              className="absolute -left-28 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-[#f7f0df]/10 transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute right-8 top-12 h-24 w-24 rounded-full border border-[#f7f0df]/20 opacity-70"
-            />
-            <div className="relative">
-              <p className="mb-5 text-xs uppercase tracking-[0.34em] text-[#f7f0df]/55">
-                {site.name}
-              </p>
-              <p className="text-[0.65rem] uppercase tracking-[0.34em] text-[#b79d66]">
-                {locale === "hu" ? "Roll camera" : "Roll camera"}
-              </p>
-            </div>
-            <h2 className="relative max-w-2xl font-serif text-4xl leading-[1.02] tracking-tight sm:text-5xl md:text-6xl">
-              {copy.introTitle}
-            </h2>
-          </div>
-
-          <div className="relative flex min-h-[360px] flex-col justify-between border-t border-[#f7f0df]/12 px-6 py-16 sm:px-10 md:min-h-[520px] md:border-l md:border-t-0 md:px-12 md:py-20">
-            <div
-              aria-hidden="true"
-              className="absolute right-6 top-10 h-36 w-36 rounded-full border border-[#f7f0df]/18 opacity-75 transition-transform duration-700 group-hover:rotate-12 md:h-44 md:w-44"
-            >
-              <span className="absolute inset-5 rounded-full border border-[#f7f0df]/16" />
-              <span className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f7f0df]/75" />
-              <span className="absolute left-1/2 top-5 h-5 w-5 -translate-x-1/2 rounded-full bg-[#f7f0df]/45" />
-              <span className="absolute bottom-5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full bg-[#f7f0df]/45" />
-              <span className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-[#f7f0df]/45" />
-              <span className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-[#f7f0df]/45" />
-            </div>
-            <div className="relative max-w-xl">
-              {copy.intro.map((paragraph) => (
-                <p
-                  key={paragraph}
-                  className="text-xl leading-8 text-[#f7f0df]/78 md:text-2xl md:leading-10"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-            <span className="relative mt-12 inline-flex min-h-16 w-fit items-center gap-4 overflow-hidden border border-[#f7f0df]/60 bg-[#f7f0df] px-5 py-3 text-neutral-950 shadow-[0_22px_60px_rgba(0,0,0,0.22)] transition-all duration-500 group-hover:border-[#b79d66] group-hover:bg-[#b79d66] group-hover:text-neutral-950">
-              <span
-                aria-hidden="true"
-                className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full border border-current/70 transition-transform duration-700 group-hover:rotate-[42deg]"
-              >
-                <span className="absolute h-8 w-8 rounded-full border border-current/35" />
-                <span className="h-3 w-3 rounded-full bg-current" />
-                <span className="absolute left-1/2 top-1 h-2 w-2 -translate-x-1/2 rounded-full bg-current/80" />
-                <span className="absolute bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-current/80" />
-                <span className="absolute left-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-current/80" />
-                <span className="absolute right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-current/80" />
-              </span>
-              <span className="grid gap-1">
-                <span className="text-[0.62rem] uppercase tracking-[0.32em] text-current/55">
-                  8mm / flow
-                </span>
-                <span className="text-sm uppercase tracking-[0.22em]">
-                  {copy.introCta}
-                </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className="ml-2 h-px w-10 bg-current/55 transition-all duration-500 group-hover:w-16"
-              />
-            </span>
-          </div>
-        </div>
-      </Link>
-
-      {aboutImageUrl && (
-        <section className="reveal-on-scroll mx-auto max-w-6xl px-6 pb-8">
-          <Image
-            src={aboutImageUrl}
-            alt={
-              locale === "hu"
-                ? "Richard Foto budapesti történetmesélő fotós portréja"
-                : "Portrait of Richard Foto Budapest storytelling photographer"
-            }
-            width={1200}
-            height={720}
-            sizes="(max-width: 768px) 100vw, 1152px"
-            className="image-soft-motion h-auto w-full object-contain shadow-[0_28px_80px_rgba(0,0,0,0.12)]"
-          />
-        </section>
-      )}
-
       <section className="bg-[#f0ece4] px-6 py-24 md:py-32">
         <div className="mx-auto max-w-6xl">
           <div className="reveal-on-scroll grid gap-10 md:grid-cols-[0.9fr_1.1fr]">
@@ -755,6 +629,115 @@ export default async function Home(props: { params: LocaleParams }) {
           </div>
         </div>
       </section>
+
+      <Link
+        id="presentation-start"
+        href={`/${locale}${copy.introHref}`}
+        aria-label={
+          locale === "hu"
+            ? "Forgatás menete megnyitása"
+            : "Open filming flow"
+        }
+        className="group reveal-on-scroll relative mx-auto my-20 block max-w-6xl scroll-mt-28 overflow-hidden border border-neutral-950 bg-neutral-950 text-[#f7f0df] shadow-[0_34px_100px_rgba(20,20,20,0.24)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_48px_130px_rgba(20,20,20,0.32)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral-950 md:my-28"
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-60 transition-transform duration-700 group-hover:scale-[1.015]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 12% 20%, rgba(183,157,102,0.34), transparent 24%), radial-gradient(circle at 85% 78%, rgba(240,236,228,0.16), transparent 28%), linear-gradient(115deg, rgba(255,255,255,0.08), transparent 42%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-8 opacity-45"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, transparent 0 18px, rgba(247,240,223,0.78) 18px 28px, transparent 28px 46px)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-8 opacity-45"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, transparent 0 18px, rgba(247,240,223,0.78) 18px 28px, transparent 28px 46px)",
+          }}
+        />
+
+        <div className="relative grid min-h-[520px] gap-0 md:grid-cols-[1.1fr_0.9fr]">
+          <div className="relative flex min-h-[380px] flex-col justify-between overflow-hidden px-6 py-16 sm:px-10 md:min-h-[520px] md:px-12 md:py-20">
+            <div
+              aria-hidden="true"
+              className="absolute -left-28 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-[#f7f0df]/10 transition-transform duration-700 group-hover:scale-110"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute right-8 top-12 h-24 w-24 rounded-full border border-[#f7f0df]/20 opacity-70"
+            />
+            <div className="relative">
+              <p className="mb-5 text-xs uppercase tracking-[0.34em] text-[#f7f0df]/55">
+                {site.name}
+              </p>
+              <p className="text-[0.65rem] uppercase tracking-[0.34em] text-[#b79d66]">
+                {locale === "hu" ? "Roll camera" : "Roll camera"}
+              </p>
+            </div>
+            <h2 className="relative max-w-2xl font-serif text-4xl leading-[1.02] tracking-tight sm:text-5xl md:text-6xl">
+              {copy.introTitle}
+            </h2>
+          </div>
+
+          <div className="relative flex min-h-[360px] flex-col justify-between border-t border-[#f7f0df]/12 px-6 py-16 sm:px-10 md:min-h-[520px] md:border-l md:border-t-0 md:px-12 md:py-20">
+            <div
+              aria-hidden="true"
+              className="absolute right-6 top-10 h-36 w-36 rounded-full border border-[#f7f0df]/18 opacity-75 transition-transform duration-700 group-hover:rotate-12 md:h-44 md:w-44"
+            >
+              <span className="absolute inset-5 rounded-full border border-[#f7f0df]/16" />
+              <span className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f7f0df]/75" />
+              <span className="absolute left-1/2 top-5 h-5 w-5 -translate-x-1/2 rounded-full bg-[#f7f0df]/45" />
+              <span className="absolute bottom-5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full bg-[#f7f0df]/45" />
+              <span className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-[#f7f0df]/45" />
+              <span className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-[#f7f0df]/45" />
+            </div>
+            <div className="relative max-w-xl">
+              {copy.intro.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="text-xl leading-8 text-[#f7f0df]/78 md:text-2xl md:leading-10"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+            <span className="relative mt-12 inline-flex min-h-16 w-fit items-center gap-4 overflow-hidden border border-[#f7f0df]/60 bg-[#f7f0df] px-5 py-3 text-neutral-950 shadow-[0_22px_60px_rgba(0,0,0,0.22)] transition-all duration-500 group-hover:border-[#b79d66] group-hover:bg-[#b79d66] group-hover:text-neutral-950">
+              <span
+                aria-hidden="true"
+                className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full border border-current/70 transition-transform duration-700 group-hover:rotate-[42deg]"
+              >
+                <span className="absolute h-8 w-8 rounded-full border border-current/35" />
+                <span className="h-3 w-3 rounded-full bg-current" />
+                <span className="absolute left-1/2 top-1 h-2 w-2 -translate-x-1/2 rounded-full bg-current/80" />
+                <span className="absolute bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-current/80" />
+                <span className="absolute left-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-current/80" />
+                <span className="absolute right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-current/80" />
+              </span>
+              <span className="grid gap-1">
+                <span className="text-[0.62rem] uppercase tracking-[0.32em] text-current/55">
+                  8mm / flow
+                </span>
+                <span className="text-sm uppercase tracking-[0.22em]">
+                  {copy.introCta}
+                </span>
+              </span>
+              <span
+                aria-hidden="true"
+                className="ml-2 h-px w-10 bg-current/55 transition-all duration-500 group-hover:w-16"
+              />
+            </span>
+          </div>
+        </div>
+      </Link>
 
       {(featured?.length || gallery?.length) && (
         <section
@@ -878,6 +861,23 @@ export default async function Home(props: { params: LocaleParams }) {
           </div>
         </div>
       </section>
+
+      {aboutImageUrl && (
+        <section className="reveal-on-scroll mx-auto max-w-6xl px-6 py-10 md:py-14">
+          <Image
+            src={aboutImageUrl}
+            alt={
+              locale === "hu"
+                ? "Richard Foto budapesti történetmesélő fotós portréja"
+                : "Portrait of Richard Foto Budapest storytelling photographer"
+            }
+            width={1200}
+            height={720}
+            sizes="(max-width: 768px) 100vw, 1152px"
+            className="image-soft-motion h-auto w-full object-contain shadow-[0_28px_80px_rgba(0,0,0,0.12)]"
+          />
+        </section>
+      )}
 
       <section className="bg-neutral-100 px-6 py-24 md:py-32">
         <div className="reveal-on-scroll mx-auto grid max-w-6xl gap-10 md:grid-cols-[1fr_0.8fr]">

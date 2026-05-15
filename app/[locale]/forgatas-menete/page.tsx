@@ -1,9 +1,39 @@
 import type { Metadata } from "next";
+import type { SanityImageSource } from "@sanity/image-url";
+import { groq } from "next-sanity";
 import { notFound } from "next/navigation";
 import { createMetadata, isLocale, type Locale } from "@/lib/site";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
 import ForgatasMeneteExperience from "./ForgatasMeneteExperience";
 
 type LocaleParams = Promise<{ locale: string }>;
+type ForgatasMeneteImages = {
+  heroImage?: SanityImageSource;
+  frameImage?: SanityImageSource;
+  brandImage?: SanityImageSource;
+  atmosphereImage?: SanityImageSource;
+  creatorImage?: SanityImageSource;
+  whyImage?: SanityImageSource;
+};
+
+const forgatasMeneteQuery = groq`coalesce(
+  *[_id == "forgatasMenete"][0],
+  *[_type == "forgatasMenete" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  heroImage,
+  frameImage,
+  brandImage,
+  atmosphereImage,
+  creatorImage,
+  whyImage
+}`;
+
+function getSanityImageUrl(image: SanityImageSource | undefined) {
+  if (!image) return undefined;
+
+  return urlFor(image).width(2200).auto("format").url();
+}
 
 export async function generateMetadata(props: {
   params: LocaleParams;
@@ -30,5 +60,21 @@ export default async function ForgatasMenetePage(props: {
   const { locale: rawLocale } = await props.params;
   if (!isLocale(rawLocale)) notFound();
 
-  return <ForgatasMeneteExperience locale={rawLocale} />;
+  const images = await client.fetch<ForgatasMeneteImages | null>(
+    forgatasMeneteQuery,
+  );
+
+  return (
+    <ForgatasMeneteExperience
+      locale={rawLocale}
+      images={{
+        hero: getSanityImageUrl(images?.heroImage),
+        frame: getSanityImageUrl(images?.frameImage),
+        brand: getSanityImageUrl(images?.brandImage),
+        atmosphere: getSanityImageUrl(images?.atmosphereImage),
+        creator: getSanityImageUrl(images?.creatorImage),
+        why: getSanityImageUrl(images?.whyImage),
+      }}
+    />
+  );
 }

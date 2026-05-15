@@ -6,6 +6,7 @@ import { hero } from "./hero";
 import { homeSessions } from "./homeSessions";
 import { galleryWall } from "./galleryWall";
 import { bookingSettings } from "./bookingSettings";
+import { forgatasMenete } from "./forgatasMenete";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   gallery,
@@ -15,4 +16,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   homeSessions,
   galleryWall,
   bookingSettings,
+  forgatasMenete,
 ];

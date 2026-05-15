@@ -13,6 +13,15 @@ type VisualAsset = {
   alt: string;
 };
 
+type ForgatasMeneteImageUrls = {
+  hero?: string;
+  frame?: string;
+  brand?: string;
+  atmosphere?: string;
+  creator?: string;
+  why?: string;
+};
+
 type ExperienceCopy = {
   chapters: string[];
   hero: {
@@ -225,14 +234,40 @@ function MagneticImage({
 
 export default function ForgatasMeneteExperience({
   locale,
+  images,
 }: {
   locale: Locale;
+  images?: ForgatasMeneteImageUrls;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const horizontalRef = useRef<HTMLElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const t = copy[locale];
+  const heroImage = {
+    ...assets.hero,
+    src: images?.hero ?? assets.hero.src,
+  };
+  const frameImage = {
+    ...assets.creator,
+    src: images?.frame ?? assets.creator.src,
+  };
+  const brandImage = {
+    ...assets.personalBrand,
+    src: images?.brand ?? assets.personalBrand.src,
+  };
+  const atmosphereImage = {
+    ...assets.profile,
+    src: images?.atmosphere ?? assets.profile.src,
+  };
+  const creatorImage = {
+    ...assets.creator,
+    src: images?.creator ?? assets.creator.src,
+  };
+  const whyImage = {
+    ...assets.profile,
+    src: images?.why ?? assets.profile.src,
+  };
 
   useEffect(() => {
     const root = rootRef.current;
@@ -383,8 +418,8 @@ export default function ForgatasMeneteExperience({
       <section className="fm-hero" id="chapter-1">
         <div className="fm-hero-image">
           <Image
-            src={t.hero.image.src}
-            alt={t.hero.image.alt}
+            src={heroImage.src}
+            alt={heroImage.alt}
             fill
             priority
             fetchPriority="high"
@@ -432,7 +467,7 @@ export default function ForgatasMeneteExperience({
           ))}
         </div>
         <MagneticImage
-          image={assets.creator}
+          image={frameImage}
           className="fm-manifesto-image fm-float-layer"
         />
         <div className="fm-manifesto-ring fm-float-layer" aria-hidden="true" />
@@ -450,7 +485,7 @@ export default function ForgatasMeneteExperience({
             <span>{t.character.body}</span>
           </article>
           <article className="fm-film-panel fm-panel-image">
-            <MagneticImage image={assets.personalBrand} priority />
+            <MagneticImage image={brandImage} priority />
             <div className="fm-panel-echo" aria-hidden="true">
               <span>frame</span>
               <span>light</span>
@@ -467,14 +502,14 @@ export default function ForgatasMeneteExperience({
             </div>
           </article>
           <article className="fm-film-panel fm-panel-split">
-            <MagneticImage image={assets.profile} />
+            <MagneticImage image={atmosphereImage} />
             <div>
               <p>{t.character.atmosphereLabel}</p>
               <h3>{t.character.atmosphereTitle}</h3>
             </div>
           </article>
           <article className="fm-film-panel fm-panel-image">
-            <MagneticImage image={assets.creator} />
+            <MagneticImage image={creatorImage} />
             <div className="fm-panel-echo" aria-hidden="true">
               <span>camera</span>
               <span>roll</span>
@@ -522,7 +557,7 @@ export default function ForgatasMeneteExperience({
             aria-label={locale === "hu" ? "Galéria megnyitása" : "Open gallery"}
           >
             <MagneticImage
-              image={assets.profile}
+              image={whyImage}
               className="fm-why-me-image"
               sizes="(max-width: 768px) 92vw, 70vw"
             />
