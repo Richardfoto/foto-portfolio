@@ -516,11 +516,20 @@ export default function ForgatasMeneteExperience({
         </div>
 
         <article className="fm-why-me-card fm-reveal">
-          <MagneticImage
-            image={assets.profile}
-            className="fm-why-me-image"
-            sizes="(max-width: 768px) 92vw, 70vw"
-          />
+          <Link
+            href={`/${locale}/gallery`}
+            className="fm-why-me-gallery-link"
+            aria-label={locale === "hu" ? "Galéria megnyitása" : "Open gallery"}
+          >
+            <MagneticImage
+              image={assets.profile}
+              className="fm-why-me-image"
+              sizes="(max-width: 768px) 92vw, 70vw"
+            />
+            <span className="fm-why-me-gallery-cta">
+              {locale === "hu" ? "Galéria" : "Gallery"}
+            </span>
+          </Link>
         </article>
       </section>
 

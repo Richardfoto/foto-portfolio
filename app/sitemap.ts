@@ -19,6 +19,7 @@ const staticRoutes = [
   "/contact",
   "/booking",
   "/forgatas-menete",
+  "/process",
   "/adatvedelmi-nyilatkozat",
   "/aszf",
   "/cookie-politika",

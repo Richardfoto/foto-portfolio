@@ -134,6 +134,83 @@ export const galleryWall = defineType({
         },
       ],
     }),
+    defineField({
+      name: "feedbackStories",
+      title: "Hiteles visszajelzések képpel",
+      type: "array",
+      description:
+        "Ide kerülhetnek azok a valódi visszajelzések, ahol a fotóalany akár a kinyomtatott képpel együtt szerepel. A honlapon csak az aktív, képpel és idézettel kitöltött elemek jelennek meg.",
+      validation: (rule) =>
+        rule.max(4).warning("Elég 2-4 erős, hiteles visszajelzés."),
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "active",
+              title: "Aktív?",
+              type: "boolean",
+              initialValue: true,
+            }),
+            defineField({
+              name: "image",
+              title: "Kép a visszajelzéshez",
+              type: "image",
+              description:
+                "Ide jöhet például a modell a kinyomtatott képpel, vagy egy kép a fotózás utáni átadás pillanatáról.",
+              options: { hotspot: true },
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "quoteHu",
+              title: "Visszajelzés szövege (HU)",
+              type: "text",
+              rows: 3,
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "quoteEn",
+              title: "Feedback text (EN)",
+              type: "text",
+              rows: 3,
+            }),
+            defineField({
+              name: "name",
+              title: "Megjelenő név",
+              type: "string",
+              description:
+                "Keresztnév, monogram vagy 'név nélkül'. Csak engedéllyel töltsd ki.",
+            }),
+            defineField({
+              name: "contextHu",
+              title: "Rövid kontextus (HU)",
+              type: "string",
+              description:
+                "Például: Personal Brand Starter, Lifestyle Story Session, Budapest.",
+            }),
+            defineField({
+              name: "contextEn",
+              title: "Short context (EN)",
+              type: "string",
+            }),
+          ],
+          preview: {
+            select: {
+              title: "name",
+              subtitle: "contextHu",
+              media: "image",
+            },
+            prepare({ title, subtitle, media }) {
+              return {
+                title: title || "Visszajelzés",
+                subtitle: subtitle || "Hiteles visszajelzés képpel",
+                media,
+              };
+            },
+          },
+        },
+      ],
+    }),
   ],
   preview: {
     select: {

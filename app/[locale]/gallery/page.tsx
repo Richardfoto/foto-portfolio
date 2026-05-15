@@ -46,6 +46,16 @@ type GalleryWallDocument = {
     storyHu?: string;
     storyEn?: string;
   }>;
+  feedbackStories?: Array<{
+    _key?: string;
+    active?: boolean;
+    image?: Parameters<typeof urlFor>[0];
+    quoteHu?: string;
+    quoteEn?: string;
+    name?: string;
+    contextHu?: string;
+    contextEn?: string;
+  }>;
 };
 
 const galleryWallQuery = groq`coalesce(
@@ -68,6 +78,16 @@ const galleryWallQuery = groq`coalesce(
     storyTitleEn,
     storyHu,
     storyEn
+  },
+  feedbackStories[]{
+    _key,
+    active,
+    image,
+    quoteHu,
+    quoteEn,
+    name,
+    contextHu,
+    contextEn
   }
 }`;
 
@@ -165,6 +185,32 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
     .filter(Boolean) as GalleryWallItem[];
 
   const items = wallItems.slice(0, 6);
+  const feedbackStories = (wall?.feedbackStories ?? [])
+    .filter((item) => item.active !== false && item.image)
+    .map((item, index) => {
+      const url = imageUrl(item.image, 1400);
+      const quote =
+        locale === "hu" ? item.quoteHu : item.quoteEn || item.quoteHu;
+      if (!url || !quote?.trim()) return null;
+
+      return {
+        id: item._key ?? `feedback-${index}`,
+        imageUrl: url,
+        quote,
+        name:
+          item.name?.trim() ||
+          (locale === "hu" ? "név nélkül" : "anonymous"),
+        context:
+          locale === "hu" ? item.contextHu : item.contextEn || item.contextHu,
+      };
+    })
+    .filter(Boolean) as Array<{
+      id: string;
+      imageUrl: string;
+      quote: string;
+      name: string;
+      context?: string;
+    }>;
   const heroImageUrl = imageUrl(wall?.heroImage, 2200) ?? items[0]?.imageUrl ?? null;
   const title = galleryWallTitle(
     locale === "hu" ? wall?.titleHu : wall?.titleEn || wall?.titleHu,
@@ -257,6 +303,76 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
           </div>
         )}
       </div>
+
+      {feedbackStories.length > 0 && (
+        <section className="bg-[#f0ece4] px-4 py-20 md:py-28">
+          <div className="mx-auto max-w-screen-xl">
+            <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
+              <div>
+                <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
+                  {locale === "hu" ? "Visszajelzések" : "Feedback"}
+                </p>
+                <h2 className="max-w-3xl font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+                  {locale === "hu"
+                    ? "Amikor a kép már nem csak nálam él tovább."
+                    : "When the image starts living beyond my camera."}
+                </h2>
+              </div>
+              <p className="max-w-2xl text-base leading-8 text-neutral-600 md:justify-self-end">
+                {locale === "hu"
+                  ? "Ide azok a valódi mondatok kerülnek, amelyeket fotózás után kaptam. Nem automatikus értékelések: csak olyan visszajelzés jelenik meg, amelyhez külön engedélyt kaptam."
+                  : "These are real words received after sessions. They are not automatic reviews: only feedback shared with explicit permission appears here."}
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-5 lg:grid-cols-3">
+              {feedbackStories.slice(0, 3).map((feedback, index) => (
+                <article
+                  key={feedback.id}
+                  className={`group overflow-hidden bg-neutral-950 text-white shadow-[0_24px_70px_rgba(20,20,20,0.12)] ${
+                    index === 0 ? "lg:col-span-2" : ""
+                  }`}
+                >
+                  <div
+                    className={`relative bg-black ${
+                      index === 0 ? "aspect-[16/10]" : "aspect-[4/5]"
+                    }`}
+                  >
+                    <Image
+                      src={feedback.imageUrl}
+                      alt={
+                        locale === "hu"
+                          ? "Fotózás utáni hiteles visszajelzés"
+                          : "Authentic feedback after a photo session"
+                      }
+                      fill
+                      sizes={
+                        index === 0
+                          ? "(max-width: 1024px) 100vw, 760px"
+                          : "(max-width: 1024px) 100vw, 380px"
+                      }
+                      className="image-soft-motion object-contain p-3 opacity-90"
+                    />
+                  </div>
+                  <div className="grid gap-5 p-6 md:p-7">
+                    {feedback.context && (
+                      <p className="text-xs uppercase tracking-[0.24em] text-white/45">
+                        {feedback.context}
+                      </p>
+                    )}
+                    <blockquote className="font-serif text-2xl leading-tight tracking-tight md:text-3xl">
+                      “{feedback.quote}”
+                    </blockquote>
+                    <p className="text-sm uppercase tracking-[0.2em] text-white/55">
+                      {feedback.name}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="bg-[#f7f4ee] px-4 pb-20 md:pb-28">
         <div className="mx-auto grid max-w-screen-xl gap-10 border-t border-neutral-200 pt-14 md:grid-cols-[0.9fr_1.1fr] md:pt-20">
