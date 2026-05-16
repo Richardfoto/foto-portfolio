@@ -9,7 +9,12 @@ export default function ProcessScrollController() {
     if (!sticky) return;
 
     const previousScrollRestoration = window.history.scrollRestoration;
+    const root = document.documentElement;
+    const body = document.body;
+
     window.history.scrollRestoration = "manual";
+    root.classList.add("process-page-active");
+    body.classList.add("process-page-active");
 
     let targetScroll = sticky.scrollLeft;
     let frame = 0;
@@ -83,6 +88,8 @@ export default function ProcessScrollController() {
     };
 
     const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey) return;
+
       const scrollDelta =
         Math.abs(event.deltaY) > Math.abs(event.deltaX)
           ? event.deltaY
@@ -126,7 +133,7 @@ export default function ProcessScrollController() {
       scrollToHash();
     };
 
-    sticky.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     sticky.addEventListener("scroll", syncTarget, { passive: true });
     window.addEventListener("hashchange", onHashChange);
     links.forEach((link) => {
@@ -141,7 +148,9 @@ export default function ProcessScrollController() {
       stopAnimation();
       if (initialFrame) window.cancelAnimationFrame(initialFrame);
       window.history.scrollRestoration = previousScrollRestoration;
-      sticky.removeEventListener("wheel", onWheel);
+      root.classList.remove("process-page-active");
+      body.classList.remove("process-page-active");
+      window.removeEventListener("wheel", onWheel, { capture: true });
       sticky.removeEventListener("scroll", syncTarget);
       window.removeEventListener("hashchange", onHashChange);
       links.forEach((link) => {
