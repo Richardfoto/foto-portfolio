@@ -169,13 +169,13 @@ export default async function ModelPage(props: { params: LocaleParams }) {
     <main className="min-h-screen bg-[#f7f4ee] text-neutral-950">
       <JsonLd data={graph} />
 
-      <section className="bg-neutral-950 px-6 pb-20 pt-32 text-[#fff8e8] md:pb-28 md:pt-40">
+      <section className="model-hero-section bg-neutral-950 px-6 pb-20 pt-32 text-[#fff8e8] md:pb-28 md:pt-40">
         <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[0.9fr_1.1fr] md:items-end">
           <div>
             <p className="mb-6 text-xs uppercase tracking-[0.34em] text-[#fff8e8]/45">
               {copy.eyebrow}
             </p>
-            <h1 className="font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-7xl">
+            <h1 className="model-hero-title font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-7xl">
               {copy.heroTitle}
             </h1>
           </div>

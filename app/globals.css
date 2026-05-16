@@ -401,8 +401,9 @@ body.process-page-active .site-shell > footer,
 
 .fm-line-mask {
   display: block;
-  overflow: hidden;
-  padding-bottom: 0.08em;
+  overflow: visible;
+  padding-top: 0.1em;
+  padding-bottom: 0.14em;
 }
 
 .fm-hero-word {
@@ -1017,7 +1018,8 @@ body.process-page-active .site-shell > footer,
 
 @media (max-width: 640px) {
   .fm-hero h1 {
-    font-size: clamp(3.35rem, 15vw, 5.8rem);
+    font-size: clamp(2.85rem, 12.5vw, 4.6rem);
+    line-height: 0.9;
   }
 
   .fm-manifesto h2,
@@ -1044,6 +1046,96 @@ body.process-page-active .site-shell > footer,
 
   .fm-marquee-section {
     padding: 3.1rem 0;
+  }
+}
+
+@media (max-width: 980px) and (orientation: landscape) and (max-height: 520px) {
+  .site-shell > nav > div {
+    height: 2.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .site-shell > nav > div > a:first-child span:first-child {
+    display: none;
+  }
+
+  .site-shell > nav > div > a:first-child span:last-child {
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .site-shell > nav > div > div {
+    gap: 0.75rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+
+  .site-shell > nav button {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.62rem;
+  }
+
+  .site-shell > nav a[href$="/model"] {
+    max-width: 4.9rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.46rem;
+    line-height: 1.05;
+  }
+
+  .fm-chapter-nav {
+    height: 2.75rem;
+    padding: 0.62rem 1rem;
+  }
+
+  .fm-brand {
+    font-size: 1.25rem;
+  }
+
+  .fm-hero-content {
+    width: min(92vw, 54rem);
+    padding: 3.15rem 1rem 1.55rem;
+  }
+
+  .fm-hero h1 {
+    font-size: clamp(2.45rem, 7.4vw, 3.8rem);
+    line-height: 0.9;
+    letter-spacing: -0.075em;
+  }
+
+  .fm-hero-lead {
+    margin-top: 1rem;
+    max-width: 28rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .fm-film-panel {
+    min-height: 100svh;
+    padding: 3.9rem 1rem 2rem;
+  }
+
+  .fm-film-panel h2,
+  .fm-film-panel h3,
+  .fm-manifesto h2,
+  .fm-section-heading h2,
+  .fm-booking h2 {
+    font-size: clamp(2.35rem, 7vw, 4.2rem);
+    line-height: 0.92;
+  }
+
+  .fm-marquee-section {
+    padding: 2rem 0;
+  }
+
+  .model-hero-section {
+    padding-top: 6rem;
+    padding-bottom: 3rem;
+  }
+
+  .model-hero-title {
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    line-height: 0.92;
   }
 }
 
@@ -1663,6 +1755,126 @@ body.process-page-active .site-shell > footer,
 
   .process-scene-meta {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 980px) and (orientation: landscape) and (max-height: 520px) {
+  .process-root {
+    inset: 2.75rem 0 0;
+  }
+
+  .process-root::before {
+    inset: 2.75rem 0 0;
+  }
+
+  .process-panel {
+    padding: 1rem;
+  }
+
+  .process-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem);
+    gap: 1.25rem;
+  }
+
+  .process-rec {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .process-hero h1,
+  .process-cta h2 {
+    font-size: clamp(2.45rem, 8vw, 4.15rem);
+    line-height: 0.86;
+  }
+
+  .process-opening-lines {
+    margin-top: 0.9rem;
+    gap: 0.08rem;
+    font-size: 0.9rem;
+    line-height: 1.12;
+  }
+
+  .process-hero-body {
+    margin-top: 0.85rem;
+    max-width: 36rem;
+    font-size: 0.78rem;
+    line-height: 1.34;
+  }
+
+  .process-production-meta {
+    margin-top: 0;
+  }
+
+  .process-production-meta div {
+    gap: 0.25rem;
+    padding: 0.62rem;
+  }
+
+  .process-scene-frame {
+    min-height: 0;
+    height: calc(100svh - 2rem);
+  }
+
+  .process-scene-grid {
+    grid-template-columns: minmax(8rem, 0.52fr) minmax(0, 1.48fr);
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .process-scene-meta {
+    flex-direction: row;
+    padding: 0.65rem 1rem;
+  }
+
+  .process-scene-title p {
+    margin-bottom: 0.55rem;
+  }
+
+  .process-scene-title h2 {
+    max-width: 8ch;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    line-height: 0.92;
+  }
+
+  .process-scene-content {
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    line-height: 1.34;
+  }
+
+  .process-lead {
+    font-size: 0.95rem;
+    line-height: 1.28;
+  }
+
+  .process-word-stack {
+    gap: 0.08rem;
+    padding: 0.15rem 0;
+  }
+
+  .process-word-stack span,
+  .process-scene-02 .process-word-stack span {
+    font-size: clamp(1.05rem, 3vw, 1.55rem);
+  }
+
+  .process-points li,
+  .process-scene-02 .process-points li {
+    padding: 0.32rem 0;
+  }
+
+  .process-duration {
+    padding-left: 0.7rem;
+  }
+
+  .process-cta span {
+    margin-top: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .process-cta a {
+    margin-top: 1.1rem;
+    min-width: 13rem;
+    padding: 0.78rem 1rem;
   }
 }
 
