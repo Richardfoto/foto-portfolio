@@ -833,16 +833,16 @@ export default async function ServiceDetailPage(props: { params: LocaleParams })
     <main className="min-h-screen bg-[#fbfaf7] text-neutral-950">
       <JsonLd data={graph} />
 
-      <section className="bg-neutral-950 px-5 pb-12 pt-28 text-white md:px-8 md:pb-16 md:pt-36">
+      <section className="bg-neutral-950 px-5 pb-12 pt-28 text-[#fff8e8] md:px-8 md:pb-16 md:pt-36">
         <div className="reveal-up mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/45">
+            <p className="mb-6 text-xs uppercase tracking-[0.32em] text-[#fff8e8]/45">
               {copy.eyebrow}
             </p>
-            <h1 className="max-w-4xl font-serif text-5xl leading-tight tracking-tight md:text-7xl">
+            <h1 className="max-w-4xl font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-7xl">
               {service.title[locale]}
             </h1>
-            <p className="mt-8 max-w-3xl text-lg leading-8 text-white/70">
+            <p className="mt-8 max-w-3xl text-lg leading-8 text-[#fff8e8]/70">
               {memoryFirstCopy(service.description[locale], locale)}
             </p>
             <div className="mt-10 flex flex-col gap-3 text-sm uppercase tracking-[0.16em] sm:flex-row">

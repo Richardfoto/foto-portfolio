@@ -35,8 +35,16 @@ type AboutHome = {
 };
 
 type HeroHome = {
+  headerEyebrow?: string;
+  headerTitle?: string;
+  headerSubtitle?: string;
   image?: SanityImageSource;
   images?: SanityImageSource[];
+  workingImage?: SanityImageSource;
+  headerPrimaryCta?: string;
+  headerSecondaryCta?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 type GalleryItem = {
@@ -55,7 +63,28 @@ type HomeSessions = {
   modelApplicationImage?: SanityImageSource;
 };
 
-const heroQuery = groq`*[_type == "hero"][0]{ image, images }`;
+const heroQuery = groq`coalesce(
+  *[_id == "hero"][0],
+  *[_type == "hero" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  headerEyebrow,
+  headerTitle,
+  headerSubtitle,
+  image,
+  images,
+  workingImage,
+  headerPrimaryCta,
+  headerSecondaryCta,
+  seoTitle,
+  seoDescription
+}`;
+const heroSeoQuery = groq`coalesce(
+  *[_id == "hero"][0],
+  *[_type == "hero" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
+){
+  seoTitle,
+  seoDescription
+}`;
 const homeSessionsQuery = groq`coalesce(
   *[_id == "homeSessions"][0],
   *[_type == "homeSessions" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]
@@ -97,7 +126,7 @@ const homeCopy = {
     heroEyebrow: "Budapest • filmes hangulatú fotózás • 2015 óta",
     heroTitle: "Budapest\nfotózás\nValódi pillanatok.",
     heroSubtitle:
-      "Minden egy kávéval kezdődik, és egy történettel ér véget. Vezetett, mégis kötetlen hangulatú fotózás.",
+      "Vezetett, mégis kötetlen hangulatú fotózás.\nMinden egy kávéval kezdődik, és egy történettel ér véget.",
     primaryCta: "Röviden, Igy képzeld el",
     secondaryCta: "Melyik stílus illik hozzád?",
     introTitle: "Gyere, meséld el a történeted, és csináljunk egy különleges képet.",
@@ -350,16 +379,29 @@ export async function generateMetadata(props: {
   const { locale: rawLocale } = await props.params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "hu";
   const isHu = locale === "hu";
+  const heroSeo = isHu
+    ? await client.fetch<Pick<HeroHome, "seoTitle" | "seoDescription"> | null>(
+        heroSeoQuery,
+      )
+    : null;
+  const title =
+    isHu && heroSeo?.seoTitle?.trim()
+      ? heroSeo.seoTitle
+      : isHu
+        ? "Richard Foto | Történetmesélő lifestyle fotózás Budapest"
+        : "Richard Foto | Storytelling Lifestyle Photography Budapest";
+  const description =
+    isHu && heroSeo?.seoDescription?.trim()
+      ? heroSeo.seoDescription
+      : isHu
+        ? "Időtlen, természetes lifestyle, werk, családi, kismama, újszülött, esküvői és portré fotózás Budapesten. Valódi pillanatok, filmes hangulatban."
+        : "Timeless natural lifestyle, werk, family, maternity, newborn, wedding and portrait photography in Budapest. Real moments with a cinematic feeling.";
 
   return createMetadata({
     locale,
     path: "/",
-    title: isHu
-      ? "Richard Foto | Történetmesélő lifestyle fotózás Budapest"
-      : "Richard Foto | Storytelling Lifestyle Photography Budapest",
-    description: isHu
-      ? "Időtlen, természetes lifestyle, werk, családi, kismama, újszülött, esküvői és portré fotózás Budapesten. Valódi pillanatok, filmes hangulatban."
-      : "Timeless natural lifestyle, werk, family, maternity, newborn, wedding and portrait photography in Budapest. Real moments with a cinematic feeling.",
+    title,
+    description,
     keywords: [
       ...serviceKeywords(locale),
       ...(isHu
@@ -436,11 +478,43 @@ export default async function Home(props: { params: LocaleParams }) {
     69,
   );
   const aboutImageUrl = getSanityImageUrl(
-    about?.aboutImage ?? about?.profileImage,
+    hero?.workingImage ?? about?.aboutImage ?? about?.profileImage,
     900,
     1100,
     84,
   );
+  const homeText = (value: string | undefined, fallback: string) => {
+    const text = value?.trim();
+    const isInternalLabel =
+      text === "Főoldal hero" ||
+      text === "Hero" ||
+      text === "Főoldali hero";
+
+    return locale === "hu" && text && !isInternalLabel ? text : fallback;
+  };
+  const heroEyebrow = homeText(hero?.headerEyebrow, copy.heroEyebrow);
+  const heroTitle = homeText(hero?.headerTitle, copy.heroTitle);
+  const heroSubtitle = homeText(hero?.headerSubtitle, copy.heroSubtitle);
+  const primaryCta = homeText(hero?.headerPrimaryCta, copy.primaryCta);
+  const secondaryCta = homeText(hero?.headerSecondaryCta, copy.secondaryCta);
+  const heroTitleLines = heroTitle.split("\n").filter(Boolean);
+  const heroTitleFinalWords = (heroTitleLines.slice(2).join(" ") || "")
+    .split(" ")
+    .filter(Boolean);
+  const heroTitleGrid = {
+    leftTop: heroTitleLines[0] ?? heroTitle,
+    leftBottom: heroTitleLines[1] ?? "",
+    rightTop: heroTitleFinalWords[0] ?? "",
+    rightBottom: heroTitleFinalWords.slice(1).join(" "),
+  };
+  const heroSubtitleLines =
+    locale === "hu" &&
+    heroSubtitle.includes("Minden egy kávéval kezdődik") &&
+    heroSubtitle.includes("Vezetett, mégis kötetlen")
+      ? "Vezetett, mégis kötetlen hangulatú fotózás.\nMinden egy kávéval kezdődik, és egy történettel ér véget."
+      : heroSubtitle.includes(". ")
+        ? heroSubtitle.replace(". ", ".\n")
+        : heroSubtitle;
   const galleryImages = localizedGallery.filter((item) => item.coverImage);
   const sessionImages: Record<string, SanityImageSource | undefined> = {
     "personal-brand-starter": homeSessions?.personalBrandStarterImage,
@@ -484,36 +558,55 @@ export default async function Home(props: { params: LocaleParams }) {
             priority
             fetchPriority="high"
             sizes="100vw"
-            className="image-soft-motion object-contain p-4 opacity-70"
+            className="image-soft-motion object-cover opacity-88"
           />
         ) : (
           <div className="absolute inset-0 bg-neutral-950" aria-hidden="true" />
         )}
-        <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/15 to-black/70" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/28 via-black/6 to-black/46" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/38 via-black/6 to-black/20" />
 
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-6xl flex-col justify-center px-6 py-24">
-          <p className="reveal-up mb-7 max-w-xl text-xs uppercase tracking-[0.32em] text-white/70">
-            {copy.heroEyebrow}
-          </p>
-          <h1 className="reveal-up max-w-5xl whitespace-pre-line font-serif text-5xl leading-[0.96] tracking-tight [animation-delay:90ms] sm:text-6xl md:text-7xl lg:text-8xl">
-            {copy.heroTitle}
-          </h1>
-          <p className="reveal-up mt-8 max-w-2xl text-lg leading-8 text-white/82 [animation-delay:180ms] md:text-xl">
-            {copy.heroSubtitle}
-          </p>
-          <div className="reveal-up mt-12 flex flex-col gap-4 [animation-delay:260ms] sm:flex-row">
-            <Link
-              href={`/${locale}/forgatas-menete`}
-              className="inline-flex items-center justify-center bg-white px-8 py-4 text-sm uppercase tracking-[0.2em] text-neutral-950 transition-colors hover:bg-neutral-200"
-            >
-              {copy.primaryCta}
-            </Link>
-            <Link
-              href={`/${locale}/services`}
-              className="inline-flex items-center justify-center border border-white/70 px-8 py-4 text-sm uppercase tracking-[0.2em] text-white transition-colors hover:bg-white hover:text-neutral-950"
-            >
-              {copy.secondaryCta}
-            </Link>
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-6xl flex-col justify-between px-6 pb-10 pt-14 md:pb-12 md:pt-18 lg:pb-14 lg:pt-20">
+          <div className="pt-2 md:pt-4">
+            <p className="reveal-up mb-7 max-w-xl text-[0.7rem] uppercase tracking-[0.36em] text-white/68">
+              {heroEyebrow}
+            </p>
+            <h1 className="reveal-up grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] gap-x-10 font-serif text-4xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] [animation-delay:90ms] sm:text-5xl md:grid-cols-[minmax(0,0.95fr)_minmax(8rem,0.55fr)_minmax(0,0.95fr)] md:text-6xl lg:text-[4.7rem]">
+              <span className="block">
+                {heroTitleGrid.leftTop}
+              </span>
+              <span aria-hidden="true" className="hidden md:block" />
+              <span className="block md:text-right">
+                {heroTitleGrid.rightTop}
+              </span>
+              <span className="block">
+                {heroTitleGrid.leftBottom}
+              </span>
+              <span aria-hidden="true" className="hidden md:block" />
+              <span className="block md:text-right">
+                {heroTitleGrid.rightBottom}
+              </span>
+            </h1>
+          </div>
+
+          <div className="pb-0">
+            <p className="reveal-up max-w-3xl whitespace-pre-line text-lg leading-8 text-white/84 [animation-delay:180ms] md:text-xl">
+              {heroSubtitleLines}
+            </p>
+            <div className="reveal-up mt-8 flex flex-col gap-4 [animation-delay:260ms] sm:flex-row">
+              <Link
+                href={`/${locale}/forgatas-menete`}
+                className="inline-flex items-center justify-center bg-white px-8 py-4 text-sm uppercase tracking-[0.2em] text-neutral-950 transition-colors hover:bg-neutral-200"
+              >
+                {primaryCta}
+              </Link>
+              <Link
+                href={`/${locale}/services`}
+                className="inline-flex items-center justify-center border border-white/70 px-8 py-4 text-sm uppercase tracking-[0.2em] text-white transition-colors hover:bg-white hover:text-neutral-950"
+              >
+                {secondaryCta}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -525,7 +618,7 @@ export default async function Home(props: { params: LocaleParams }) {
               <p className="mb-5 text-xs uppercase tracking-[0.3em] text-neutral-500">
                 {copy.trendingEyebrow}
               </p>
-              <h2 className="max-w-3xl font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+              <h2 className="max-w-3xl font-serif text-4xl font-normal leading-[0.92] tracking-[-0.045em] text-neutral-950 md:text-6xl">
                 {copy.trendingTitle}
               </h2>
             </div>
@@ -593,7 +686,7 @@ export default async function Home(props: { params: LocaleParams }) {
                       )}
                       <h3
                         id={titleId}
-                        className={`${session.label ? "mt-4" : ""} max-w-xl whitespace-pre-line font-serif leading-tight tracking-tight ${
+                        className={`${session.label ? "mt-4" : ""} max-w-xl whitespace-pre-line font-serif font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] ${
                           session.id === "model-application"
                             ? "text-3xl md:text-[2rem] lg:text-[2.15rem]"
                             : "text-3xl md:text-5xl"
@@ -799,9 +892,9 @@ export default async function Home(props: { params: LocaleParams }) {
         </div>
       </section>
 
-      <section className="bg-neutral-950 px-6 py-24 text-white md:py-32">
+      <section className="bg-neutral-950 px-6 py-24 text-[#fff8e8] md:py-32">
         <div className="mx-auto max-w-6xl">
-          <h2 className="reveal-on-scroll max-w-3xl font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+          <h2 className="reveal-on-scroll max-w-3xl font-serif text-4xl font-normal leading-[0.92] tracking-[-0.045em] md:text-6xl">
             {copy.howTitle}
           </h2>
           <div className="mt-16 grid gap-8 md:grid-cols-4">
@@ -810,11 +903,13 @@ export default async function Home(props: { params: LocaleParams }) {
                 key={step.title}
                 className="reveal-on-scroll border-t border-white/15 pt-6"
               >
-                <p className="mb-8 text-xs uppercase tracking-[0.28em] text-white/55">
+                <p className="mb-8 text-xs uppercase tracking-[0.28em] text-[#d89a43]">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <h3 className="font-serif text-2xl">{step.title}</h3>
-                <p className="mt-5 text-sm leading-7 text-white/62">
+                <h3 className="font-serif text-2xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8]">
+                  {step.title}
+                </h3>
+                <p className="mt-5 text-sm leading-7 text-[#fff8e8]/62">
                   {step.text}
                 </p>
               </article>

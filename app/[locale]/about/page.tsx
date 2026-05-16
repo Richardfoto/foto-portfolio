@@ -222,7 +222,7 @@ export default async function AboutPage(props: { params: LocaleParams }) {
     <main className="min-h-screen bg-white text-neutral-950">
       <JsonLd data={graph} />
 
-      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 px-6 text-white">
+      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 px-6 text-[#fff8e8]">
         {headerImageUrl && (
           <Image
             src={headerImageUrl}
@@ -241,15 +241,15 @@ export default async function AboutPage(props: { params: LocaleParams }) {
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/68 via-neutral-950/22 to-transparent" />
         <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-6xl px-0 pb-14 pt-24 md:pb-20 md:pt-28">
           <div className="self-start">
-            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/55">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-[#fff8e8]/55">
               {headerEyebrow}
             </p>
-            <h1 className="font-serif text-5xl leading-none tracking-tight md:text-7xl">
+            <h1 className="font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-7xl">
               {headerTitle}
             </h1>
           </div>
           <div className="self-end">
-            <p className="max-w-3xl border-l border-white/35 pl-5 text-lg leading-8 text-white/74">
+            <p className="max-w-3xl border-l border-[#fff8e8]/35 pl-5 text-lg leading-8 text-[#fff8e8]/74">
               {headerIntro}
             </p>
           </div>

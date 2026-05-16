@@ -252,7 +252,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
     <main className="min-h-screen bg-[#f7f4ee] pt-20 text-neutral-950">
       <JsonLd data={graph} />
 
-      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 text-white">
+      <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-neutral-950 text-[#fff8e8]">
         {heroImageUrl && (
           <Image
             src={heroImageUrl}
@@ -270,10 +270,10 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/62 via-black/10 to-transparent" />
         <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-screen-xl px-4 pb-14 pt-12 md:pb-20 md:pt-14">
           <div className="self-start">
-            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-[#fff8e8]/50">
               Love letter
             </p>
-            <h1 className="max-w-3xl whitespace-pre-line font-serif text-5xl leading-none tracking-tight md:text-7xl">
+            <h1 className="max-w-3xl whitespace-pre-line font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-7xl">
               {heroTitle}
             </h1>
           </div>
@@ -285,7 +285,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
                   {heroCaption}
                 </p>
               )}
-              <p className="text-lg leading-8 text-white/72">{lead}</p>
+              <p className="text-lg leading-8 text-[#fff8e8]/72">{lead}</p>
             </div>
             <div className="md:col-start-2">
               <CameraSettingsTicker locale={locale} />

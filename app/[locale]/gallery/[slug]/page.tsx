@@ -166,7 +166,7 @@ export default async function GalleryPage(props: { params: LocaleParams }) {
           <p className="text-xs tracking-[0.35em] text-zinc-400 uppercase mb-3">
             {category}
           </p>
-          <h1 className="text-5xl md:text-6xl font-serif leading-tight mb-6">
+          <h1 className="mb-6 font-serif text-5xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] md:text-6xl">
             {gallery.title}
           </h1>
 

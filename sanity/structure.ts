@@ -80,7 +80,7 @@ export const structure: StructureResolver = (S) => {
           S.list()
             .title("Főoldal")
             .items([
-              singleton("hero", "Hero kép"),
+              singleton("hero", "Header szekció és munkakép"),
               singleton("homeSessions", "Kiemelt csempék képei"),
             ]),
         ),

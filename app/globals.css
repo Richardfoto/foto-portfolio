@@ -651,12 +651,19 @@ body:has(.process-root) > .site-shell > footer,
   position: absolute;
   inset: 0;
   opacity: 0.34;
-  transform: scale(1.06);
+  transform: none;
 }
 
 .fm-panel-image > div:last-child {
   position: relative;
   z-index: 2;
+}
+
+.fm-panel-image .fm-image-cover,
+.fm-panel-split .fm-image-cover,
+.fm-why-me-image .fm-image-cover {
+  object-fit: contain;
+  object-position: center;
 }
 
 .fm-panel-echo {
