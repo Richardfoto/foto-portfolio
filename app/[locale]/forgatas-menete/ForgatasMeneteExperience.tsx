@@ -212,11 +212,13 @@ function MagneticImage({
   className = "",
   priority = false,
   sizes = "(max-width: 768px) 88vw, 38vw",
+  fit = "cover",
 }: {
   image: VisualAsset;
   className?: string;
   priority?: boolean;
   sizes?: string;
+  fit?: "cover" | "contain";
 }) {
   return (
     <div className={`fm-magnetic-image ${className}`}>
@@ -226,7 +228,7 @@ function MagneticImage({
         fill
         priority={priority}
         sizes={sizes}
-        className="fm-image-cover"
+        className={`fm-image-cover${fit === "contain" ? " fm-image-contain" : ""}`}
       />
     </div>
   );
@@ -485,7 +487,7 @@ export default function ForgatasMeneteExperience({
             <span>{t.character.body}</span>
           </article>
           <article className="fm-film-panel fm-panel-image">
-            <MagneticImage image={brandImage} priority />
+            <MagneticImage image={brandImage} priority fit="contain" />
             <div className="fm-panel-echo" aria-hidden="true">
               <span>frame</span>
               <span>light</span>
@@ -509,7 +511,7 @@ export default function ForgatasMeneteExperience({
             </div>
           </article>
           <article className="fm-film-panel fm-panel-image">
-            <MagneticImage image={creatorImage} />
+            <MagneticImage image={creatorImage} fit="contain" />
             <div className="fm-panel-echo" aria-hidden="true">
               <span>camera</span>
               <span>roll</span>
@@ -560,6 +562,7 @@ export default function ForgatasMeneteExperience({
               image={whyImage}
               className="fm-why-me-image"
               sizes="(max-width: 768px) 92vw, 70vw"
+              fit="contain"
             />
             <span className="fm-why-me-gallery-cta">
               {locale === "hu" ? "Galéria" : "Gallery"}

@@ -267,6 +267,11 @@ body:has(.process-root) > .site-shell > footer,
   object-fit: cover;
 }
 
+.fm-image-cover.fm-image-contain {
+  object-fit: contain;
+  object-position: center;
+}
+
 .fm-cursor-orb {
   position: fixed;
   z-index: 70;
@@ -652,6 +657,8 @@ body:has(.process-root) > .site-shell > footer,
   inset: 0;
   opacity: 0.34;
   transform: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 .fm-panel-image > div:last-child {
@@ -664,6 +671,11 @@ body:has(.process-root) > .site-shell > footer,
 .fm-why-me-image .fm-image-cover {
   object-fit: contain;
   object-position: center;
+}
+
+.fm-magnetic-image:hover .fm-image-contain {
+  transform: none;
+  filter: none;
 }
 
 .fm-panel-echo {
@@ -769,7 +781,7 @@ body:has(.process-root) > .site-shell > footer,
   position: relative;
   display: grid;
   gap: 1.4rem;
-  min-height: 44rem;
+  min-height: 0;
   margin-top: 5rem;
   max-width: 72rem;
   background: transparent;
@@ -778,12 +790,16 @@ body:has(.process-root) > .site-shell > footer,
 
 .fm-why-me-image {
   position: relative;
-  min-height: 34rem;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .fm-why-me-gallery-link {
   position: relative;
   display: block;
+  width: min(100%, 62rem);
   color: inherit;
   text-decoration: none;
   outline: none;
@@ -796,8 +812,8 @@ body:has(.process-root) > .site-shell > footer,
 
 .fm-why-me-gallery-link:hover .fm-why-me-image img,
 .fm-why-me-gallery-link:focus-visible .fm-why-me-image img {
-  transform: scale(1.1);
-  filter: contrast(1.08) saturate(1.08);
+  transform: none;
+  filter: none;
 }
 
 .fm-why-me-gallery-cta {
@@ -961,12 +977,11 @@ body:has(.process-root) > .site-shell > footer,
   }
 
   .fm-why-me-card {
-    min-height: 24rem;
     margin-top: 3.5rem;
   }
 
   .fm-why-me-image {
-    min-height: 22rem;
+    min-height: 0;
   }
 
   .fm-hero::after,
