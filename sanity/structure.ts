@@ -84,7 +84,7 @@ export const structure: StructureResolver = (S) => {
               singleton("homeSessions", "Kiemelt csempék képei"),
             ]),
         ),
-      singleton("forgatasMenete", "Forgatás menete"),
+      singleton("forgatasMenete", "Röviden"),
       S.divider(),
       S.listItem()
         .title("Galéria")

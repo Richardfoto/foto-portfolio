@@ -13,7 +13,7 @@ type VisualAsset = {
   alt: string;
 };
 
-type ForgatasMeneteImageUrls = {
+type RovidenImageUrls = {
   hero?: string;
   frame?: string;
   brand?: string;
@@ -234,12 +234,12 @@ function MagneticImage({
   );
 }
 
-export default function ForgatasMeneteExperience({
+export default function RovidenExperience({
   locale,
   images,
 }: {
   locale: Locale;
-  images?: ForgatasMeneteImageUrls;
+  images?: RovidenImageUrls;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
@@ -402,7 +402,7 @@ export default function ForgatasMeneteExperience({
 
       <nav
         className="fm-chapter-nav"
-        aria-label={locale === "hu" ? "Forgatás menete" : "Filming flow"}
+        aria-label={locale === "hu" ? "Röviden" : "In brief"}
       >
         <Link className="fm-brand" href={`/${locale}`}>
           Richard Foto

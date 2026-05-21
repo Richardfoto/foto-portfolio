@@ -127,7 +127,7 @@ const homeCopy = {
     heroTitle: "Budapest\nfotózás\nValódi pillanatok.",
     heroSubtitle:
       "Vezetett, mégis kötetlen hangulatú fotózás.\nMinden egy kávéval kezdődik, és egy történettel ér véget.",
-    primaryCta: "Röviden, Igy képzeld el",
+    primaryCta: "Röviden, így képzeld el",
     secondaryCta: "Melyik stílus illik hozzád?",
     introTitle: "Gyere, meséld el a történeted, és csináljunk egy különleges képet.",
     intro: [
@@ -250,7 +250,7 @@ const homeCopy = {
     heroTitle: "Budapest\nphotography\nReal moments.",
     heroSubtitle:
       "Quiet storytelling photography in Budapest for people who do not want to perform in front of the camera, but finally feel like themselves.",
-    primaryCta: "Filming flow",
+    primaryCta: "In brief",
     secondaryCta: "Which style fits you?",
     introTitle: "Come tell me your story, and let us create a special image.",
     intro: [
@@ -571,19 +571,19 @@ export default async function Home(props: { params: LocaleParams }) {
             <p className="reveal-up mb-7 max-w-xl text-[0.7rem] uppercase tracking-[0.36em] text-white/68">
               {heroEyebrow}
             </p>
-            <h1 className="reveal-up grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] gap-x-10 font-serif text-4xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] [animation-delay:90ms] sm:text-5xl md:grid-cols-[minmax(0,0.95fr)_minmax(8rem,0.55fr)_minmax(0,0.95fr)] md:text-6xl lg:text-[4.7rem]">
+            <h1 className="reveal-up grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-x-4 font-serif text-4xl font-normal leading-[0.92] tracking-[-0.045em] text-[#fff8e8] [animation-delay:90ms] sm:gap-x-6 sm:text-5xl md:grid-cols-[minmax(0,0.95fr)_minmax(8rem,0.55fr)_minmax(0,0.95fr)] md:gap-x-10 md:text-6xl lg:text-[4.7rem]">
               <span className="block">
                 {heroTitleGrid.leftTop}
               </span>
               <span aria-hidden="true" className="hidden md:block" />
-              <span className="block md:text-right">
+              <span className="block text-right">
                 {heroTitleGrid.rightTop}
               </span>
               <span className="block">
                 {heroTitleGrid.leftBottom}
               </span>
               <span aria-hidden="true" className="hidden md:block" />
-              <span className="block md:text-right">
+              <span className="block text-right">
                 {heroTitleGrid.rightBottom}
               </span>
             </h1>
@@ -595,7 +595,7 @@ export default async function Home(props: { params: LocaleParams }) {
             </p>
             <div className="reveal-up mt-8 flex flex-col gap-4 [animation-delay:260ms] sm:flex-row">
               <Link
-                href={`/${locale}/forgatas-menete`}
+                href={`/${locale}/roviden`}
                 className="inline-flex items-center justify-center bg-white px-8 py-4 text-sm uppercase tracking-[0.2em] text-neutral-950 transition-colors hover:bg-neutral-200"
               >
                 {primaryCta}

@@ -24,7 +24,7 @@ export const hero = defineType({
     headerSubtitle:
       "Vezetett, mégis kötetlen hangulatú fotózás.\nMinden egy kávéval kezdődik, és egy történettel ér véget.",
     headerEyebrow: "Budapest • filmes hangulatú fotózás • 2015 óta",
-    headerPrimaryCta: "Röviden, Igy képzeld el",
+    headerPrimaryCta: "Röviden, így képzeld el",
     headerSecondaryCta: "Melyik stílus illik hozzád?",
     seoTitle: "Richard Foto | Budapest fotózás valódi pillanatokkal",
     seoDescription:

@@ -217,18 +217,30 @@ body:has(.process-root) {
 
 html.process-page-active,
 body.process-page-active {
-  height: 100%;
+  height: var(--process-viewport-height, 100svh);
   overflow: hidden;
   overscroll-behavior: none;
 }
 
+body.process-page-active {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+}
+
 body:has(.process-root) #main-content {
-  height: 100svh;
+  height: calc(
+    var(--process-viewport-height, 100svh) -
+      var(--process-header-height, 5rem)
+  );
   overflow: hidden;
 }
 
 body.process-page-active #main-content {
-  height: 100svh;
+  height: calc(
+    var(--process-viewport-height, 100svh) -
+      var(--process-header-height, 5rem)
+  );
   overflow: hidden;
 }
 
@@ -676,8 +688,12 @@ body.process-page-active .site-shell > footer,
 }
 
 .fm-panel-image > div:last-child {
-  position: relative;
+  position: absolute;
   z-index: 2;
+  left: clamp(1.5rem, 6vw, 7rem);
+  right: clamp(1.5rem, 24vw, 16rem);
+  bottom: clamp(4rem, 15svh, 9rem);
+  max-width: 46rem;
 }
 
 .fm-panel-image .fm-image-cover,
@@ -804,7 +820,7 @@ body.process-page-active .site-shell > footer,
 
 .fm-why-me-image {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 5;
   min-height: 0;
   background: transparent;
   box-shadow: none;
@@ -813,7 +829,8 @@ body.process-page-active .site-shell > footer,
 .fm-why-me-gallery-link {
   position: relative;
   display: block;
-  width: min(100%, 62rem);
+  width: min(100%, 38rem);
+  margin-inline: auto;
   color: inherit;
   text-decoration: none;
   outline: none;
@@ -983,6 +1000,12 @@ body.process-page-active .site-shell > footer,
     grid-template-columns: 1fr;
   }
 
+  .fm-panel-image > div:last-child {
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: clamp(3.75rem, 12svh, 7rem);
+  }
+
   .fm-why-me-wall {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -1115,6 +1138,12 @@ body.process-page-active .site-shell > footer,
     padding: 3.9rem 1rem 2rem;
   }
 
+  .fm-panel-image > div:last-child {
+    left: 2.4rem;
+    right: 2.4rem;
+    bottom: 3.1rem;
+  }
+
   .fm-film-panel h2,
   .fm-film-panel h3,
   .fm-manifesto h2,
@@ -1147,9 +1176,12 @@ body.process-page-active .site-shell > footer,
   --process-black: #070605;
   --process-amber: #d89a43;
   position: fixed;
-  inset: 5rem 0 0;
+  inset: var(--process-header-height, 5rem) 0 0;
   overflow: hidden;
-  height: auto;
+  height: calc(
+    var(--process-viewport-height, 100svh) -
+      var(--process-header-height, 5rem)
+  );
   min-height: 0;
   margin-top: 0;
   padding-top: 0;
@@ -1163,7 +1195,7 @@ body.process-page-active .site-shell > footer,
 .process-root::before {
   content: "";
   position: fixed;
-  inset: 5rem 0 0;
+  inset: var(--process-header-height, 5rem) 0 0;
   z-index: 0;
   pointer-events: none;
   background-image:
@@ -1399,14 +1431,14 @@ body.process-page-active .site-shell > footer,
 .process-horizontal-sticky {
   position: relative;
   top: auto;
-  overflow-x: auto;
+  overflow: hidden;
   overflow-y: hidden;
   height: 100%;
   padding-left: 14rem;
   scroll-behavior: auto;
   scrollbar-width: none;
-  overscroll-behavior: contain;
-  touch-action: pan-x;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 .process-horizontal-sticky::-webkit-scrollbar {
@@ -1417,6 +1449,7 @@ body.process-page-active .site-shell > footer,
   display: flex;
   width: max-content;
   height: 100%;
+  transform: translate3d(0, 0, 0);
   will-change: transform;
 }
 
@@ -1657,13 +1690,20 @@ body.process-page-active .site-shell > footer,
 
 @media (max-width: 980px) {
   .process-root {
-    height: auto;
+    height: calc(
+      var(--process-viewport-height, 100svh) -
+        var(--process-header-height, 5rem)
+    );
+    max-height: calc(
+      var(--process-viewport-height, 100svh) -
+        var(--process-header-height, 5rem)
+    );
     margin-top: 0;
     padding-top: 0;
   }
 
   .process-root::before {
-    top: 5rem;
+    top: var(--process-header-height, 5rem);
     background-size: 3.5rem 3.5rem;
   }
 
@@ -1675,7 +1715,7 @@ body.process-page-active .site-shell > footer,
     flex: 0 0 100vw;
     min-height: 100%;
     height: 100%;
-    padding: 4.5rem 1rem 3rem;
+    padding: clamp(0.9rem, 3svh, 2rem) 1rem clamp(1.45rem, 4svh, 2.4rem);
     overflow: hidden;
   }
 
@@ -1690,9 +1730,38 @@ body.process-page-active .site-shell > footer,
   }
 
   .process-hero h1,
-  .process-scene-title h2,
+  .process-scene-title h2 {
+    font-size: clamp(2.55rem, 11vw, 4rem);
+  }
+
+  .process-cta {
+    align-content: center;
+    gap: clamp(0.85rem, 2.6svh, 1.35rem);
+    padding-top: clamp(1.25rem, 5svh, 2.5rem);
+    padding-bottom: clamp(2rem, 5svh, 3rem);
+  }
+
+  .process-cta p {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+  }
+
   .process-cta h2 {
-    font-size: clamp(3.5rem, 17vw, 5.8rem);
+    max-width: 9ch;
+    margin-top: 0;
+    font-size: clamp(2.65rem, 14vw, 4.55rem);
+    line-height: 0.86;
+  }
+
+  .process-cta span {
+    margin-top: 0;
+    font-size: clamp(1rem, 4.4vw, 1.28rem);
+    line-height: 1.35;
+  }
+
+  .process-cta a {
+    margin-top: 0.35rem;
+    min-width: min(16rem, 100%);
   }
 
   .process-scene-title h2 {
@@ -1704,7 +1773,7 @@ body.process-page-active .site-shell > footer,
     position: relative;
     width: 100%;
     max-width: 28rem;
-    margin-top: 3rem;
+    margin-top: 1.4rem;
   }
 
   .process-timecode {
@@ -1712,11 +1781,14 @@ body.process-page-active .site-shell > footer,
   }
 
   .process-rec {
-    top: 6.5rem;
+    top: 1.25rem;
     right: 1rem;
   }
 
   .process-scene-frame {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
     min-height: 0;
     max-height: 100%;
   }
@@ -1728,12 +1800,13 @@ body.process-page-active .site-shell > footer,
   .process-horizontal-sticky {
     position: relative;
     top: auto;
-    overflow-x: auto;
+    overflow: hidden;
     overflow-y: hidden;
     height: 100%;
     padding-left: 0;
     scrollbar-width: none;
-    overscroll-behavior: contain;
+    overscroll-behavior: none;
+    touch-action: none;
   }
 
   .process-horizontal-track {
@@ -1749,26 +1822,87 @@ body.process-page-active .site-shell > footer,
 
   .process-scene-grid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding: 1.25rem;
+    gap: clamp(0.75rem, 2svh, 1.4rem);
+    align-content: start;
+    min-height: 0;
+    padding: clamp(0.85rem, 3vw, 1.25rem);
   }
 
   .process-scene-meta {
     flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.54rem;
+  }
+
+  .process-scene-title p {
+    margin-bottom: 0.5rem;
+    font-size: 0.58rem;
+  }
+
+  .process-scene-title h2 {
+    max-width: 11ch;
+    line-height: 0.9;
+  }
+
+  .process-scene-content {
+    gap: clamp(0.5rem, 1.6svh, 0.8rem);
+    font-size: clamp(0.8rem, 3.4vw, 0.94rem);
+    line-height: 1.36;
+  }
+
+  .process-lead {
+    font-size: clamp(0.95rem, 3.8vw, 1.08rem);
+    line-height: 1.3;
+  }
+
+  .process-word-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.15rem 0.9rem;
+    padding: 0.15rem 0;
+  }
+
+  .process-word-stack span,
+  .process-scene-02 .process-word-stack span {
+    font-size: clamp(1.25rem, 6vw, 1.75rem);
+  }
+
+  .process-points li,
+  .process-scene-02 .process-points li {
+    gap: 0.65rem;
+    padding: 0.42rem 0;
+  }
+
+  .process-outro,
+  .process-duration {
+    font-size: clamp(0.78rem, 3.25vw, 0.9rem);
+    line-height: 1.38;
+  }
+
+  .process-duration {
+    padding-left: 0.7rem;
   }
 }
 
 @media (max-width: 980px) and (orientation: landscape) and (max-height: 520px) {
   .process-root {
-    inset: 2.75rem 0 0;
+    inset: var(--process-header-height, 5rem) 0 0;
+    height: calc(
+      var(--process-viewport-height, 100svh) -
+        var(--process-header-height, 5rem)
+    );
+    max-height: calc(
+      var(--process-viewport-height, 100svh) -
+        var(--process-header-height, 5rem)
+    );
   }
 
   .process-root::before {
-    inset: 2.75rem 0 0;
+    inset: var(--process-header-height, 5rem) 0 0;
   }
 
   .process-panel {
-    padding: 1rem;
+    padding: 0.85rem 1rem 1rem;
   }
 
   .process-hero {
@@ -1783,22 +1917,22 @@ body.process-page-active .site-shell > footer,
 
   .process-hero h1,
   .process-cta h2 {
-    font-size: clamp(2.45rem, 8vw, 4.15rem);
+    font-size: clamp(2.25rem, 7vw, 3.65rem);
     line-height: 0.86;
   }
 
   .process-opening-lines {
-    margin-top: 0.9rem;
+    margin-top: 0.55rem;
     gap: 0.08rem;
-    font-size: 0.9rem;
-    line-height: 1.12;
+    font-size: 0.78rem;
+    line-height: 1.08;
   }
 
   .process-hero-body {
-    margin-top: 0.85rem;
-    max-width: 36rem;
-    font-size: 0.78rem;
-    line-height: 1.34;
+    margin-top: 0.35rem;
+    max-width: 32rem;
+    font-size: 0.64rem;
+    line-height: 1.18;
   }
 
   .process-production-meta {
@@ -1812,7 +1946,7 @@ body.process-page-active .site-shell > footer,
 
   .process-scene-frame {
     min-height: 0;
-    height: calc(100svh - 2rem);
+    height: 100%;
   }
 
   .process-scene-grid {
@@ -1838,8 +1972,8 @@ body.process-page-active .site-shell > footer,
 
   .process-scene-content {
     gap: 0.55rem;
-    font-size: 0.78rem;
-    line-height: 1.34;
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 
   .process-lead {
@@ -1859,20 +1993,64 @@ body.process-page-active .site-shell > footer,
 
   .process-points li,
   .process-scene-02 .process-points li {
-    padding: 0.32rem 0;
+    padding: 0.26rem 0;
   }
 
   .process-duration {
     padding-left: 0.7rem;
   }
 
+  .process-scene-02 .process-scene-content {
+    grid-template-columns: minmax(8rem, 0.65fr) minmax(0, 1fr);
+    gap: 0.35rem 0.9rem;
+  }
+
+  .process-scene-02 .process-lead,
+  .process-scene-02 .process-outro {
+    grid-column: 1 / -1;
+  }
+
+  .process-scene-02 .process-word-stack {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .process-scene-02 .process-points {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .process-scene-02 .process-outro {
+    font-size: 0.68rem;
+    line-height: 1.22;
+  }
+
+  .process-cta {
+    grid-template-columns: minmax(0, 1fr) minmax(11rem, 0.55fr);
+    grid-auto-rows: min-content;
+    place-items: center start;
+    align-content: center;
+    gap: 0.7rem 1.4rem;
+    text-align: left;
+  }
+
+  .process-cta p {
+    grid-column: 1 / -1;
+  }
+
+  .process-cta h2 {
+    max-width: 10ch;
+  }
+
   .process-cta span {
-    margin-top: 0.8rem;
-    font-size: 1rem;
+    margin-top: 0;
+    font-size: 0.92rem;
+    line-height: 1.35;
   }
 
   .process-cta a {
-    margin-top: 1.1rem;
+    grid-column: 2;
+    margin-top: 0;
     min-width: 13rem;
     padding: 0.78rem 1rem;
   }

@@ -18,7 +18,7 @@ const staticRoutes = [
   "/model",
   "/contact",
   "/booking",
-  "/forgatas-menete",
+  "/roviden",
   "/process",
   "/adatvedelmi-nyilatkozat",
   "/aszf",

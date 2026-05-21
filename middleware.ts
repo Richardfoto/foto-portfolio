@@ -20,6 +20,15 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (/^\/(hu|en)\/forgatas-menete(?=\/|$)/.test(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(
+      /^\/(hu|en)\/forgatas-menete/,
+      (_match, locale: string) => `/${locale}/roviden`,
+    );
+    return NextResponse.redirect(url, 308);
+  }
+
   if (/^\/(hu|en)\/studio(?=\/|$)/.test(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = pathname.replace(/^\/(hu|en)\/studio/, "/studio");

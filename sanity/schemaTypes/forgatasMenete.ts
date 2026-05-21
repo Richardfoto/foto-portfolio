@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 export const forgatasMenete = defineType({
   name: "forgatasMenete",
-  title: "Forgatás menete",
+  title: "Röviden",
   type: "document",
   groups: [{ name: "images", title: "Oldal képei" }],
   fields: [
@@ -11,7 +11,7 @@ export const forgatasMenete = defineType({
       title: "Hero kép",
       type: "image",
       group: "images",
-      description: "A Forgatás menete oldal nyitó, teljes szélességű hero képe.",
+      description: "A Röviden oldal nyitó, teljes szélességű hero képe.",
       options: { hotspot: true },
     }),
     defineField({
@@ -65,8 +65,8 @@ export const forgatasMenete = defineType({
     },
     prepare({ media }) {
       return {
-        title: "Forgatás menete",
-        subtitle: "A forgatás-menete oldal külön állítható képei",
+        title: "Röviden",
+        subtitle: "A roviden oldal külön állítható képei",
         media,
       };
     },
